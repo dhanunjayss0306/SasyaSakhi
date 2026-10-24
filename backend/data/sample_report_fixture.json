@@ -1,0 +1,70 @@
+{
+  "synthetic": true,
+  "label": "SYNTHETIC SAMPLE \u2014 predefined demo values, NOT produced by OCR.",
+  "source_image": "synthetic_sample_report.png",
+  "fields": [
+    {
+      "parameter": "pH",
+      "label": "pH",
+      "value": 6.8,
+      "unit": null,
+      "form": null
+    },
+    {
+      "parameter": "EC",
+      "label": "EC",
+      "value": 0.42,
+      "unit": "dS/m",
+      "form": null
+    },
+    {
+      "parameter": "OC",
+      "label": "Organic Carbon",
+      "value": 0.62,
+      "unit": "%",
+      "form": null
+    },
+    {
+      "parameter": "N",
+      "label": "Nitrogen (N)",
+      "value": 310,
+      "unit": "kg/ha",
+      "form": null
+    },
+    {
+      "parameter": "P",
+      "label": "Phosphorus (P2O5)",
+      "value": 28,
+      "unit": "kg/ha",
+      "form": "P2O5"
+    },
+    {
+      "parameter": "K",
+      "label": "Potassium (K2O)",
+      "value": 190,
+      "unit": "kg/ha",
+      "form": "K2O"
+    },
+    {
+      "parameter": "S",
+      "label": "Sulphur (S)",
+      "value": 12,
+      "unit": "ppm",
+      "form": null
+    },
+    {
+      "parameter": "Zn",
+      "label": "Zinc (Zn)",
+      "value": 0.8,
+      "unit": "ppm",
+      "form": null
+    },
+    {
+      "parameter": "Fe",
+      "label": "Iron (Fe)",
+      "value": 5.2,
+      "unit": "ppm",
+      "form": null
+    }
+  ]
+}
