@@ -32,7 +32,7 @@ function SampleInsightCard() {
           </div>
           <div className="rounded-xl bg-white/10 px-2 py-3">
             <dt className="text-[11px] uppercase tracking-wider text-ivory/60">N · P · K</dt>
-            <dd className="mt-1 font-display text-xl font-semibold">280·22·310</dd>
+            <dd className="mt-1 break-all font-display text-sm font-semibold">280·22·310</dd>
           </div>
           <div className="rounded-xl bg-white/10 px-2 py-3">
             <dt className="text-[11px] uppercase tracking-wider text-ivory/60">OC</dt>
@@ -77,11 +77,20 @@ export function Hero() {
             AI guidance for Indian farmers
           </p>
 
-          <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] tracking-tight text-ivory text-balance sm:text-6xl lg:text-7xl">
-            <FxCanvasText
-              text="Your Soil. Your Support. Better Farming."
-              className="font-display"
-            />
+          <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] text-ivory text-balance sm:text-6xl xl:text-7xl">
+            {/* One FxCanvasText per line: the canvas effect draws a single line
+                and cannot wrap, so a full-sentence canvas was clipped at the
+                column edge on desktop ("Your Soil. Your Sup"). Each short
+                line fits its column, so the full headline is always visible. */}
+            <span className="block">
+              <FxCanvasText text="Your Soil." className="font-display" />
+            </span>
+            <span className="block">
+              <FxCanvasText text="Your Support." className="font-display" />
+            </span>
+            <span className="block">
+              <FxCanvasText text="Better Farming." className="font-display" />
+            </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/80 lg:mx-0">
