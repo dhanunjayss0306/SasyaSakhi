@@ -258,6 +258,8 @@ interface RotatingGlobeProps {
   markers: GlobeMarker[];
   onMarkerClick?: (marker: GlobeMarker) => void;
   onMarkerHover?: (marker: GlobeMarker | null) => void;
+  /** Fired once the textures resolve, so the parent can hide its loader. */
+  onLoaded?: () => void;
 }
 
 function RotatingGlobe({
@@ -265,6 +267,7 @@ function RotatingGlobe({
   markers,
   onMarkerClick,
   onMarkerHover,
+  onLoaded,
 }: RotatingGlobeProps) {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -286,7 +289,8 @@ function RotatingGlobe({
       // eslint-disable-next-line react-hooks/immutability -- three.js textures are mutable by design
       bumpTexture.anisotropy = 8;
     }
-  }, [earthTexture, bumpTexture]);
+    if (earthTexture && bumpTexture) onLoaded?.();
+  }, [earthTexture, bumpTexture, onLoaded]);
 
   // Create geometries
   const geometry = useMemo(() => {
@@ -403,9 +407,10 @@ interface SceneProps {
   config: Required<Globe3DConfig>;
   onMarkerClick?: (marker: GlobeMarker) => void;
   onMarkerHover?: (marker: GlobeMarker | null) => void;
+  onLoaded?: () => void;
 }
 
-function Scene({ markers, config, onMarkerClick, onMarkerHover }: SceneProps) {
+function Scene({ markers, config, onMarkerClick, onMarkerHover, onLoaded }: SceneProps) {
   const { camera } = useThree();
 
   // Set initial camera position (pulled back to accommodate markers)
@@ -435,6 +440,7 @@ function Scene({ markers, config, onMarkerClick, onMarkerHover }: SceneProps) {
         markers={markers}
         onMarkerClick={onMarkerClick}
         onMarkerHover={onMarkerHover}
+        onLoaded={onLoaded}
       />
 
       {/* Atmosphere (static) */}
@@ -465,24 +471,14 @@ function Scene({ markers, config, onMarkerClick, onMarkerHover }: SceneProps) {
 }
 
 // ============================================================================
-// Loading Fallback
-// ============================================================================
-
-function LoadingFallback() {
-  return (
-    <Html center>
-      <div className="flex shrink-0 flex-col items-center gap-3">
-        <span className="inline-block shrink-0 text-sm text-neutral-400">
-          Loading globe...
-        </span>
-      </div>
-    </Html>
-  );
-}
-
-// ============================================================================
 // Main Globe3D Component
 // ============================================================================
+// NOTE: the Suspense fallback below is deliberately null, not a drei <Html>
+// loader. <Html> mounts a second React root, and unmounting that root when
+// the textures resolved raced with React's own render ("Attempted to
+// synchronously unmount a root while React was already rendering"), which
+// broke hydration and left every link on the page dead. The loading text
+// lives in plain DOM outside the Canvas instead (see Globe3D).
 
 const defaultConfig: Required<Globe3DConfig> = {
   radius: 2,
@@ -519,9 +515,16 @@ export function Globe3D({
     () => ({ ...defaultConfig, ...config }),
     [config],
   );
+  const [loaded, setLoaded] = useState(false);
+  const handleLoaded = useCallback(() => setLoaded(true), []);
 
   return (
     <div className={cn("relative h-[500px] w-full", className)}>
+      {!loaded && (
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+          <span className="text-sm text-neutral-400">Loading globe...</span>
+        </div>
+      )}
       <Canvas
         gl={{
           antialias: true,
@@ -539,12 +542,13 @@ export function Globe3D({
           background: mergedConfig.backgroundColor || "transparent",
         }}
       >
-        <Suspense fallback={<LoadingFallback />}>
+        <Suspense fallback={null}>
           <Scene
             markers={markers}
             config={mergedConfig}
             onMarkerClick={onMarkerClick}
             onMarkerHover={onMarkerHover}
+            onLoaded={handleLoaded}
           />
         </Suspense>
       </Canvas>

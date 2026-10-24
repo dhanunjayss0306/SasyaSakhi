@@ -14,6 +14,20 @@ interface CanvasTextProps {
   overlay?: boolean;
 }
 
+// Module-scope default palette: it must be a stable reference. An inline
+// default array would be a fresh array on every render, which changed the
+// updateColors identity every render, re-ran the effect below, and —
+// because setResolvedColors always received a new array — re-rendered
+// forever ("Maximum update depth exceeded", freezing the page).
+const DEFAULT_COLORS = [
+  "#ff6b6b",
+  "#4ecdc4",
+  "#45b7d1",
+  "#96ceb4",
+  "#ffeaa7",
+  "#dfe6e9",
+];
+
 function resolveColor(color: string): string {
   if (color.startsWith("var(")) {
     const varName = color.slice(4, -1).trim();
@@ -29,7 +43,7 @@ export function CanvasText({
   text,
   className = "",
   backgroundClassName = "bg-white dark:bg-neutral-950",
-  colors = ["#ff6b6b", "#4ecdc4", "#45b7d1", "#96ceb4", "#ffeaa7", "#dfe6e9"],
+  colors = DEFAULT_COLORS,
   animationDuration = 5,
   lineWidth = 1.5,
   lineGap = 10,
@@ -48,11 +62,21 @@ export function CanvasText({
 
   const updateColors = useCallback(() => {
     if (bgRef.current) {
-      const computed = window.getComputedStyle(bgRef.current);
-      setBgColor(computed.backgroundColor);
+      const next = window.getComputedStyle(bgRef.current).backgroundColor;
+      // Only update when the value actually changed: returning the
+      // previous value makes React bail out instead of re-rendering.
+      setBgColor((prev) => (prev === next ? prev : next));
     }
     const resolved = colors.map(resolveColor);
-    setResolvedColors(resolved);
+    // Same guard for the array: a new array reference on every call
+    // would re-render on every effect run even when nothing changed,
+    // which was the other half of the update-depth loop.
+    setResolvedColors((prev) =>
+      prev.length === resolved.length &&
+      prev.every((c, i) => c === resolved[i])
+        ? prev
+        : resolved,
+    );
   }, [colors]);
 
   useEffect(() => {

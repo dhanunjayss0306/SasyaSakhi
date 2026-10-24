@@ -61,6 +61,14 @@ export function Navbar() {
       <LiquidGlass
         radius={24}
         className="mx-auto w-full max-w-6xl border border-white/10 bg-pine/60 shadow-lg shadow-pine/20"
+        // Fixed dark pine base (pine #09271d at 80%). LiquidGlass's own
+        // "pending" mode paints a 12% white wash as an inline style, which
+        // beats the bg-pine/60 class — so over the light ivory page top
+        // the bar looked white and the ivory text vanished, and it only
+        // turned green once dark hero content scrolled underneath it.
+        // This explicit base wins over the glass wash in every mode,
+        // while the backdrop blur keeps the glass look.
+        style={{ backgroundColor: "rgb(9 39 29 / 0.8)" }}
       >
         <nav
           aria-label="Primary"
