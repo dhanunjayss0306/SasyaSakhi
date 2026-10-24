@@ -3,12 +3,13 @@
 import { useRef, useState } from "react";
 import { FileUp, FileText, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BACKEND_CONFIGURED } from "@/lib/api-client";
 
 const ACCEPTED_EXTS = [".pdf", ".jpg", ".jpeg", ".png"];
 const MAX_SIZE_MB = 10;
 
 interface ReportUploaderProps {
-  onProcess: (fileName: string) => void;
+  onProcess: (file: File) => void;
   onSample: () => void;
 }
 
@@ -58,7 +59,7 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
   function handleProcess() {
     if (!file) return;
     setBusy(true);
-    onProcess(file.name);
+    onProcess(file);
   }
 
   return (
@@ -166,7 +167,7 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
               Processing…
             </>
           ) : (
-            "Process with demo OCR"
+            BACKEND_CONFIGURED ? "Process with OCR" : "Process with demo OCR"
           )}
         </Button>
         <Button type="button" variant="outline" onClick={onSample} className="flex-1">
@@ -175,7 +176,9 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
       </div>
 
       <p className="mt-4 text-xs text-charcoal/60">
-        Demo data — uploads are simulated in this prototype; no file leaves your device.
+        {BACKEND_CONFIGURED
+          ? "Your file is sent to the configured backend for OCR."
+          : "Demo data — uploads are simulated in this prototype; no file leaves your device."}
       </p>
     </div>
   );

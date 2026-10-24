@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SUGGESTED_QUESTIONS, mockChatReply } from "@/lib/mock-data";
+import { BACKEND_CONFIGURED, chatWithAssistant } from "@/lib/api-client";
+import { store } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Bot, Eraser, Send, Sprout, User } from "lucide-react";
@@ -30,6 +32,8 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
   ]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  // Tracks what the last reply actually came from, for the honest header label.
+  const [lastSource, setLastSource] = useState<"live" | "mock" | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -49,16 +53,47 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
     setMessages((prev) => [...prev, { id: nextId++, role: "user", text: trimmed }]);
     setInput("");
     setTyping(true);
-    timerRef.current = setTimeout(() => {
-      const reply = mockChatReply(trimmed);
-      setMessages((prev) => [...prev, { id: nextId++, role: "assistant", text: reply }]);
-      setTyping(false);
-    }, 800);
+    void (async () => {
+      // Backend first when configured; any failure falls back to mock replies.
+      if (BACKEND_CONFIGURED) {
+        try {
+          const report = store.getReport();
+          const confirmed: Record<string, number> = {};
+          if (report) {
+            const MAP = { ph: "pH", ec: "EC", oc: "OC", n: "N", p: "P", k: "K" } as const;
+            for (const p of report.parameters) {
+              if (p.value !== null) confirmed[MAP[p.key]] = p.value;
+            }
+          }
+          const res = await chatWithAssistant(trimmed, {
+            language: initialLang,
+            report_id: report?.id,
+            context:
+              Object.keys(confirmed).length > 0
+                ? { confirmed_values: confirmed }
+                : undefined,
+          });
+          setMessages((prev) => [...prev, { id: nextId++, role: "assistant", text: res.answer }]);
+          setLastSource("live");
+          setTyping(false);
+          return;
+        } catch {
+          console.debug("SasyaSakhi: backend chat unavailable, using mock reply.");
+        }
+      }
+      timerRef.current = setTimeout(() => {
+        const reply = mockChatReply(trimmed);
+        setMessages((prev) => [...prev, { id: nextId++, role: "assistant", text: reply }]);
+        setLastSource("mock");
+        setTyping(false);
+      }, 800);
+    })();
   };
 
   const clearChat = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     setTyping(false);
+    setLastSource(null);
     setMessages([{ id: nextId++, role: "assistant", text: greeting(initialLang) }]);
   };
 
@@ -72,7 +107,13 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
           </span>
           <div>
             <p className="font-display text-base font-semibold text-charcoal">SasyaSakhi Assistant</p>
-            <p className="text-xs text-charcoal/60">Mock AI — demo responses</p>
+            <p className="text-xs text-charcoal/60">
+              {lastSource === "live"
+                ? "Live answers"
+                : lastSource === "mock"
+                  ? "Mock AI — demo responses"
+                  : "Ask about your soil report"}
+            </p>
           </div>
         </div>
         <Button variant="ghost" size="sm" onClick={clearChat} aria-label="Clear chat">

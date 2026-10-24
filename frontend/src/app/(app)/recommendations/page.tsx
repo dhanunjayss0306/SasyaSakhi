@@ -1,14 +1,74 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { CropId } from "@/types/crop";
-import { CROPS, MOCK_NOTICE } from "@/lib/mock-data";
+import { CROPS, MOCK_NOTICE, SAMPLE_SOIL_REPORT } from "@/lib/mock-data";
 import { getCropRecommendations, getFertilizerPlan } from "@/lib/mock-recommendation-service";
+import {
+  BACKEND_CONFIGURED,
+  cropSuitability,
+  fertilizerRecommendation,
+  type ConfirmedValue,
+  type CropSuitability,
+} from "@/lib/api-client";
+import { store } from "@/lib/store";
 import { CropCard } from "@/components/recommendations/crop-card";
-import { FertilizerPanel } from "@/components/recommendations/fertilizer-panel";
+import {
+  FertilizerPanel,
+  type LiveFertilizerPlan,
+} from "@/components/recommendations/fertilizer-panel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CheckCircle2 } from "lucide-react";
+
+type LiveCrop = {
+  status: CropSuitability["status"];
+  supporting: string[];
+  limiting: string[];
+  missing: string[];
+  explanation: string;
+};
+
+/** Backend status labels, displayed verbatim — never mapped to numbers. */
+const STATUS_LABEL: Record<LiveCrop["status"], string> = {
+  suitable: "Suitable",
+  marginal: "Marginal",
+  unsuitable: "Unsuitable",
+  insufficient_data: "Insufficient data",
+};
+
+/** Frontend parameter keys -> backend canonical names (N, P, K — never oxides). */
+const FRONTEND_TO_BACKEND = {
+  ph: "pH",
+  ec: "EC",
+  oc: "OC",
+  n: "N",
+  p: "P",
+  k: "K",
+} as const;
+
+function toCropId(name: string): CropId | null {
+  const n = name.toLowerCase();
+  if (n.includes("rice") || n.includes("paddy")) return "paddy";
+  if (n.includes("cotton")) return "cotton";
+  if (n.includes("chilli") || n.includes("chili")) return "chilli";
+  return null;
+}
+
+/** Confirmed values for backend calls: stored report, else the sample report. */
+function reportValues(): ConfirmedValue[] {
+  const report = store.getReport() ?? SAMPLE_SOIL_REPORT;
+  const values: ConfirmedValue[] = [];
+  for (const p of report.parameters) {
+    if (p.value === null) continue;
+    values.push({
+      parameter: FRONTEND_TO_BACKEND[p.key],
+      value: p.value,
+      unit: p.unit || undefined,
+    });
+  }
+  return values;
+}
 
 export default function RecommendationsPage() {
   const [selectedId, setSelectedId] = useState<CropId>("paddy");
@@ -17,17 +77,123 @@ export default function RecommendationsPage() {
   const selectedRec = recommendations.find((r) => r.cropId === selectedId);
   const fertilizerItems = getFertilizerPlan(selectedId);
 
+  // Live backend state. When the backend is unset, everything below stays
+  // null and the page renders exactly as before (mock).
+  const [cropsPhase, setCropsPhase] = useState<"loading" | "live" | "mock">(
+    BACKEND_CONFIGURED ? "loading" : "mock",
+  );
+  const [liveCrops, setLiveCrops] = useState<Map<CropId, LiveCrop> | null>(null);
+  // Fertilizer results are keyed per crop and written only from async
+  // callbacks (never synchronously in an effect body). No entry for a crop
+  // yet means its plan is still loading.
+  const [fertResults, setFertResults] = useState<
+    Partial<Record<CropId, { status: "live" | "mock"; plan: LiveFertilizerPlan | null }>>
+  >({});
+
+  // Fetch crop suitability once. Any failure (no values, bad response,
+  // network) falls back to the mock rendering — never an error page.
+  useEffect(() => {
+    if (!BACKEND_CONFIGURED) return;
+    let alive = true;
+    (async () => {
+      try {
+        const values = reportValues();
+        if (values.length === 0) throw new Error("no report values");
+        const res = await cropSuitability(undefined, values);
+        if (!res.success || res.results.length === 0) throw new Error("no results");
+        const map = new Map<CropId, LiveCrop>();
+        for (const r of res.results) {
+          const id = toCropId(r.crop);
+          if (id && !map.has(id)) {
+            map.set(id, {
+              status: r.status,
+              supporting: r.supporting_factors,
+              limiting: r.limiting_factors,
+              missing: r.missing_information,
+              explanation: r.explanation,
+            });
+          }
+        }
+        if (map.size === 0) throw new Error("no recognized crops");
+        if (alive) {
+          setLiveCrops(map);
+          setCropsPhase("live");
+        }
+      } catch {
+        if (alive) setCropsPhase("mock");
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // Fetch the fertilizer plan for the selected crop once crops are live.
+  // State is written only inside the async callback below.
+  useEffect(() => {
+    if (cropsPhase !== "live") return;
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fertilizerRecommendation(selectedId, {
+          values: reportValues(),
+          area: 1,
+          area_unit: "acre",
+        });
+        if (!res.success || res.items.length === 0) throw new Error("no items");
+        if (alive) {
+          setFertResults((prev) => ({
+            ...prev,
+            [selectedId]: {
+              status: "live",
+              plan: {
+                items: res.items.map((i) => ({
+                  product: i.product,
+                  nutrient: i.nutrient,
+                  quantity: i.quantity,
+                  unit: i.unit,
+                })),
+                ruleId: res.rule_id,
+                explanation: res.explanation,
+                area: res.area,
+                areaUnit: res.area_unit,
+                totalCost: res.total_cost,
+                currency: res.currency,
+              },
+            },
+          }));
+        }
+      } catch {
+        if (alive) {
+          setFertResults((prev) => ({
+            ...prev,
+            [selectedId]: { status: "mock", plan: null },
+          }));
+        }
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [selectedId, cropsPhase]);
+
+  const liveSelected = cropsPhase === "live" ? (liveCrops?.get(selectedId) ?? null) : null;
+  const showLiveWhy = liveSelected !== null;
+  const fertResult = cropsPhase === "live" ? fertResults[selectedId] : undefined;
+
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold text-charcoal">Crop recommendations</h1>
           <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
-            Suitability scores from your soil report, with an illustrative fertilizer plan for the selected crop.
+            {cropsPhase === "live"
+              ? "Suitability from your soil report, with a fertilizer plan for the selected crop."
+              : "Suitability scores from your soil report, with an illustrative fertilizer plan for the selected crop."}
           </p>
         </div>
         <span className="rounded-full bg-gold/20 px-3 py-1 text-xs font-semibold text-charcoal">
-          {MOCK_NOTICE.split(".")[0]}
+          {cropsPhase === "live" ? "Live" : MOCK_NOTICE.split(".")[0]}
         </span>
       </div>
 
@@ -47,42 +213,108 @@ export default function RecommendationsPage() {
         ))}
       </div>
 
-      {/* Crop cards grid */}
-      <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {CROPS.map((crop) => (
-          <CropCard
-            key={crop.id}
-            crop={crop}
-            selected={selectedId === crop.id}
-            onSelect={setSelectedId}
-          />
-        ))}
-      </div>
+      {cropsPhase === "loading" ? (
+        <p className="mt-6 text-sm text-charcoal/60" role="status">
+          Loading recommendations…
+        </p>
+      ) : (
+        <>
+          {/* Crop cards grid */}
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {CROPS.map((crop) => {
+              const live = liveCrops?.get(crop.id);
+              return (
+                <CropCard
+                  key={crop.id}
+                  crop={crop}
+                  selected={selectedId === crop.id}
+                  onSelect={setSelectedId}
+                  statusLabel={live ? STATUS_LABEL[live.status] : undefined}
+                />
+              );
+            })}
+          </div>
 
-      {/* Why suitable + fertilizer plan for the selected crop */}
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
-        <section aria-labelledby="why-heading" className="rounded-2xl border border-sage bg-white p-5 sm:p-6">
-          <h2 id="why-heading" className="font-display text-xl font-semibold text-charcoal">
-            Why {selectedCrop.name} suits your soil
-          </h2>
-          <p className="mt-1 text-sm text-charcoal/60">
-            Suitability score: <span className="font-semibold text-forest">{selectedRec?.suitability ?? selectedCrop.suitability}%</span>
-          </p>
-          <ul className="mt-4 space-y-3">
-            {(selectedRec?.why ?? selectedCrop.soilFactors).map((point) => (
-              <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-leaf" aria-hidden />
-                <span>{point}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-4 text-xs text-charcoal/55">
-            Demo data — scores are illustrative and based on the sample soil report.
-          </p>
-        </section>
+          {/* Why suitable + fertilizer plan for the selected crop */}
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
+            <section aria-labelledby="why-heading" className="rounded-2xl border border-sage bg-white p-5 sm:p-6">
+              <h2 id="why-heading" className="font-display text-xl font-semibold text-charcoal">
+                {showLiveWhy && liveSelected.status === "unsuitable"
+                  ? `Why ${selectedCrop.name} is not recommended`
+                  : `Why ${selectedCrop.name} suits your soil`}
+              </h2>
+              {showLiveWhy ? (
+                <>
+                  <p className="mt-1 text-sm text-charcoal/60">
+                    Suitability:{" "}
+                    <span className="font-semibold text-forest">
+                      {STATUS_LABEL[liveSelected.status]}
+                    </span>
+                  </p>
+                  {liveSelected.supporting.length > 0 && (
+                    <ul className="mt-4 space-y-3">
+                      {liveSelected.supporting.map((point) => (
+                        <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-leaf" aria-hidden />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {liveSelected.limiting.length > 0 && (
+                    <>
+                      <h3 className="mt-5 text-sm font-semibold text-charcoal">Limiting factors</h3>
+                      <ul className="mt-2 space-y-3">
+                        {liveSelected.limiting.map((point) => (
+                          <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-leaf" aria-hidden />
+                            <span>{point}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                  {liveSelected.missing.length > 0 && (
+                    <p className="mt-4 text-xs text-charcoal/55">
+                      Missing information: {liveSelected.missing.join(", ")}.
+                    </p>
+                  )}
+                  <p className="mt-4 text-sm text-charcoal/70">{liveSelected.explanation}</p>
+                </>
+              ) : (
+                <>
+                  <p className="mt-1 text-sm text-charcoal/60">
+                    Suitability score: <span className="font-semibold text-forest">{selectedRec?.suitability ?? selectedCrop.suitability}%</span>
+                  </p>
+                  <ul className="mt-4 space-y-3">
+                    {(selectedRec?.why ?? selectedCrop.soilFactors).map((point) => (
+                      <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-leaf" aria-hidden />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 text-xs text-charcoal/55">
+                    Demo data — scores are illustrative and based on the sample soil report.
+                  </p>
+                </>
+              )}
+            </section>
 
-        <FertilizerPanel cropName={selectedCrop.name} items={fertilizerItems} />
-      </div>
+            {cropsPhase === "live" && fertResult === undefined ? (
+              <p className="text-sm text-charcoal/60" role="status">
+                Loading fertilizer plan…
+              </p>
+            ) : (
+              <FertilizerPanel
+                cropName={selectedCrop.name}
+                items={fertilizerItems}
+                live={fertResult?.status === "live" ? fertResult.plan : null}
+              />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

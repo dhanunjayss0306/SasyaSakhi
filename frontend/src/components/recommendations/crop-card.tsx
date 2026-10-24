@@ -9,6 +9,12 @@ interface CropCardProps {
   crop: Crop;
   selected: boolean;
   onSelect: (id: CropId) => void;
+  /**
+   * Backend status label (Suitable / Marginal / Unsuitable / ...). When
+   * present, the badge shows the label and the numeric bar is hidden —
+   * labels are never mapped to invented percentages.
+   */
+  statusLabel?: string;
 }
 
 /** Premium inline SVG crop illustrations — no emoji, no external assets. */
@@ -64,7 +70,7 @@ const WATER_STYLE: Record<Crop["waterNeed"], string> = {
   High: "bg-forest/10 text-forest",
 };
 
-export function CropCard({ crop, selected, onSelect }: CropCardProps) {
+export function CropCard({ crop, selected, onSelect, statusLabel }: CropCardProps) {
   return (
     <article
       data-selected={selected}
@@ -78,7 +84,7 @@ export function CropCard({ crop, selected, onSelect }: CropCardProps) {
       <div className="flex items-start justify-between gap-3">
         <CropArt id={crop.id} />
         <span className="rounded-full bg-forest px-3 py-1 font-display text-lg font-semibold text-ivory">
-          {crop.suitability}%
+          {statusLabel ?? `${crop.suitability}%`}
         </span>
       </div>
 
@@ -87,14 +93,16 @@ export function CropCard({ crop, selected, onSelect }: CropCardProps) {
       </h3>
       <p className="mt-1 text-sm leading-relaxed text-charcoal/70">{crop.description}</p>
 
-      <div className="mt-4" aria-label={`Suitability for ${crop.name}: ${crop.suitability} percent`}>
-        <div className="h-2 overflow-hidden rounded-full bg-sage" role="progressbar"
-          aria-valuenow={crop.suitability} aria-valuemin={0} aria-valuemax={100}
-          aria-label={`${crop.name} suitability`}>
-          <div className="h-full rounded-full bg-gradient-to-r from-leaf to-forest"
-            style={{ width: `${crop.suitability}%` }} />
+      {!statusLabel && (
+        <div className="mt-4" aria-label={`Suitability for ${crop.name}: ${crop.suitability} percent`}>
+          <div className="h-2 overflow-hidden rounded-full bg-sage" role="progressbar"
+            aria-valuenow={crop.suitability} aria-valuemin={0} aria-valuemax={100}
+            aria-label={`${crop.name} suitability`}>
+            <div className="h-full rounded-full bg-gradient-to-r from-leaf to-forest"
+              style={{ width: `${crop.suitability}%` }} />
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
         <span className="rounded-full bg-sage px-2.5 py-1 font-medium text-forest">{crop.season}</span>

@@ -42,9 +42,9 @@ export default function SoilReportPage() {
     }
   }
 
-  function handleProcess(fileName: string) {
+  function handleProcess(file: File) {
     void run(async () => {
-      store.setReport(await extractFromFile(fileName));
+      store.setReport(await extractFromFile(file));
     });
   }
 

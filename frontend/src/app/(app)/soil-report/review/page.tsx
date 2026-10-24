@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { FileSearch } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { ExtractedValuesForm } from "@/components/soil/extracted-values-form";
-import { confirmValues } from "@/lib/mock-soil-service";
+import { confirmValues, confirmBackendReport } from "@/lib/mock-soil-service";
+import { MOCK_NOTICE } from "@/lib/mock-data";
 import { store } from "@/lib/store";
 import type { SoilReport } from "@/types/soil";
 
@@ -38,7 +39,7 @@ export default function ReviewSoilReportPage() {
     );
   }
 
-  function handleConfirm(updated: SoilReport) {
+  async function handleConfirm(updated: SoilReport) {
     const result = confirmValues(updated);
     if (!result.ok) {
       setErrors(result.errors);
@@ -46,9 +47,13 @@ export default function ReviewSoilReportPage() {
       return;
     }
     setErrors([]);
+    // Best-effort backend confirmation; never blocks the demo on failure.
+    await confirmBackendReport(updated);
     store.setReport(updated);
     router.push("/soil-analysis");
   }
+
+  const isDemo = report.mockNotice === MOCK_NOTICE;
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
@@ -57,7 +62,7 @@ export default function ReviewSoilReportPage() {
           Review Extracted Values
         </h1>
         <p className="mt-2 text-sm text-charcoal/70">
-          The demo OCR read these values from{" "}
+          {isDemo ? "The demo OCR read these values from" : "OCR read these values from"}{" "}
           <span className="font-medium text-charcoal">{report.fileName}</span>.
           Correct anything that looks wrong, then confirm.
         </p>

@@ -3,6 +3,22 @@ import type { CropId } from "@/types/crop";
 import { CROPS } from "./mock-data";
 
 /**
+ * BACKEND-WIRING NOTE — these functions deliberately stay mock (see README
+ * "Backend wiring"). The backend crop/fertilizer endpoints are verified
+ * working, but wiring them here would break honesty or the pages:
+ *  (1) the recommendations page calls these functions synchronously, while
+ *      backend calls are async;
+ *  (2) the backend returns status labels (suitable/marginal/unsuitable) but
+ *      the page renders a numeric suitability score — mapping labels to
+ *      numbers would invent scores;
+ *  (3) FertilizerRec forces `illustrative: true` and a per-acre cost, while
+ *      the backend returns calculated (non-illustrative) doses with no prices
+ *      (total_cost null).
+ * Wiring needs the page to go async + label-based UI (Best/Good/Fair, like
+ * the preview app already uses).
+ */
+
+/**
  * Deterministic, rule-style mock recommendation engine.
  * In the real product this runs server-side; the AI only explains results.
  * All numbers here are illustrative.

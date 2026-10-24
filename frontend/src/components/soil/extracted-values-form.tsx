@@ -5,6 +5,7 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SoilReport, SoilParameter } from "@/types/soil";
 import { confirmValues } from "@/lib/mock-soil-service";
+import { MOCK_NOTICE } from "@/lib/mock-data";
 
 interface ExtractedValuesFormProps {
   report: SoilReport;
@@ -28,6 +29,9 @@ export function ExtractedValuesForm({ report, onConfirm, onBack }: ExtractedValu
     Object.fromEntries(report.parameters.map((p) => [p.key, toInput(p.value)]))
   );
   const [errors, setErrors] = useState<string[]>([]);
+  // The report's notice tells us whether these values came from the demo
+  // fallback (MOCK_NOTICE) or a real backend extraction.
+  const isDemo = report.mockNotice === MOCK_NOTICE;
 
   function update(key: string, input: string) {
     setValues((v) => ({ ...v, [key]: input }));
@@ -52,9 +56,11 @@ export function ExtractedValuesForm({ report, onConfirm, onBack }: ExtractedValu
 
   return (
     <div>
-      <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-gold/20 px-3 py-1 text-xs font-medium text-charcoal">
-        Demo data — edit freely
-      </p>
+      {isDemo && (
+        <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-gold/20 px-3 py-1 text-xs font-medium text-charcoal">
+          Demo data — edit freely
+        </p>
+      )}
 
       <div className="space-y-4">
         {report.parameters.map((p: SoilParameter) => (
@@ -92,8 +98,9 @@ export function ExtractedValuesForm({ report, onConfirm, onBack }: ExtractedValu
             />
             {p.uncertain && (
               <p id={`verify-${p.key}`} className="mt-1 text-xs text-amber-700">
-                The demo OCR was unsure about this value — please check it against
-                your report.
+                {isDemo
+                  ? "The demo OCR was unsure about this value — please check it against your report."
+                  : "This value needs checking against your report."}
               </p>
             )}
           </div>

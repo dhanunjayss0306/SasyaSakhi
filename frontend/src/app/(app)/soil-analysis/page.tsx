@@ -136,6 +136,9 @@ export default function SoilAnalysisPage() {
         ? "border-red-200 bg-red-50"
         : "border-gold/40 bg-gold/10";
   const npk = report.parameters.filter((p) => ["n", "p", "k"].includes(p.key));
+  // The report's notice tells us whether these values came from the demo
+  // fallback (MOCK_NOTICE) or a real backend extraction.
+  const isDemo = report.mockNotice === MOCK_NOTICE;
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -150,7 +153,7 @@ export default function SoilAnalysisPage() {
           </p>
         </div>
         <span className="rounded-full bg-forest px-3 py-1 text-xs font-medium text-ivory">
-          Demo data
+          {isDemo ? "Demo data" : "Live"}
         </span>
       </header>
 
@@ -229,7 +232,8 @@ export default function SoilAnalysisPage() {
         </h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-charcoal/80">
           <li>
-            <strong>Demo data only:</strong> {MOCK_NOTICE}
+            <strong>{isDemo ? "Demo data only:" : "Source:"}</strong>{" "}
+            {isDemo ? MOCK_NOTICE : report.mockNotice}
           </li>
           <li>
             <strong>Rules-based engine:</strong> statuses (Low / Optimal / High)

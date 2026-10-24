@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { store, type Lang } from "@/lib/store";
+import { BACKEND_CONFIGURED } from "@/lib/api-client";
 import { ChatWindow } from "@/components/assistant/chat-window";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +20,9 @@ export default function AssistantPage() {
         <div>
           <h1 className="font-display text-3xl font-semibold text-charcoal">AI Assistant</h1>
           <p className="mt-1 text-sm text-charcoal/65">
-            Ask about your soil report in English or Telugu. Responses are scripted demos.
+            {BACKEND_CONFIGURED
+              ? "Ask about your soil report in English or Telugu. Answers come from the backend when available, otherwise scripted demos."
+              : "Ask about your soil report in English or Telugu. Responses are scripted demos."}
           </p>
         </div>
         <div role="group" aria-label="Assistant language" className="flex rounded-full border border-sage bg-ivory p-1">

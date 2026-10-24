@@ -18,6 +18,13 @@
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "http://localhost:8000";
 
+/**
+ * True only when NEXT_PUBLIC_API_URL is explicitly set at build time.
+ * Pages use this for honest live/mock labels; services gate network calls
+ * on the same condition. When false, the app is pure mock — no network.
+ */
+export const BACKEND_CONFIGURED = Boolean(process.env.NEXT_PUBLIC_API_URL);
+
 /* ------------------------------------------------------------------ types */
 
 export type Provenance = "extracted" | "manual" | "corrected" | "demo";

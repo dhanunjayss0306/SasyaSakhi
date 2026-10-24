@@ -27,13 +27,17 @@ function SkeletonCard() {
 
 export default function WeatherPage() {
   const [days, setDays] = useState<WeatherDay[] | null>(null);
+  const [source, setSource] = useState<"live" | "mock">("mock");
   const [error, setError] = useState(false);
 
   useEffect(() => {
     let alive = true;
     getWeather()
       .then((w) => {
-        if (alive) setDays(w);
+        if (alive) {
+          setDays(w.days);
+          setSource(w.source);
+        }
       })
       .catch(() => {
         if (alive) setError(true);
@@ -53,7 +57,7 @@ export default function WeatherPage() {
           </p>
         </div>
         <span className="rounded-full bg-gold/20 px-3 py-1 text-xs font-semibold text-charcoal">
-          Demo data
+          {source === "live" ? "Live" : "Demo data"}
         </span>
       </div>
 
