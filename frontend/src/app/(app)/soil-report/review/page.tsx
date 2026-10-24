@@ -8,12 +8,15 @@ import { buttonVariants } from "@/components/ui/button";
 import { ExtractedValuesForm } from "@/components/soil/extracted-values-form";
 import { confirmValues, confirmBackendReport } from "@/lib/mock-soil-service";
 import { MOCK_NOTICE } from "@/lib/mock-data";
-import { store } from "@/lib/store";
+import { store, useStoredReport } from "@/lib/store";
 import type { SoilReport } from "@/types/soil";
 
 export default function ReviewSoilReportPage() {
   const router = useRouter();
-  const [report] = useState<SoilReport | null>(() => store.getReport());
+  // Hydration-safe: the stored report exists only on the client; reading it
+  // in a useState initializer rendered the form on the client while the
+  // server rendered "No report yet".
+  const report = useStoredReport();
   const [errors, setErrors] = useState<string[]>([]);
 
   if (report === null) {

@@ -3,15 +3,14 @@
 import { useState } from "react";
 import { Sprout } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { store } from "@/lib/store";
+import { store, useStoredLang } from "@/lib/store";
 
 type Lang = "en" | "te";
 
 function FooterLanguageSelector() {
-  const [lang, setLang] = useState<Lang>(() => store.getLang());
+  const lang = useStoredLang();
 
   const choose = (next: Lang) => {
-    setLang(next);
     store.setLang(next);
   };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -21,7 +21,7 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { cn } from "@/lib/utils";
-import { store, type Lang } from "@/lib/store";
+import { useStoredLang, useStoredUser } from "@/lib/store";
 import {
   CROPS,
   MOCK_CALENDAR,
@@ -54,19 +54,40 @@ const WEATHER_ICON: Record<WeatherDay["icon"], LucideIcon> = {
   cloud: Cloud,
 };
 
-function greetingForHour(h: number): { en: string; te: string } {
-  if (h < 12) return { en: "Good morning", te: "శుభోదయం" };
-  if (h < 17) return { en: "Good afternoon", te: "శుభ మధ్యాహ్నం" };
-  return { en: "Good evening", te: "శుభ సాయంత్రం" };
+type Daypart = "morning" | "afternoon" | "evening";
+
+const GREETINGS: Record<Daypart, { en: string; te: string }> = {
+  morning: { en: "Good morning", te: "శుభోదయం" },
+  afternoon: { en: "Good afternoon", te: "శుభ మధ్యాహ్నం" },
+  evening: { en: "Good evening", te: "శుభ సాయంత్రం" },
+};
+
+function daypartForHour(h: number): Daypart {
+  return h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
+}
+
+const emptySubscribe = () => () => {};
+
+function getDaypartSnapshot(): Daypart {
+  if (typeof window === "undefined") return "morning";
+  return daypartForHour(new Date().getHours());
 }
 
 export default function DashboardPage() {
-  const [name] = useState(() => store.getUser()?.name ?? "Guest Farmer");
-  const [lang] = useState<Lang>(() => store.getLang());
-  // `typeof window` guard: `new Date()` must never evaluate during prerender (Next 16).
-  const [greeting] = useState(() =>
-    greetingForHour(typeof window === "undefined" ? 10 : new Date().getHours())
+  const storedUser = useStoredUser();
+  const name = storedUser?.name ?? "Guest Farmer";
+  const lang = useStoredLang();
+  // The greeting depends on the client's clock, which the server cannot
+  // know; reading the real hour during render mismatched the server's
+  // "Good morning" in afternoons/evenings. useSyncExternalStore renders
+  // with the server snapshot ("morning") during hydration, then the real
+  // daypart, without a hydration error.
+  const daypart = useSyncExternalStore(
+    emptySubscribe,
+    getDaypartSnapshot,
+    () => "morning" as Daypart,
   );
+  const greeting = GREETINGS[daypart];
 
   useEffect(() => {
     document.title = "Overview · SasyaSakhi";

@@ -6,7 +6,7 @@ import { Menu, Sprout, X } from "lucide-react";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { store } from "@/lib/store";
+import { store, useStoredLang } from "@/lib/store";
 
 const NAV_LINKS = [
   { href: "#top", label: "Home" },
@@ -20,10 +20,9 @@ const NAV_LINKS = [
 type Lang = "en" | "te";
 
 function LanguageSelector({ onSelect }: { onSelect?: () => void }) {
-  const [lang, setLang] = useState<Lang>(() => store.getLang());
+  const lang = useStoredLang();
 
   const choose = (next: Lang) => {
-    setLang(next);
     store.setLang(next);
     onSelect?.();
   };

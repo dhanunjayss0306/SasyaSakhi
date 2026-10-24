@@ -5,6 +5,7 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
   type HTMLAttributes,
 } from "react";
 import { cn } from "@/lib/utils";
@@ -51,11 +52,19 @@ export function LiquidGlass({
   const [filter, setFilter] = useState<{ id: string; svg: string } | null>(
     null,
   );
-  const [mode] = useState<"pending" | "simple" | "opaque">(() => {
-    if (prefersReducedTransparency()) return "opaque";
-    if (isSafariLike() || !supportsUrlBackdropFilter()) return "simple";
-    return "pending";
-  });
+  // SSR-safe mode: the capability checks below read browser-only APIs (CSS,
+  // navigator, matchMedia) that do not exist on the server, so computing
+  // them during render resolved to "simple" during prerender but "pending"
+  // on first client render — a hydration attribute mismatch on every page
+  // using this component. useSyncExternalStore renders with the server
+  // snapshot ("simple") during hydration, then re-renders with the real
+  // mode, without a hydration error. The mode never changes mid-session
+  // (same as the old one-shot initializer), so no subscription is needed.
+  const mode = useSyncExternalStore(
+    emptySubscribe,
+    getModeSnapshot,
+    () => "simple" as GlassMode,
+  );
 
   useEffect(() => {
     const el = rootRef.current;
@@ -172,6 +181,17 @@ export function LiquidGlass({
       )}
     </div>
   );
+}
+
+type GlassMode = "pending" | "simple" | "opaque";
+
+const emptySubscribe = () => () => {};
+
+function getModeSnapshot(): GlassMode {
+  if (typeof window === "undefined") return "simple";
+  if (prefersReducedTransparency()) return "opaque";
+  if (isSafariLike() || !supportsUrlBackdropFilter()) return "simple";
+  return "pending";
 }
 
 function supportsUrlBackdropFilter() {

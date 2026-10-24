@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Bell, ChevronRight, Globe, LogOut, Menu, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { store, type Lang } from "@/lib/store";
+import { store, useStoredLang, useStoredUser, type Lang } from "@/lib/store";
 
 interface DashboardHeaderProps {
   title: string;
@@ -21,14 +21,17 @@ const DEMO_NOTIFICATIONS = [
 export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [lang, setLang] = useState<Lang>(() => store.getLang());
+  const lang = useStoredLang();
   const [notifOpen, setNotifOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
-  // Read the client-side store lazily: safe during prerender, no hydration effect needed.
-  const [userName] = useState(() => store.getUser()?.name ?? "Guest Farmer");
+  // Hydration-safe: the stored user exists only on the client; reading it in
+  // a useState initializer rendered the stored name on the client while the
+  // server rendered "Guest Farmer".
+  const storedUser = useStoredUser();
+  const userName = storedUser?.name ?? "Guest Farmer";
 
   // Close dropdowns on outside click / Escape.
   useEffect(() => {
@@ -55,7 +58,6 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
   }, []);
 
   const changeLang = (l: Lang) => {
-    setLang(l);
     store.setLang(l);
   };
 

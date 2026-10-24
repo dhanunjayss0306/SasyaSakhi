@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { store, type Lang } from "@/lib/store";
+import { store, useStoredLang, useStoredUser, type Lang } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Bell, Globe, LogOut, UserRound } from "lucide-react";
@@ -50,17 +50,27 @@ function Switch({
 
 export default function SettingsPage() {
   const router = useRouter();
-  const [lang, setLang] = useState<Lang>(() => store.getLang());
-  const [name, setName] = useState(() => store.getUser()?.name ?? "");
-  const [email, setEmail] = useState(() => store.getUser()?.email ?? "");
+  const storedUser = useStoredUser();
+  const lang = useStoredLang();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [saved, setSaved] = useState(false);
   const [weatherAlerts, setWeatherAlerts] = useState(true);
   const [taskReminders, setTaskReminders] = useState(true);
   const [priceUpdates, setPriceUpdates] = useState(false);
 
+  // Fill the form from the stored profile after hydration. Reading it in
+  // the useState initializers rendered the stored values on the client
+  // while the server rendered empty fields.
+  useEffect(() => {
+    (async () => {
+      setName(storedUser?.name ?? "");
+      setEmail(storedUser?.email ?? "");
+    })();
+  }, [storedUser]);
+
   const pickLang = (l: Lang) => {
     store.setLang(l);
-    setLang(l);
   };
 
   const saveProfile = () => {

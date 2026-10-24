@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Info, Leaf, Sprout } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { SoilParameterCard } from "@/components/soil/soil-parameter-card";
-import { store } from "@/lib/store";
+import { useStoredReport } from "@/lib/store";
 import { SAMPLE_SOIL_REPORT, MOCK_NOTICE } from "@/lib/mock-data";
 import type { SoilReport } from "@/types/soil";
 
@@ -108,12 +107,12 @@ const AFFECTS = [
 ];
 
 export default function SoilAnalysisPage() {
-  const [initial] = useState(() => {
-    const stored = store.getReport();
-    return { report: stored ?? SAMPLE_SOIL_REPORT, usingSample: stored === null };
-  });
-  const report = initial.report;
-  const usingSample = initial.usingSample;
+  // Hydration-safe: the stored report exists only on the client; reading it
+  // in a useState initializer rendered the stored report on the client
+  // while the server rendered the sample report.
+  const stored = useStoredReport();
+  const report = stored ?? SAMPLE_SOIL_REPORT;
+  const usingSample = stored === null;
 
   if (!report) {
     return (

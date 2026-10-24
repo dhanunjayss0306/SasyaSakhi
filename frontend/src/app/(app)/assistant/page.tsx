@@ -1,17 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { store, type Lang } from "@/lib/store";
+import { store, useStoredLang, type Lang } from "@/lib/store";
 import { BACKEND_CONFIGURED } from "@/lib/api-client";
 import { ChatWindow } from "@/components/assistant/chat-window";
 import { cn } from "@/lib/utils";
 
 export default function AssistantPage() {
-  const [lang, setLang] = useState<Lang>(() => store.getLang());
+  const lang = useStoredLang();
 
   const pick = (l: Lang) => {
     store.setLang(l);
-    setLang(l);
   };
 
   return (
