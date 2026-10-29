@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/landing/hero";
 import { FeatureGrid } from "@/components/landing/feature-grid";
 import { HowItWorks } from "@/components/landing/how-it-works";
+import { HowScores } from "@/components/landing/how-scores";
 import { CropShowcase } from "@/components/landing/crop-showcase";
 import { TrustSection } from "@/components/landing/trust-section";
 
@@ -49,6 +50,7 @@ export default function Home() {
         <Hero />
         <FeatureGrid />
         <HowItWorks />
+        <HowScores />
         <CropShowcase />
         <TrustSection />
         <AboutSection />

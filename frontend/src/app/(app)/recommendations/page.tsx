@@ -8,8 +8,10 @@ import {
   BACKEND_CONFIGURED,
   cropSuitability,
   fertilizerRecommendation,
+  mlSuitability,
   type ConfirmedValue,
   type CropSuitability,
+  type MLResult,
 } from "@/lib/api-client";
 import { store } from "@/lib/store";
 import { CropCard } from "@/components/recommendations/crop-card";
@@ -67,6 +69,17 @@ function reportValues(): ConfirmedValue[] {
       unit: p.unit || undefined,
     });
   }
+  // Micronutrients extracted by OCR (S, Zn, Fe, B, ...) ride along so the
+  // ML score sees the full report, not just the six main parameters.
+  for (const extra of report.extraValues ?? []) {
+    if (extra.value === null) continue;
+    values.push({
+      parameter: extra.parameter,
+      value: extra.value,
+      unit: extra.unit || undefined,
+      form: extra.form || undefined,
+    });
+  }
   return values;
 }
 
@@ -83,6 +96,7 @@ export default function RecommendationsPage() {
     BACKEND_CONFIGURED ? "loading" : "mock",
   );
   const [liveCrops, setLiveCrops] = useState<Map<CropId, LiveCrop> | null>(null);
+  const [mlResults, setMlResults] = useState<Map<CropId, MLResult> | null>(null);
   // Fertilizer results are keyed per crop and written only from async
   // callbacks (never synchronously in an effect body). No entry for a crop
   // yet means its plan is still loading.
@@ -118,6 +132,21 @@ export default function RecommendationsPage() {
         if (alive) {
           setLiveCrops(map);
           setCropsPhase("live");
+        }
+        // ML score: same soil values, scored by the deficit model. Any
+        // failure hides the ML block only — the rules results stay live.
+        try {
+          const ml = await mlSuitability(undefined, values);
+          if (ml.success) {
+            const mlMap = new Map<CropId, MLResult>();
+            for (const r of ml.results) {
+              const id = toCropId(r.crop);
+              if (id) mlMap.set(id, r);
+            }
+            if (alive) setMlResults(mlMap);
+          }
+        } catch {
+          // ML block stays hidden; rules results are unaffected.
         }
       } catch {
         if (alive) setCropsPhase("mock");
@@ -178,6 +207,7 @@ export default function RecommendationsPage() {
   }, [selectedId, cropsPhase]);
 
   const liveSelected = cropsPhase === "live" ? (liveCrops?.get(selectedId) ?? null) : null;
+  const mlSelected = cropsPhase === "live" ? (mlResults?.get(selectedId) ?? null) : null;
   const showLiveWhy = liveSelected !== null;
   const fertResult = cropsPhase === "live" ? fertResults[selectedId] : undefined;
 
@@ -280,6 +310,39 @@ export default function RecommendationsPage() {
                     </p>
                   )}
                   <p className="mt-4 text-sm text-charcoal/70">{liveSelected.explanation}</p>
+                  {mlSelected && (
+                    <div className="mt-6 rounded-xl border border-sage bg-ivory p-4">
+                      <h3 className="text-sm font-semibold text-charcoal">
+                        ML score — why the model agrees or disagrees
+                      </h3>
+                      {mlSelected.score !== null ? (
+                        <>
+                          <p className="mt-1 text-sm text-charcoal/70">
+                            ML suitability:{" "}
+                            <span className="font-semibold text-forest">
+                              {mlSelected.score}/100 ({mlSelected.status})
+                            </span>
+                          </p>
+                          <p className="mt-2 text-sm text-charcoal/70">{mlSelected.explanation}</p>
+                          {mlSelected.gaps.length > 0 && (
+                            <ul className="mt-3 space-y-2">
+                              {mlSelected.gaps.map((gap) => (
+                                <li key={gap} className="text-sm leading-relaxed text-charcoal/80">
+                                  {gap}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </>
+                      ) : (
+                        <p className="mt-1 text-sm text-charcoal/70">{mlSelected.explanation}</p>
+                      )}
+                      <p className="mt-3 text-xs text-charcoal/55">
+                        The ML score only compares gaps against the crop's ideal needs.
+                        Fertilizer doses still come from the rules engine, never from the model.
+                      </p>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>

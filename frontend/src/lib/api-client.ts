@@ -196,6 +196,60 @@ export const analyzeSoil = (report_id?: string, values?: ConfirmedValue[]) =>
     },
   );
 
+export interface MLResult {
+  crop: string;
+  status: "high" | "medium" | "low" | "insufficient_data";
+  score: number | null;
+  gaps: string[];
+  missing: string[];
+  explanation: string;
+}
+
+export const mlSuitability = (report_id?: string, values?: ConfirmedValue[]) =>
+  req<{ success: boolean; results: MLResult[]; note: string }>("/api/ml/suitability", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(valuesBody(report_id, values)),
+  });
+
+export interface ZoneInfo {
+  zone_id: string;
+  state: string;
+  zone_name: string;
+  districts: string;
+  dominant_soil: string;
+  soil_awc_mm_m: number | null;
+  avg_rainfall_mm: number | null;
+  primary_rainy_months: string;
+  monsoon_onset: string;
+  monsoon_withdrawal: string;
+  annual_rainy_days: number | null;
+  groundwater_stage_pct: number | null;
+  groundwater_category: string;
+  overall_water_mm: number | null;
+  kharif_water_mm: number | null;
+  rabi_water_mm: number | null;
+  summer_water_mm: number | null;
+  suggested_kharif_crops: string;
+  suggested_rabi_crops: string;
+  suggested_low_water_crops: string;
+  recommended_irrigation: string;
+  source_note: string;
+}
+
+export const zoneDistricts = () =>
+  req<{ success: boolean; districts: string[] }>("/api/zones/districts");
+
+export const zoneLookup = (district: string) =>
+  req<{
+    success: boolean;
+    found: boolean;
+    zone?: ZoneInfo;
+    matches?: ZoneInfo[];
+    message?: string;
+    candidates?: string[];
+  }>(`/api/zones/lookup?district=${encodeURIComponent(district)}`);
+
 export const cropSuitability = (report_id?: string, values?: ConfirmedValue[]) =>
   req<{ success: boolean; results: CropSuitability[]; warnings: string[] }>("/api/recommendations/crops", {
     method: "POST",

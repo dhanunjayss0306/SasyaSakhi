@@ -21,7 +21,8 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { cn } from "@/lib/utils";
-import { useStoredLang, useStoredUser } from "@/lib/store";
+import { useStoredLang, useStoredReport, useStoredUser } from "@/lib/store";
+import { BACKEND_CONFIGURED } from "@/lib/api-client";
 import {
   CROPS,
   MOCK_CALENDAR,
@@ -96,6 +97,20 @@ export default function DashboardPage() {
   const latestReport = MOCK_REPORT_HISTORY[0];
   const upcoming = MOCK_CALENDAR.filter((e) => !e.done).slice(0, 3);
   const weatherSlice = MOCK_WEATHER.slice(0, 3);
+  // After a real upload, the dashboard shows YOUR report (values +
+  // parameters) instead of the sample — weather, calendar and crop
+  // matches below stay sample data, and the badge says so.
+  const storedReport = useStoredReport();
+  const displayReport = storedReport ?? SAMPLE_SOIL_REPORT;
+  const latestFileName = storedReport?.fileName ?? latestReport.fileName;
+  const latestDate = storedReport
+    ? new Date(storedReport.uploadedAt).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : latestReport.date;
+  const latestStatus = storedReport ? "Your report" : latestReport.status;
 
   return (
     <div className="space-y-8">
@@ -106,9 +121,13 @@ export default function DashboardPage() {
           title={MOCK_NOTICE}
         >
           <BadgeCheck className="size-3.5" aria-hidden />
-          Demo data
+          {storedReport ? "Live report" : "Demo data"}
         </span>
-        <p className="text-xs text-charcoal/60">{MOCK_NOTICE}</p>
+        <p className="text-xs text-charcoal/60">
+          {storedReport
+            ? "Showing your uploaded report. Weather, calendar and crop matches below are still sample data."
+            : MOCK_NOTICE}
+        </p>
       </div>
 
       {/* Greeting + CTA */}
@@ -138,10 +157,10 @@ export default function DashboardPage() {
                   <p className="text-xs font-medium uppercase tracking-wider text-charcoal/50">
                     Latest soil report
                   </p>
-                  <p className="mt-1 font-medium text-charcoal">{latestReport.fileName}</p>
+                  <p className="mt-1 font-medium text-charcoal">{latestFileName}</p>
                   <p className="mt-0.5 text-sm text-charcoal/60">
-                    {latestReport.date} ·{" "}
-                    <span className="font-medium text-[#2E6B40]">{latestReport.status}</span>
+                    {latestDate} ·{" "}
+                    <span className="font-medium text-[#2E6B40]">{latestStatus}</span>
                   </p>
                 </div>
               </div>
@@ -181,7 +200,9 @@ export default function DashboardPage() {
                   <ArrowRight aria-hidden />
                 </Link>
                 <p className="mt-2.5 text-center text-[11px] text-ivory/50">
-                  Demo — uploads are not actually processed.
+                  {BACKEND_CONFIGURED
+                    ? "Uploads are processed by the live backend."
+                    : "Demo — uploads are not actually processed."}
                 </p>
               </div>
             </div>
@@ -201,7 +222,7 @@ export default function DashboardPage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
-          {SAMPLE_SOIL_REPORT.parameters.map((p) => (
+          {displayReport.parameters.map((p) => (
             <div
               key={p.key}
               className="rounded-2xl border border-sage bg-white p-4"

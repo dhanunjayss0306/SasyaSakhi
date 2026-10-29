@@ -11,6 +11,7 @@ const TITLE_BY_PATH: Record<string, string> = {
   "/soil-analysis": "Soil Health",
   "/recommendations": "Crop & Fertilizer Recommendations",
   "/weather": "Weather",
+  "/zone-water": "Zone & Water",
   "/crop-calendar": "Crop Calendar",
   "/assistant": "AI Assistant",
   "/settings": "Settings",

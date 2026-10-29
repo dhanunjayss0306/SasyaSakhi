@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import config
-from app.api import analysis, assistant, health, recommendations, satellite, soil_reports, tracking, weather
+from app.api import analysis, assistant, health, ml, recommendations, satellite, soil_reports, tracking, weather, zones
 from app.services.data_loader import loader
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
@@ -41,6 +41,8 @@ app.include_router(analysis.router, prefix="/api", tags=["analysis"])
 app.include_router(recommendations.router, prefix="/api", tags=["recommendations"])
 app.include_router(assistant.router, prefix="/api", tags=["assistant"])
 app.include_router(weather.router, prefix="/api", tags=["weather"])
+app.include_router(ml.router, prefix="/api", tags=["ml"])
+app.include_router(zones.router, prefix="/api", tags=["zones"])
 
 
 @app.get("/")

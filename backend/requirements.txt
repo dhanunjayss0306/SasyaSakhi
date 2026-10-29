@@ -11,3 +11,4 @@ httpx>=0.27
 python-multipart>=0.0.9
 python-dotenv>=1.0
 pytest>=8.0
+scikit-learn>=1.5  # ML suitability model (v2)

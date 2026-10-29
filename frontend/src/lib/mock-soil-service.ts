@@ -73,9 +73,15 @@ function mapFieldsToReport(
   notice: string,
 ): SoilReport {
   const byKey = new Map<SoilParameter["key"], SoilParameter>();
+  const extraValues: { parameter: string; value: number | null; unit?: string | null; form?: string | null }[] = [];
   for (const f of fields) {
     const key = BACKEND_TO_FRONTEND[f.parameter];
-    if (!key) continue;
+    if (!key) {
+      // Micronutrients and other extras: preserved for ML + confirm,
+      // never forced into one of the six main parameter slots.
+      extraValues.push({ parameter: f.parameter, value: f.value, unit: f.unit, form: f.form });
+      continue;
+    }
     const meta = META[key];
     byKey.set(key, {
       key,
@@ -107,6 +113,7 @@ function mapFieldsToReport(
     uploadedAt: new Date().toISOString(),
     parameters,
     mockNotice: notice,
+    extraValues: extraValues.length > 0 ? extraValues : undefined,
   };
 }
 
@@ -254,6 +261,17 @@ export async function confirmBackendReport(report: SoilReport): Promise<boolean>
         parameter: FRONTEND_TO_BACKEND[p.key],
         value: p.value,
         unit: p.unit || undefined,
+      });
+    }
+    // Micronutrients extracted by OCR travel with the confirm too, so the
+    // backend's confirmed report (and the ML score) is not limited to six.
+    for (const extra of report.extraValues ?? []) {
+      if (extra.value === null) continue;
+      values.push({
+        parameter: extra.parameter,
+        value: extra.value,
+        unit: extra.unit || undefined,
+        form: extra.form || undefined,
       });
     }
     const res = await confirmReport(report.id, values);
