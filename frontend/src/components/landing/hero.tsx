@@ -5,7 +5,6 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown, FlaskConical, Sprout, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
-import { FxCanvasText, FxCloudShader } from "@/components/effects";
 
 /** The 7-step process, shown by the "How to Use This" guide. Same journey
  *  as the app itself: language first, soil report in, guidance out. */
@@ -105,13 +104,6 @@ function HowToUseGuide({
   );
 }
 
-const HERO_FALLBACK = (
-  <div
-    aria-hidden
-    className="absolute inset-0 bg-gradient-to-b from-pine via-forest to-pine"
-  />
-);
-
 function SampleInsightCard() {
   return (
     <LiquidGlass
@@ -159,17 +151,17 @@ export function Hero() {
       className="relative flex min-h-[calc(100svh-76px)] items-center overflow-hidden bg-pine"
     >
       <HowToUseGuide open={guideOpen} onClose={() => setGuideOpen(false)} />
-      <FxCloudShader
-        className="absolute inset-0"
-        speed={0.5}
-        count={3}
-        cloudColor="#69a66b"
-        skyTopColor="#09271d"
-        skyBottomColor="#123d2a"
-        fallback={HERO_FALLBACK}
+      {/* Hero background: real paddy-field photograph (Pexels photo ID
+          2897195, terraced green paddy with forested hill). Free to use
+          under the Pexels licence; no attribution required. Dark pine
+          overlay keeps the ivory text readable. */}
+      <img
+        src="/hero-field.jpg"
+        alt=""
+        aria-hidden
+        className="absolute inset-0 h-full w-full object-cover"
       />
-      <div aria-hidden className="hero-vignette absolute inset-0" />
-      <div aria-hidden className="grain absolute inset-0 opacity-20" />
+      <div aria-hidden className="absolute inset-0 bg-pine/70" />
       <div
         aria-hidden
         className="absolute inset-0 bg-gradient-to-b from-pine/60 via-transparent to-pine"
@@ -182,19 +174,9 @@ export function Hero() {
           </p>
 
           <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] text-ivory text-balance sm:text-6xl xl:text-7xl">
-            {/* One FxCanvasText per line: the canvas effect draws a single line
-                and cannot wrap, so a full-sentence canvas was clipped at the
-                column edge on desktop ("Your Soil. Your Sup"). Each short
-                line fits its column, so the full headline is always visible. */}
-            <span className="block">
-              <FxCanvasText text="Your Soil." className="font-display" />
-            </span>
-            <span className="block">
-              <FxCanvasText text="Your Support." className="font-display" />
-            </span>
-            <span className="block">
-              <FxCanvasText text="Better Farming." className="font-display" />
-            </span>
+            <span className="block">Your Soil.</span>
+            <span className="block italic text-gold">Your Support.</span>
+            <span className="block">Better Farming.</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/80">
