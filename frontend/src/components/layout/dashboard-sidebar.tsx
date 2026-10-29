@@ -42,7 +42,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 interface DashboardSidebarProps {
-  /** Mobile drawer open state. */
+  /** Drawer open state (all screen sizes). */
   open: boolean;
   onClose: () => void;
 }
@@ -82,7 +82,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg p-2 text-ivory/70 hover:bg-forest hover:text-ivory lg:hidden"
+          className="rounded-lg p-2 text-ivory/70 hover:bg-forest hover:text-ivory"
           aria-label="Close navigation menu"
         >
           <X className="size-5" aria-hidden />
@@ -141,30 +141,24 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
 
   return (
     <>
-      {/* Mobile backdrop */}
+      {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-pine/60 backdrop-blur-sm transition-opacity lg:hidden",
+          "fixed inset-0 z-40 bg-pine/60 backdrop-blur-sm transition-opacity",
           open ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         onClick={onClose}
         aria-hidden
       />
-      {/* Mobile drawer */}
+      {/* Drawer (all screen sizes, opened by the hamburger) */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300 lg:hidden",
+          "fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300",
           open ? "translate-x-0" : "-translate-x-full",
         )}
         aria-hidden={!open}
-        inert={!open}
-      >
-        {nav}
-      </aside>
-      {/* Desktop sidebar */}
-      <aside
-        className="fixed inset-y-0 left-0 z-30 hidden w-72 lg:block"
         aria-label="Dashboard navigation"
+        inert={!open}
       >
         {nav}
       </aside>

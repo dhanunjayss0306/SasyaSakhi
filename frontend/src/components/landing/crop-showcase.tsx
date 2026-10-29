@@ -140,7 +140,7 @@ export function CropShowcase() {
           </p>
         </div>
 
-        <div className="mt-6 grid gap-2 sm:grid-cols-3 sm:gap-4">
+        <div className="mt-6 grid gap-2 sm:gap-4">
           {CROPS.map((crop) => (
             <CardContainer
               key={crop.key}
@@ -219,7 +219,7 @@ export function CropShowcase() {
                   Demo data
                 </span>
               </p>
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+              <div className="mt-5 grid gap-4">
                 <div className="rounded-2xl bg-ivory p-4">
                   <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/50">
                     <Droplets className="size-4" aria-hidden /> Soil pH

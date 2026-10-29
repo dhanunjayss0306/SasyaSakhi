@@ -91,11 +91,11 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
   return (
     <header className="sticky top-0 z-20 border-b border-sage/70 bg-ivory/90 backdrop-blur">
       <div className="flex items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6">
-        {/* Mobile hamburger */}
+        {/* Hamburger (opens the drawer on all screen sizes) */}
         <button
           type="button"
           onClick={onMenuToggle}
-          className="rounded-lg p-2 text-charcoal hover:bg-sage lg:hidden"
+          className="rounded-lg p-2 text-charcoal hover:bg-sage"
           aria-label="Open navigation menu"
           aria-expanded={false}
         >

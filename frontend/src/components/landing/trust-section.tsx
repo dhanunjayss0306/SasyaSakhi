@@ -46,7 +46,7 @@ export function TrustSection() {
         className="absolute inset-0 bg-gradient-to-b from-pine via-transparent to-pine"
       />
 
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6">
         <div>
           <p className="text-sm font-semibold uppercase tracking-widest text-leaf">
             How we keep it honest

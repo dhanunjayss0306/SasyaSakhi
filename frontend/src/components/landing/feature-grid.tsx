@@ -17,7 +17,7 @@ const FEATURES = [
     description:
       "Snap a photo of your soil health card or upload a PDF. Text is read automatically — no typing needed.",
     href: "/soil-report",
-    span: "sm:col-span-2",
+    span: "",
   },
   {
     icon: HeartPulse,
@@ -73,7 +73,7 @@ const FEATURES = [
     description:
       "Every screen, report and answer in the language you are comfortable with.",
     href: "/assistant",
-    span: "sm:col-span-2",
+    span: "",
   },
 ];
 
@@ -97,7 +97,7 @@ export function FeatureGrid() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-12 grid gap-4">
           {FEATURES.map((feature) => (
             <a
               key={feature.title}

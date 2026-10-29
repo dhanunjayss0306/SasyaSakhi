@@ -86,7 +86,7 @@ export function HowItWorks() {
           </p>
         </div>
 
-        <ol className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-12 grid gap-4">
           {STEPS.map((step, i) => (
             <li
               key={step.title}

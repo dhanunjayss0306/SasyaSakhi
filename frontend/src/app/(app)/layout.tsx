@@ -34,12 +34,12 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-ivory text-charcoal">
       <DashboardSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="lg:pl-72">
+      <div>
         <DashboardHeader
           title={titleForPath(pathname)}
           onMenuToggle={() => setSidebarOpen((v) => !v)}
         />
-        <main className="mx-auto w-full max-w-6xl px-4 pt-6 pb-28 sm:px-6 sm:pt-8 sm:pb-28 lg:pb-8">
+        <main className="mx-auto w-full max-w-6xl px-4 pt-6 pb-28 sm:px-6 sm:pt-8">
           {children}
         </main>
       </div>

@@ -175,8 +175,8 @@ export function Hero() {
         className="absolute inset-0 bg-gradient-to-b from-pine/60 via-transparent to-pine"
       />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.5fr_1fr]">
-        <div className="text-center lg:text-left">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-20 sm:px-6">
+        <div className="text-center">
           <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-ivory/85 backdrop-blur">
             AI guidance for Indian farmers
           </p>
@@ -197,18 +197,18 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/80 lg:mx-0">
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/80">
             Upload your soil test report and get clear answers: what your soil
             needs, which crops suit it, and exactly how much fertilizer to use —
             in English or Telugu.
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center lg:justify-start">
+          <div className="mt-8 flex flex-col items-center gap-3">
             <Link
               href="/soil-report"
               className={buttonVariants({
                 size: "lg",
-                className: "w-full bg-gold text-charcoal hover:bg-gold/90 sm:w-auto",
+                className: "w-full bg-gold text-charcoal hover:bg-gold/90",
               })}
             >
               Analyze My Soil
@@ -220,7 +220,7 @@ export function Hero() {
                 size: "lg",
                 variant: "outline",
                 className:
-                  "w-full border-white/25 bg-white/5 text-ivory backdrop-blur hover:bg-white/15 hover:text-ivory sm:w-auto",
+                  "w-full border-white/25 bg-white/5 text-ivory backdrop-blur hover:bg-white/15 hover:text-ivory",
               })}
             >
               <Sprout className="size-4" aria-hidden />
@@ -232,7 +232,7 @@ export function Hero() {
               className={buttonVariants({
                 size: "lg",
                 variant: "ghost",
-                className: "w-full text-ivory underline-offset-4 hover:bg-white/10 hover:text-ivory hover:underline sm:w-auto",
+                className: "w-full text-ivory underline-offset-4 hover:bg-white/10 hover:text-ivory hover:underline",
               })}
             >
               How to Use This
@@ -240,9 +240,9 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-sm lg:mx-0">
+        <div className="mx-auto w-full max-w-sm">
           <SampleInsightCard />
-          <p className="mt-3 text-center text-xs text-ivory/50 lg:text-left">
+          <p className="mt-3 text-center text-xs text-ivory/50">
             Sample preview — your report becomes the input.
           </p>
         </div>

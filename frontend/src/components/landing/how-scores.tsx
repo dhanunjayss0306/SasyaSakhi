@@ -52,7 +52,7 @@ export function HowScores() {
             always shows why.
           </p>
         </div>
-        <div className="mt-12 grid gap-5 md:grid-cols-2">
+        <div className="mt-12 grid gap-5">
           {BASE_POINTS.map((point) => (
             <article
               key={point.title}
