@@ -299,6 +299,50 @@ def _workbook_rdf(crop: str) -> Optional[dict[str, float]]:
     return None
 
 
+def general_reference_plan(crop: str, area: float = 1.0, area_unit: str = "acre") -> FertilizerResponse:
+    """General published RDF plan for a crop, WITHOUT any soil-test values.
+
+    Used by the 'I Already Have a Crop' flow: the farmer has no soil report,
+    so no STCR dose can be computed. The published RDF (workbook row first,
+    built-in table second) is shown, labelled general_reference, and never
+    presented as soil-test adjusted. The N dose is exposed as n_kg_ha so the
+    stage schedule can be built from the same reference dose.
+    """
+    crop = crop.strip().lower()
+    rdf = _workbook_rdf(crop)
+    rdf_source = f"workbook RDF row '{rdf.pop('_row')}'" if rdf else None
+    if rdf is None:
+        rdf = GENERAL_RDF.get(crop)
+        rdf_source = "built-in general reference" if rdf else None
+    if rdf is None:
+        return FertilizerResponse(
+            success=False, crop=crop, status="insufficient_data", dose_basis="general_reference",
+            area=area, area_unit=area_unit,
+            explanation=f"'{crop}' is not supported in this prototype (paddy, cotton, chilli).",
+            limitations=["Fertiliser recommendations cover paddy, cotton, and chilli only."],
+        )
+    req = FertilizerRequest(crop=crop, area=area, area_unit=area_unit)
+    resp = _build_response(
+        req, {"N": rdf["N"], "P2O5": rdf["P2O5"], "K2O": rdf["K2O"]},
+        rule_id=None, basis="general_reference", status="needs_review",
+        inputs_used=[f"General reference only ({rdf_source}) — no soil-test values were used, so no STCR dose was computed."],
+        assumptions=[
+            "These doses are a general published reference, not computed from a soil test.",
+            "Upload a lab report for a soil-test-adjusted dose.",
+        ],
+    )
+    # _build_response's generic general-reference wording claims the workbook
+    # rules are not loaded; here the reason is different (no soil values),
+    # so state it exactly.
+    resp.explanation = (
+        f"General published reference dose for {crop}: "
+        f"{rdf['N']:.0f} kg N, {rdf['P2O5']:.0f} kg P2O5 and {rdf['K2O']:.0f} kg K2O per hectare, "
+        f"converted to fertiliser products above. No soil-test values were used, "
+        f"so this is NOT adjusted to your soil — upload a lab report for the adjusted dose.")
+    resp.n_kg_ha = rdf["N"]
+    return resp
+
+
 def recommend(req: FertilizerRequest, values: dict) -> FertilizerResponse:
     crop = req.crop.strip().lower()
     if crop not in GENERAL_RDF and loader.get("fertilizer_rules") is None:

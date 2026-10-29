@@ -19,6 +19,16 @@ def crop_suitability(body: CropSuitabilityRequest):
     return CropSuitabilityResponse(success=True, results=results, warnings=warnings)
 
 
+@router.get("/recommendations/fertilizer/general", response_model=FertilizerResponse)
+def fertilizer_general(crop: str, area: float = 1.0, area_unit: str = "acre"):
+    """General published RDF plan for a crop, with NO soil-test values.
+
+    Powers the 'I Already Have a Crop' flow. Always dose_basis
+    general_reference; never soil-test adjusted.
+    """
+    return fertilizer_calculator.general_reference_plan(crop, area, area_unit)
+
+
 @router.post("/recommendations/fertilizer", response_model=FertilizerResponse)
 def fertilizer(body: FertilizerRequest):
     values, err = resolve_values(body.report_id, body.values)

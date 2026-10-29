@@ -4,11 +4,13 @@ import { useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
 import { DashboardHeader } from "@/components/layout/dashboard-header";
+import { SakhiPet } from "@/components/assistant/sakhi-pet";
 
 const TITLE_BY_PATH: Record<string, string> = {
   "/dashboard": "Overview",
   "/soil-report": "Soil Reports",
   "/soil-analysis": "Soil Health",
+  "/my-crop": "My Crop Care",
   "/recommendations": "Crop & Fertilizer Recommendations",
   "/weather": "Weather",
   "/zone-water": "Zone & Water",
@@ -37,10 +39,14 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
           title={titleForPath(pathname)}
           onMenuToggle={() => setSidebarOpen((v) => !v)}
         />
-        <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+        <main className="mx-auto w-full max-w-6xl px-4 pt-6 pb-28 sm:px-6 sm:pt-8 sm:pb-28 lg:pb-8">
           {children}
         </main>
       </div>
+      {/* Sakhi pet: every app page except the assistant page itself, where
+          the chat is already open. Bottom padding above keeps it off the
+          content on mobile. */}
+      {pathname !== "/assistant" && <SakhiPet />}
     </div>
   );
 }

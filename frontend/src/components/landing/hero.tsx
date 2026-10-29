@@ -1,8 +1,109 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, FlaskConical } from "lucide-react";
+import { ArrowRight, ChevronDown, FlaskConical, Sprout, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { FxCanvasText, FxCloudShader } from "@/components/effects";
+
+/** The 7-step process, shown by the "How to Use This" guide. Same journey
+ *  as the app itself: language first, soil report in, guidance out. */
+const HOW_TO_USE_STEPS: { title: string; detail: string }[] = [
+  {
+    title: "Choose your language",
+    detail: "English or Telugu — the whole app, including Sakhi's answers, follows your choice.",
+  },
+  {
+    title: "Upload your soil report",
+    detail: "A lab soil health card as a PDF or photo — or try the sample report first.",
+  },
+  {
+    title: "Review and confirm the values",
+    detail: "Check what was read from your report and fix anything before analysis.",
+  },
+  {
+    title: "See your soil analysis",
+    detail: "What each value (pH, EC, organic carbon, N, P, K) means for your field.",
+  },
+  {
+    title: "See which crops match",
+    detail: "Paddy, cotton and chilli, scored against your soil by the rules engine.",
+  },
+  {
+    title: "Get your fertilizer plan",
+    detail: "How much urea, DAP and MOP for the crop you pick, for your area.",
+  },
+  {
+    title: "Weather, calendar and Sakhi",
+    detail: "Field weather, your season tasks, and Sakhi in the corner for any question.",
+  },
+];
+
+function HowToUseGuide({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-end justify-center bg-pine/70 p-4 backdrop-blur-sm sm:items-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label="How to use SasyaSakhi"
+    >
+      <button
+        type="button"
+        aria-label="Close guide"
+        onClick={onClose}
+        className="absolute inset-0 cursor-default"
+      />
+      <div className="relative max-h-[85svh] w-full max-w-lg overflow-y-auto rounded-3xl bg-ivory p-6 shadow-2xl sm:p-8">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="font-display text-2xl font-semibold text-charcoal">
+              How to use SasyaSakhi
+            </h2>
+            <p className="mt-1 text-sm text-charcoal/65">
+              Seven steps from your soil report to a sowing decision.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close guide"
+            className="rounded-full border border-sage bg-white p-2 text-charcoal hover:bg-sage/60"
+          >
+            <X className="size-4" aria-hidden />
+          </button>
+        </div>
+        <ol className="mt-6 space-y-4">
+          {HOW_TO_USE_STEPS.map((step, i) => (
+            <li key={step.title} className="flex gap-3.5">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-forest font-display text-sm font-semibold text-ivory">
+                {i + 1}
+              </span>
+              <div>
+                <p className="font-semibold text-charcoal">{step.title}</p>
+                <p className="mt-0.5 text-sm leading-relaxed text-charcoal/70">
+                  {step.detail}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-6 rounded-xl bg-gold/15 p-4 text-sm leading-relaxed text-charcoal/75">
+          Already growing a crop and have no soil report? Use{" "}
+          <span className="font-semibold text-charcoal">I Already Have a Crop</span>{" "}
+          instead — it guides you from your crop and district alone.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 const HERO_FALLBACK = (
   <div
@@ -49,12 +150,15 @@ function SampleInsightCard() {
 }
 
 export function Hero() {
+  const [guideOpen, setGuideOpen] = useState(false);
+
   return (
     <section
       id="top"
       aria-label="SasyaSakhi introduction"
       className="relative flex min-h-[calc(100svh-76px)] items-center overflow-hidden bg-pine"
     >
+      <HowToUseGuide open={guideOpen} onClose={() => setGuideOpen(false)} />
       <FxCloudShader
         className="absolute inset-0"
         speed={0.5}
@@ -99,7 +203,7 @@ export function Hero() {
             in English or Telugu.
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center lg:justify-start">
             <Link
               href="/soil-report"
               className={buttonVariants({
@@ -111,7 +215,7 @@ export function Hero() {
               <ArrowRight className="size-4" aria-hidden />
             </Link>
             <Link
-              href="#how-it-works"
+              href="/my-crop"
               className={buttonVariants({
                 size: "lg",
                 variant: "outline",
@@ -119,8 +223,20 @@ export function Hero() {
                   "w-full border-white/25 bg-white/5 text-ivory backdrop-blur hover:bg-white/15 hover:text-ivory sm:w-auto",
               })}
             >
-              Explore How It Works
+              <Sprout className="size-4" aria-hidden />
+              I Already Have a Crop
             </Link>
+            <button
+              type="button"
+              onClick={() => setGuideOpen(true)}
+              className={buttonVariants({
+                size: "lg",
+                variant: "ghost",
+                className: "w-full text-ivory underline-offset-4 hover:bg-white/10 hover:text-ivory hover:underline sm:w-auto",
+              })}
+            >
+              How to Use This
+            </button>
           </div>
         </div>
 

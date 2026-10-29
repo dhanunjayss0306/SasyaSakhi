@@ -113,6 +113,7 @@ export interface FertilizerResponse {
   currency: string;
   area: number;
   area_unit: string;
+  n_kg_ha?: number | null;
   rule_id?: string | null;
   inputs_used: string[];
   assumptions: string[];
@@ -273,6 +274,18 @@ export const fertilizerRecommendation = (
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ crop, ...opts }),
   });
+
+/** General published RDF plan for a crop, with NO soil-test values.
+ *  Used by the "I Already Have a Crop" flow. Always dose_basis
+ *  general_reference — never soil-test adjusted. */
+export const fertilizerGeneral = (
+  crop: string,
+  area = 1,
+  area_unit: "acre" | "ha" = "acre",
+) =>
+  req<FertilizerResponse>(
+    `/api/recommendations/fertilizer/general?crop=${encodeURIComponent(crop)}&area=${area}&area_unit=${area_unit}`,
+  );
 
 export const chatWithAssistant = (
   message: string,

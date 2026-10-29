@@ -57,6 +57,9 @@ class FertilizerResponse(BaseModel):
     status: str = Field(description="'calculated' | 'needs_review' | 'insufficient_data' | 'price_not_configured'")
     dose_basis: str = Field(default="workbook_rule",
                             description="'workbook_rule' | 'general_reference' — general_reference doses are published RDF, NOT soil-test adjusted")
+    n_kg_ha: Optional[float] = Field(
+        default=None,
+        description="N dose in kg/ha behind this plan, set only for general-reference plans (used by the no-soil-report crop-care flow for the stage schedule).")
     items: list[FertilizerItem] = Field(default_factory=list)
     total_cost: Optional[float] = None
     currency: str = "INR"

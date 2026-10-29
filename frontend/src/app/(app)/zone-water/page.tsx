@@ -7,6 +7,7 @@ import {
   type ZoneInfo,
 } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
+import { SatelliteCheck } from "@/components/soil/satellite-check";
 import { Droplets } from "lucide-react";
 
 /** Zone + water lookup: district -> agro-climatic zone, water, crops.
@@ -189,6 +190,11 @@ export default function ZoneWaterPage() {
           <p className="mt-5 text-xs text-charcoal/55">{zone.source_note}</p>
         </article>
       )}
+
+      {/* Satellite modelled check: separate from the zone survey above.
+          SoilGrids covers only pH, OC, N (g/kg), clay, sand, CEC — P, K,
+          EC and micronutrients are listed as not measured, never invented. */}
+      <SatelliteCheck />
     </div>
   );
 }

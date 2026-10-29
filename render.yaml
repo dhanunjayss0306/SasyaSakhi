@@ -1,0 +1,25 @@
+# Render Blueprint for the SasyaSakhi FastAPI backend.
+# Used by: Render Dashboard -> New -> Blueprint -> select this repo.
+# The frontend is deployed separately on Vercel (see DEPLOY-STEPS.md).
+# Secrets are NOT in this file: set them in the Render dashboard after
+# the Blueprint applies (they show as sync: false below).
+services:
+  - type: web
+    name: sasyasakhi-backend
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_API_BASE
+        value: https://api.groq.com/openai/v1
+      - key: AI_MODEL
+        value: openai/gpt-oss-120b
+      - key: SARVAM_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false

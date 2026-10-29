@@ -102,6 +102,12 @@ export default function DashboardPage() {
   // matches below stay sample data, and the badge says so.
   const storedReport = useStoredReport();
   const displayReport = storedReport ?? SAMPLE_SOIL_REPORT;
+  // A stored report is NOT automatically a live one: when a backend
+  // extraction fails, the upload flow stores the demo sample instead, and
+  // that used to be badged "Live report" here. Only a report whose notice
+  // is not the demo notice counts as live (same rule as soil-analysis).
+  const isLiveReport =
+    storedReport !== null && storedReport.mockNotice !== MOCK_NOTICE;
   const latestFileName = storedReport?.fileName ?? latestReport.fileName;
   const latestDate = storedReport
     ? new Date(storedReport.uploadedAt).toLocaleDateString("en-IN", {
@@ -110,7 +116,11 @@ export default function DashboardPage() {
         year: "numeric",
       })
     : latestReport.date;
-  const latestStatus = storedReport ? "Your report" : latestReport.status;
+  const latestStatus = isLiveReport
+    ? "Your report"
+    : storedReport
+      ? "Sample values"
+      : latestReport.status;
 
   return (
     <div className="space-y-8">
@@ -121,12 +131,14 @@ export default function DashboardPage() {
           title={MOCK_NOTICE}
         >
           <BadgeCheck className="size-3.5" aria-hidden />
-          {storedReport ? "Live report" : "Demo data"}
+          {isLiveReport ? "Live report" : "Demo data"}
         </span>
         <p className="text-xs text-charcoal/60">
-          {storedReport
+          {isLiveReport
             ? "Showing your uploaded report. Weather, calendar and crop matches below are still sample data."
-            : MOCK_NOTICE}
+            : storedReport
+              ? "Your upload could not be read, so sample values are shown instead. Try a clearer photo or PDF."
+              : MOCK_NOTICE}
         </p>
       </div>
 
