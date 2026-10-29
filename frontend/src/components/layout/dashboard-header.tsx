@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Bell, ChevronRight, Globe, LogOut, Menu, UserRound } from "lucide-react";
+import { Bell, ChevronLeft, ChevronRight, Globe, LogOut, Menu, UserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { store, useStoredLang, useStoredUser, type Lang } from "@/lib/store";
 
@@ -66,6 +66,16 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
     router.push("/");
   };
 
+  // Back button on every app page. router.back() with no history behind it
+  // does nothing, so fall back to the dashboard in that case.
+  const handleBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/dashboard");
+    }
+  };
+
   const crumbs = pathname
     .split("/")
     .filter(Boolean)
@@ -90,6 +100,17 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
           aria-expanded={false}
         >
           <Menu className="size-5" aria-hidden />
+        </button>
+
+        {/* Back button — every app page, phone and desktop alike */}
+        <button
+          type="button"
+          onClick={handleBack}
+          aria-label="Go back"
+          className="flex shrink-0 items-center gap-0.5 rounded-lg px-2 py-2 text-sm font-semibold text-charcoal hover:bg-sage"
+        >
+          <ChevronLeft className="size-5" aria-hidden />
+          <span className="hidden sm:inline">Back</span>
         </button>
 
         {/* Title + breadcrumb */}

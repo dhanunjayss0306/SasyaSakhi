@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertTriangle, ArrowLeft, Loader2 } from "lucide-react";
 import { ReportUploader } from "@/components/soil/report-uploader";
 import { extractFromFile, processSampleReport } from "@/lib/mock-soil-service";
 import { store } from "@/lib/store";
@@ -16,6 +16,10 @@ export default function SoilReportPage() {
   const [phase, setPhase] = useState<Phase>("idle");
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  // True once the user has left this screen mid-upload (browser Back or
+  // the Back button below). The pending upload must not yank them forward
+  // to the review page after they already went back.
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
     if (phase !== "processing") return;
@@ -25,12 +29,36 @@ export default function SoilReportPage() {
     return () => clearInterval(interval);
   }, [phase]);
 
+  // Back/forward navigation restores this page with its old state, so a
+  // finished upload used to leave the processing screen stuck on screen
+  // forever. Reset to the upload page whenever the browser moves back or
+  // forward, and mark any pending upload cancelled.
+  useEffect(() => {
+    const onPopState = () => {
+      cancelledRef.current = true;
+      setPhase("idle");
+      setActiveStep(0);
+      setError(null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  function backToUpload() {
+    cancelledRef.current = true;
+    setPhase("idle");
+    setActiveStep(0);
+    setError(null);
+  }
+
   async function run(action: () => Promise<void>) {
+    cancelledRef.current = false;
     setError(null);
     setPhase("processing");
     setActiveStep(0);
     try {
       await action();
+      if (cancelledRef.current) return;
       router.push("/soil-report/review");
     } catch (e) {
       setError(
@@ -113,6 +141,16 @@ export default function SoilReportPage() {
               className="h-full rounded-full bg-leaf transition-all duration-700"
               style={{ width: `${((activeStep + 1) / STEPS.length) * 100}%` }}
             />
+          </div>
+          <div className="mt-8 text-center">
+            <button
+              type="button"
+              onClick={backToUpload}
+              className="inline-flex items-center gap-1.5 rounded-full border border-sage bg-white px-4 py-2 text-sm font-semibold text-charcoal hover:bg-sage/60"
+            >
+              <ArrowLeft className="size-4" aria-hidden />
+              Back to upload
+            </button>
           </div>
         </div>
       ) : (
