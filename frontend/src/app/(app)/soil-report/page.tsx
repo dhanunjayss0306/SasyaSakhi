@@ -1,8 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, AlertTriangle, ArrowLeft, Loader2 } from "lucide-react";
+import {
+  CheckCircle2,
+  AlertTriangle,
+  ArrowLeft,
+  Camera,
+  FileText,
+  FlaskConical,
+  Loader2,
+  Satellite,
+} from "lucide-react";
 import { ReportUploader } from "@/components/soil/report-uploader";
 import { extractFromFile, processSampleReport } from "@/lib/mock-soil-service";
 import { store } from "@/lib/store";
@@ -10,12 +20,17 @@ import { store } from "@/lib/store";
 const STEPS = ["Reading file…", "Running OCR…", "Extracting values…"];
 
 type Phase = "idle" | "processing" | "error";
+type Method = "choose" | "upload";
 
 export default function SoilReportPage() {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("idle");
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  // First screen: how does the farmer want to share soil details? The
+  // uploader only appears after "Upload soil report" is picked, so the
+  // satellite, physical-test, and soil-photo options are visible up front.
+  const [method, setMethod] = useState<Method>("choose");
   // True once the user has left this screen mid-upload (browser Back or
   // the Back button below). The pending upload must not yank them forward
   // to the review page after they already went back.
@@ -86,15 +101,76 @@ export default function SoilReportPage() {
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
       <header className="mb-8">
         <h1 className="font-display text-3xl font-semibold text-charcoal">
-          Upload Soil Report
+          {method === "choose" ? "Share Your Soil Details" : "Upload Soil Report"}
         </h1>
         <p className="mt-2 text-sm text-charcoal/70">
-          Upload your lab soil report as a PDF or photo. Our demo OCR reads the
-          key values so you can confirm them before analysis.
+          {method === "choose"
+            ? "Pick how you want to share soil details. Every option leads into the same review and analysis flow."
+            : "Upload your lab soil report as a PDF or photo. Our demo OCR reads the key values so you can confirm them before analysis."}
         </p>
       </header>
 
-      {phase === "processing" ? (
+      {method === "choose" && phase !== "processing" ? (
+        <div className="space-y-3">
+          <p className="text-sm text-charcoal/70">
+            Pick how you want to share soil details. Every option leads into
+            the same review and analysis flow.
+          </p>
+          <button
+            type="button"
+            onClick={() => setMethod("upload")}
+            className="flex w-full items-start gap-3 rounded-2xl border border-forest/20 bg-white px-5 py-4 text-left hover:bg-sage/40"
+          >
+            <FileText className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
+            <span>
+              <span className="block font-semibold text-charcoal">Upload soil report</span>
+              <span className="mt-0.5 block text-sm text-charcoal/70">
+                PDF or photo of your lab report. The app reads the values.
+              </span>
+            </span>
+          </button>
+          <Link
+            href="/zone-water"
+            className="flex w-full items-start gap-3 rounded-2xl border border-forest/20 bg-white px-5 py-4 text-left hover:bg-sage/40"
+          >
+            <Satellite className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
+            <span>
+              <span className="block font-semibold text-charcoal">Satellite</span>
+              <span className="mt-0.5 block text-sm text-charcoal/70">
+                Soil estimates by field location from satellite data. Only
+                some values are available, and they are modelled estimates,
+                never a lab test.
+              </span>
+            </span>
+          </Link>
+          <Link
+            href="/soil-report/manual"
+            className="flex w-full items-start gap-3 rounded-2xl border border-forest/20 bg-white px-5 py-4 text-left hover:bg-sage/40"
+          >
+            <FlaskConical className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
+            <span>
+              <span className="block font-semibold text-charcoal">Physical test</span>
+              <span className="mt-0.5 block text-sm text-charcoal/70">
+                You already have a physical lab test. Type its values by hand.
+              </span>
+            </span>
+          </Link>
+          <Link
+            href="/soil-report/photo"
+            className="flex w-full items-start gap-3 rounded-2xl border border-forest/20 bg-white px-5 py-4 text-left hover:bg-sage/40"
+          >
+            <Camera className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
+            <span>
+              <span className="block font-semibold text-charcoal">Soil photo</span>
+              <span className="mt-0.5 block text-sm text-charcoal/70">
+                Take a photo of your soil and attach it. Photo analysis is
+                not built yet, so you continue with clearly labelled demo
+                values.
+              </span>
+            </span>
+          </Link>
+        </div>
+      ) : phase === "processing" ? (
         <div
           role="status"
           aria-label="Processing soil report"
@@ -154,7 +230,17 @@ export default function SoilReportPage() {
           </div>
         </div>
       ) : (
-        <ReportUploader onProcess={handleProcess} onSample={handleSample} />
+        <>
+          <button
+            type="button"
+            onClick={() => setMethod("choose")}
+            className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-sage bg-white px-4 py-2 text-sm font-semibold text-charcoal hover:bg-sage/60"
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            Back to options
+          </button>
+          <ReportUploader onProcess={handleProcess} onSample={handleSample} />
+        </>
       )}
 
       {phase === "error" && error && (
