@@ -6,11 +6,41 @@ import { BACKEND_CONFIGURED, chatWithAssistant } from "@/lib/api-client";
 import { store } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Bot, Eraser, Send, Sprout, User } from "lucide-react";
+import { Bot, Eraser, Mic, MicOff, Send, Sprout, User } from "lucide-react";
 
 interface ChatWindowProps {
   initialLang: "en" | "te";
 }
+
+// Telugu script range. If the message itself is Telugu, it is Telugu no matter
+// which way the EN/తెలుగు toggle is set — this is what lets Telugu speech be
+// understood even when the toggle was left on English.
+const TELUGU_RE = /[\u0C00-\u0C7F]/;
+
+// Minimal typing for the browser Web Speech API (Chrome/Edge). It is not in
+// the standard TS DOM lib under the webkit name, so we type only what we use.
+interface SpeechRecognitionResultItem {
+  transcript: string;
+  isFinal: boolean;
+}
+
+interface SpeechRecognitionEventLike {
+  results: ArrayLike<ArrayLike<SpeechRecognitionResultItem>>;
+  resultIndex: number;
+}
+
+interface SpeechRecognitionInstance {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: { error: string }) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+}
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
 
 interface Message {
   id: number;
@@ -34,8 +64,12 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
   const [typing, setTyping] = useState(false);
   // Tracks what the last reply actually came from, for the honest header label.
   const [lastSource, setLastSource] = useState<"live" | "mock" | null>(null);
+  const [listening, setListening] = useState(false);
+  const [voiceError, setVoiceError] = useState<string | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
+  const finalTranscriptRef = useRef("");
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -44,6 +78,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
+      if (recognitionRef.current) recognitionRef.current.stop();
     };
   }, []);
 
@@ -66,7 +101,9 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
             }
           }
           const res = await chatWithAssistant(trimmed, {
-            language: initialLang,
+            // Telugu text wins over the toggle, so Telugu speech is answered
+            // in Telugu even if the page toggle is still on English.
+            language: TELUGU_RE.test(trimmed) ? "te" : initialLang,
             report_id: report?.id,
             context:
               Object.keys(confirmed).length > 0
@@ -95,6 +132,72 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
     setTyping(false);
     setLastSource(null);
     setMessages([{ id: nextId++, role: "assistant", text: greeting(initialLang) }]);
+  };
+
+  // Voice input: the browser converts speech to text (no server needed for
+  // this step). The recogniser language follows the EN/తెలుగు toggle, so set
+  // the toggle to తెలుగు before speaking Telugu.
+  const toggleVoice = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      return;
+    }
+    const win = window as unknown as {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    };
+    const SpeechRecognitionCtor = win.SpeechRecognition ?? win.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
+      setVoiceError(
+        initialLang === "te"
+          ? "వాయిస్ ఈ బ్రౌజర్‌లో పనిచేయదు. Chrome వాడండి."
+          : "Voice is not supported in this browser. Please use Chrome."
+      );
+      return;
+    }
+    setVoiceError(null);
+    finalTranscriptRef.current = "";
+    const recognition = new SpeechRecognitionCtor();
+    recognition.lang = initialLang === "te" ? "te-IN" : "en-IN";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognition.onresult = (event) => {
+      let interim = "";
+      let finalText = "";
+      for (let i = event.resultIndex; i < event.results.length; i += 1) {
+        const result = event.results[i];
+        for (let j = 0; j < result.length; j += 1) {
+          const part = result[j];
+          if (part.isFinal) finalText += part.transcript;
+          else interim += part.transcript;
+        }
+      }
+      if (finalText) finalTranscriptRef.current += finalText;
+      setInput((finalTranscriptRef.current + interim).trimStart());
+    };
+    recognition.onerror = (event) => {
+      if (event.error === "not-allowed") {
+        setVoiceError(
+          initialLang === "te"
+            ? "మైక్ అనుమతి ఇవ్వలేదు. బ్రౌజర్ సెట్టింగ్స్‌లో మైక్ అనుమతించండి."
+            : "Microphone permission was denied. Allow the mic in browser settings."
+        );
+      } else if (event.error === "no-speech") {
+        setVoiceError(
+          initialLang === "te" ? "ఏమీ వినిపించలేదు. మళ్లీ ప్రయత్నించండి." : "Didn't hear anything. Try again."
+        );
+      }
+    };
+    recognition.onend = () => {
+      recognitionRef.current = null;
+      setListening(false);
+      const spoken = finalTranscriptRef.current.trim();
+      finalTranscriptRef.current = "";
+      if (spoken) send(spoken);
+    };
+    recognitionRef.current = recognition;
+    setListening(true);
+    recognition.start();
   };
 
   return (
@@ -216,10 +319,34 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
           className="h-10 flex-1 rounded-xl border border-sage bg-ivory px-4 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-forest focus:outline-none"
           autoComplete="off"
         />
+        <button
+          type="button"
+          onClick={toggleVoice}
+          disabled={typing}
+          aria-label={listening ? "Stop listening" : "Speak your question"}
+          title={listening ? "Stop listening" : "Speak your question"}
+          className={cn(
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors disabled:opacity-50",
+            listening
+              ? "animate-pulse border-red-600 bg-red-600 text-white"
+              : "border-sage bg-ivory text-forest hover:bg-sage"
+          )}
+        >
+          {listening ? <MicOff className="h-4 w-4" aria-hidden /> : <Mic className="h-4 w-4" aria-hidden />}
+        </button>
         <Button type="submit" disabled={!input.trim() || typing} aria-label="Send message">
           <Send className="h-4 w-4" aria-hidden />
         </Button>
       </form>
+      {(listening || voiceError) && (
+        <p className="px-4 pb-3 text-xs text-charcoal/60" role="status">
+          {listening
+            ? initialLang === "te"
+              ? "వింటున్నాను… మాట్లాడండి."
+              : "Listening… speak now."
+            : voiceError}
+        </p>
+      )}
     </div>
   );
 }

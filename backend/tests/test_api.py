@@ -117,6 +117,16 @@ def test_assistant_telugu(client):
     assert r.json()["language"] == "te"
 
 
+def test_assistant_telugu_detected_from_message(client):
+    # Telugu message with the language flag left on "en" (e.g. Telugu speech
+    # while the toggle was on English) must still be answered as Telugu.
+    r = client.post("/api/assistant/chat",
+                    json={"language": "en", "message": "pH అంటే ఏమిటి?",
+                          "context": {"confirmed_values": {"pH": {"value": 6.8}}}})
+    assert r.status_code == 200
+    assert r.json()["language"] == "te"
+
+
 def test_demo_sample_report(client):
     r = client.get("/api/demo/sample-report")
     assert r.status_code == 200

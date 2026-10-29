@@ -1,4 +1,6 @@
 """AI assistant chat endpoint."""
+import re
+
 from fastapi import APIRouter
 
 from app.models.assistant import ChatRequest, ChatResponse
@@ -8,6 +10,11 @@ from app.services import crop_recommendation, explanation_service, fertilizer_ca
 from app.services.report_store import get_confirmed
 
 router = APIRouter()
+
+# Telugu script range. The message text wins over the client's language flag,
+# so Telugu speech (or Telugu typing) is answered in Telugu even if the client
+# sent language="en".
+_TELUGU_RE = re.compile(r"[\u0c00-\u0c7f]")
 
 
 def _build_context(report_id: str | None, extra: dict | None) -> dict:
@@ -26,7 +33,7 @@ def _build_context(report_id: str | None, extra: dict | None) -> dict:
 
 @router.post("/assistant/chat", response_model=ChatResponse)
 def chat(body: ChatRequest):
-    language = "te" if body.language.lower().startswith("te") else "en"
+    language = "te" if body.language.lower().startswith("te") or _TELUGU_RE.search(body.message) else "en"
     context = _build_context(body.report_id, body.context)
     text, sources, mode = explanation_service.answer(body.message, language, context)
     return ChatResponse(success=True, language=language, answer=text,
