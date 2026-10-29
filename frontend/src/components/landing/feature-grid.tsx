@@ -5,8 +5,8 @@ import {
   CloudSun,
   Crop,
   FileScan,
+  Globe,
   HeartPulse,
-  Languages,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -68,7 +68,7 @@ const FEATURES = [
     span: "",
   },
   {
-    icon: Languages,
+    icon: Globe,
     title: "Telugu & English",
     description:
       "Every screen, report and answer in the language you are comfortable with.",
@@ -79,10 +79,10 @@ const FEATURES = [
 
 export function FeatureGrid() {
   return (
-    <section id="features" aria-labelledby="features-heading" className="bg-ivory py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="features" aria-labelledby="features-heading" className="bg-cream py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-widest text-leaf">
+          <p className="text-sm font-semibold uppercase tracking-widest text-forest">
             Features
           </p>
           <h2
@@ -97,7 +97,7 @@ export function FeatureGrid() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4">
+        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature) => (
             <a
               key={feature.title}
@@ -117,7 +117,7 @@ export function FeatureGrid() {
               <p className="mt-2 flex-1 text-sm leading-relaxed text-charcoal/65">
                 {feature.description}
               </p>
-              <span className="mt-4 text-sm font-medium text-leaf opacity-0 transition-opacity group-hover:opacity-100">
+              <span className="mt-4 text-sm font-medium text-forest">
                 Open →
               </span>
             </a>

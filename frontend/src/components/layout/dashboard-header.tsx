@@ -89,13 +89,14 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
   const initial = (userName || "G").charAt(0).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-20 border-b border-sage/70 bg-ivory/90 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-charcoal/10 bg-cream/90 backdrop-blur">
       <div className="flex items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6">
-        {/* Hamburger (opens the drawer on all screen sizes) */}
+        {/* Hamburger (opens the drawer on small screens; the sidebar is
+            always visible on desktop) */}
         <button
           type="button"
           onClick={onMenuToggle}
-          className="rounded-lg p-2 text-charcoal hover:bg-sage"
+          className="rounded-lg p-2 text-charcoal hover:bg-sage lg:hidden"
           aria-label="Open navigation menu"
           aria-expanded={false}
         >
@@ -107,10 +108,10 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
           type="button"
           onClick={handleBack}
           aria-label="Go back"
-          className="flex shrink-0 items-center gap-0.5 rounded-lg px-2 py-2 text-sm font-semibold text-charcoal hover:bg-sage"
+          className="flex shrink-0 items-center gap-0.5 rounded-full border border-charcoal/20 bg-cream px-3 py-2 text-sm font-semibold text-charcoal hover:bg-sage"
         >
           <ChevronLeft className="size-5" aria-hidden />
-          <span className="hidden sm:inline">Back</span>
+          <span>Back</span>
         </button>
 
         {/* Title + breadcrumb */}

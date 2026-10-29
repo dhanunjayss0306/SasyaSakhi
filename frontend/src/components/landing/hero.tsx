@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronDown, FlaskConical, Sprout, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
+import { cn } from "@/lib/utils";
 
 /** The 7-step process, shown by the "How to Use This" guide. Same journey
  *  as the app itself: language first, soil report in, guidance out. */
@@ -104,40 +104,52 @@ function HowToUseGuide({
   );
 }
 
+/** Frosted-glass sample card, restyled to the preview's structure. Values
+ *  and labelling are the real app's own sample values — no farm, district
+ *  or report number is claimed, because this card has none. */
 function SampleInsightCard() {
   return (
-    <LiquidGlass
-      radius={20}
-      className="border border-white/15 bg-white/10 shadow-2xl shadow-pine/40"
-    >
-      <div className="p-5 text-left text-ivory">
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-gold">
-          <FlaskConical className="size-4" aria-hidden />
+    <div className="rounded-3xl border border-white/25 bg-forest/60 shadow-2xl shadow-pine/40 backdrop-blur-md">
+      <div className="p-5 text-left text-ivory sm:p-6">
+        <p className="flex items-center gap-2 font-display text-lg font-semibold">
+          <FlaskConical className="size-5 text-gold" aria-hidden />
           Soil insight
-          <span className="ml-auto rounded-full bg-white/15 px-2 py-0.5 text-[10px] normal-case tracking-normal">
+          <span className="ml-auto rounded-full border border-white/30 px-2.5 py-0.5 font-sans text-[11px] font-medium normal-case tracking-normal text-ivory/85">
             Sample
           </span>
         </p>
-        <dl className="mt-4 grid grid-cols-3 gap-3 text-center">
-          <div className="rounded-xl bg-white/10 px-2 py-3">
+        <dl className="mt-5 grid grid-cols-3 gap-3 text-center">
+          <div className="rounded-xl bg-pine/60 px-2 py-3">
             <dt className="text-[11px] uppercase tracking-wider text-ivory/60">pH</dt>
             <dd className="mt-1 font-display text-xl font-semibold">6.8</dd>
           </div>
-          <div className="rounded-xl bg-white/10 px-2 py-3">
+          <div className="rounded-xl bg-pine/60 px-2 py-3">
             <dt className="text-[11px] uppercase tracking-wider text-ivory/60">N · P · K</dt>
             <dd className="mt-1 break-all font-display text-sm font-semibold">280·22·310</dd>
           </div>
-          <div className="rounded-xl bg-white/10 px-2 py-3">
+          <div className="rounded-xl bg-pine/60 px-2 py-3">
             <dt className="text-[11px] uppercase tracking-wider text-ivory/60">OC</dt>
             <dd className="mt-1 font-display text-xl font-semibold">0.62%</dd>
           </div>
         </dl>
-        <p className="mt-4 text-sm leading-relaxed text-ivory/80">
+        <p className="mt-5 font-semibold text-ivory">Best match: Paddy</p>
+        <p className="mt-1 text-sm leading-relaxed text-ivory/80">
           Slightly acidic loam — good for paddy. Add 25 kg/acre MOP before
           transplanting.
         </p>
+        <Link
+          href="/dashboard"
+          className={cn(
+            buttonVariants({
+              size: "lg",
+              className: "mt-5 w-full rounded-full bg-gold text-charcoal hover:bg-gold/90",
+            }),
+          )}
+        >
+          View sample analysis
+        </Link>
       </div>
-    </LiquidGlass>
+    </div>
   );
 }
 
@@ -148,28 +160,28 @@ export function Hero() {
     <section
       id="top"
       aria-label="SasyaSakhi introduction"
-      className="relative flex min-h-[calc(100svh-76px)] items-center overflow-hidden bg-pine"
+      className="relative flex min-h-[calc(100svh-73px)] items-center overflow-hidden bg-pine"
     >
       <HowToUseGuide open={guideOpen} onClose={() => setGuideOpen(false)} />
       {/* Hero background: real paddy-field photograph (Pexels photo ID
           2897195, terraced green paddy with forested hill). Free to use
-          under the Pexels licence; no attribution required. Dark pine
-          overlay keeps the ivory text readable. */}
+          under the Pexels licence; no attribution required. Dark gradient
+          fading in from the bottom keeps the white text legible. */}
       <img
         src="/hero-field.jpg"
         alt=""
         aria-hidden
         className="absolute inset-0 h-full w-full object-cover"
       />
-      <div aria-hidden className="absolute inset-0 bg-pine/70" />
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-b from-pine/60 via-transparent to-pine"
+        className="absolute inset-0 bg-gradient-to-t from-pine/90 via-pine/35 to-pine/10"
       />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-20 sm:px-6">
-        <div className="text-center">
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-ivory/85 backdrop-blur">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-8">
+        <div className="text-center lg:col-span-7 lg:text-left">
+          <p className="inline-flex items-center gap-2 rounded-full bg-black/40 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold backdrop-blur">
+            <span aria-hidden className="size-1.5 rounded-full bg-gold" />
             AI guidance for Indian farmers
           </p>
 
@@ -179,31 +191,35 @@ export function Hero() {
             <span className="block">Better Farming.</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/80">
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/85 lg:mx-0">
             Upload your soil test report and get clear answers: what your soil
             needs, which crops suit it, and exactly how much fertilizer to use —
             in English or Telugu.
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3">
+          <div className="mt-8 flex flex-col items-center gap-3 lg:flex-row lg:flex-wrap lg:items-start lg:justify-start">
             <Link
               href="/soil-report"
-              className={buttonVariants({
-                size: "lg",
-                className: "w-full bg-gold text-charcoal hover:bg-gold/90",
-              })}
+              className={cn(
+                buttonVariants({
+                  size: "lg",
+                  className: "w-full rounded-full bg-gold px-7 text-charcoal hover:bg-gold/90 sm:w-auto",
+                }),
+              )}
             >
               Analyze My Soil
               <ArrowRight className="size-4" aria-hidden />
             </Link>
             <Link
               href="/my-crop"
-              className={buttonVariants({
-                size: "lg",
-                variant: "outline",
-                className:
-                  "w-full border-white/25 bg-white/5 text-ivory backdrop-blur hover:bg-white/15 hover:text-ivory",
-              })}
+              className={cn(
+                buttonVariants({
+                  size: "lg",
+                  variant: "outline",
+                  className:
+                    "w-full rounded-full border-white/40 bg-transparent px-7 text-ivory hover:bg-white/15 hover:text-ivory sm:w-auto",
+                }),
+              )}
             >
               <Sprout className="size-4" aria-hidden />
               I Already Have a Crop
@@ -211,20 +227,27 @@ export function Hero() {
             <button
               type="button"
               onClick={() => setGuideOpen(true)}
-              className={buttonVariants({
-                size: "lg",
-                variant: "ghost",
-                className: "w-full text-ivory underline-offset-4 hover:bg-white/10 hover:text-ivory hover:underline",
-              })}
+              className={cn(
+                buttonVariants({
+                  size: "lg",
+                  variant: "outline",
+                  className:
+                    "w-full rounded-full border-white/30 bg-white/5 px-7 text-ivory hover:bg-white/15 hover:text-ivory sm:w-auto",
+                }),
+              )}
             >
               How to Use This
             </button>
           </div>
+
+          <p className="mt-6 text-sm text-ivory/70">
+            Free prototype · No account needed to try the demo · Works on any phone
+          </p>
         </div>
 
-        <div className="mx-auto w-full max-w-sm">
+        <div className="mx-auto w-full max-w-md lg:col-span-5 lg:mx-0 lg:justify-self-end">
           <SampleInsightCard />
-          <p className="mt-3 text-center text-xs text-ivory/50">
+          <p className="mt-3 text-center text-xs text-ivory/60">
             Sample preview — your report becomes the input.
           </p>
         </div>

@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
 /** How the crop scores work — plain language, shown on the landing page.
  *  Two different tools, never mixed up:
  *  - Rules engine: sets fertilizer doses from the workbook (STCR rules).
@@ -33,11 +37,11 @@ export function HowScores() {
     <section
       id="how-scores"
       aria-labelledby="how-scores-heading"
-      className="bg-ivory py-20 sm:py-28"
+      className="bg-cream py-20 sm:py-28"
     >
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl">
-          <p className="text-sm font-semibold uppercase tracking-widest text-leaf">
+          <p className="text-sm font-semibold uppercase tracking-widest text-forest">
             How the scores work
           </p>
           <h2
@@ -52,7 +56,7 @@ export function HowScores() {
             always shows why.
           </p>
         </div>
-        <div className="mt-12 grid gap-5">
+        <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {BASE_POINTS.map((point) => (
             <article
               key={point.title}
@@ -66,6 +70,19 @@ export function HowScores() {
               </p>
             </article>
           ))}
+        </div>
+        <div className="mt-10">
+          <Link
+            href="/recommendations"
+            className={cn(
+              buttonVariants({
+                size: "lg",
+                className: "rounded-full bg-forest px-7 text-ivory hover:bg-pine",
+              }),
+            )}
+          >
+            See crop recommendations
+          </Link>
         </div>
       </div>
     </section>

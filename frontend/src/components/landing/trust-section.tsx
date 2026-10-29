@@ -1,34 +1,19 @@
-import { Bot, ScanLine, SlidersHorizontal } from "lucide-react";
-import { FxDottedGlow, FxGlobe } from "@/components/effects";
-import type { GlobeMarker } from "@/components/ui/3d-globe";
-
-const MARKER_SRC =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%2369a66b'/%3E%3Ccircle cx='8' cy='8' r='3' fill='%2309271d'/%3E%3C/svg%3E";
-
-const MARKERS: GlobeMarker[] = [
-  {
-    lat: 17.7,
-    lng: 83.3,
-    src: MARKER_SRC,
-    label: "Andhra Pradesh",
-  },
-];
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const PRINCIPLES = [
   {
-    icon: ScanLine,
     title: "OCR extracts",
     description:
       "Your soil health card is read by the scanner — every value is captured, nothing is guessed.",
   },
   {
-    icon: SlidersHorizontal,
     title: "Rules engine recommends",
     description:
       "Agronomy rules — not vibes — match your soil numbers to crops and fertilizer doses.",
   },
   {
-    icon: Bot,
     title: "AI explains",
     description:
       "The assistant only explains what the rules found, in plain English or Telugu.",
@@ -37,70 +22,80 @@ const PRINCIPLES = [
 
 export function TrustSection() {
   return (
-    <section aria-labelledby="trust-heading" className="relative overflow-hidden bg-pine py-20 sm:py-28">
-      <div aria-hidden className="absolute inset-0 opacity-40">
-        <FxDottedGlow className="h-full w-full" />
-      </div>
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-gradient-to-b from-pine via-transparent to-pine"
-      />
+    <section aria-labelledby="trust-heading" className="bg-cream py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="relative overflow-hidden rounded-[2rem] bg-forest px-6 py-12 shadow-xl shadow-forest/20 sm:px-10 sm:py-14">
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-[radial-gradient(rgba(247,246,239,0.14)_1px,transparent_1.5px)] [background-size:22px_22px]"
+          />
+          <div className="relative z-10">
+            <p className="inline-flex items-center rounded-full bg-pine px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold">
+              How we keep it honest
+            </p>
+            <h2
+              id="trust-heading"
+              className="mt-5 max-w-2xl font-display text-4xl font-semibold tracking-tight text-ivory text-balance sm:text-5xl"
+            >
+              Three roles, one promise: no invented numbers
+            </h2>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-ivory/70">
+              The scanner reads, the rules calculate, and the assistant only
+              explains — so every number you see traces back to your report.
+            </p>
 
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-widest text-leaf">
-            How we keep it honest
-          </p>
-          <h2
-            id="trust-heading"
-            className="mt-3 font-display text-4xl font-semibold tracking-tight text-ivory text-balance sm:text-5xl"
-          >
-            Three roles, one promise: no invented numbers
-          </h2>
-
-          <ul className="mt-10 space-y-6">
-            {PRINCIPLES.map((p) => (
-              <li key={p.title} className="flex gap-4">
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-leaf/20 text-leaf">
-                  <p.icon className="size-6" aria-hidden />
-                </span>
-                <div>
-                  <h3 className="font-display text-xl font-semibold text-ivory">
+            <div className="mt-10 grid gap-8 md:grid-cols-3">
+              {PRINCIPLES.map((p, i) => (
+                <div key={p.title}>
+                  <p
+                    aria-hidden
+                    className="font-display text-3xl font-semibold text-gold"
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </p>
+                  <h3 className="mt-3 font-display text-xl font-semibold text-ivory">
                     {p.title}
                   </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-ivory/70">
+                  <p className="mt-1.5 text-sm leading-relaxed text-ivory/70">
                     {p.description}
                   </p>
                 </div>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </div>
 
-          <p className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-relaxed text-ivory/60">
-            Prototype honesty: this page shows sample and demo data. Live
-            recommendations will only appear once real soil reports and weather
-            feeds are connected.
-          </p>
-        </div>
-
-        <div className="text-center">
-          <FxGlobe
-            markers={MARKERS}
-            className="h-[320px] w-full sm:h-[420px]"
-            fallback={
-              <div
-                aria-hidden
-                className="mx-auto flex h-[320px] w-full max-w-md items-center justify-center rounded-full bg-gradient-to-br from-forest to-pine shadow-2xl shadow-black/40 sm:h-[420px]"
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/soil-report"
+                className={cn(
+                  buttonVariants({
+                    size: "lg",
+                    className: "rounded-full bg-gold px-7 text-charcoal hover:bg-gold/90",
+                  }),
+                )}
               >
-                <span className="font-display text-2xl text-ivory/60">
-                  Andhra Pradesh
-                </span>
-              </div>
-            }
-          />
-          <p className="mt-4 text-sm text-ivory/60">
-            Built for farmers, starting in Andhra Pradesh
-          </p>
+                Analyze My Soil
+              </Link>
+              <Link
+                href="/recommendations"
+                className={cn(
+                  buttonVariants({
+                    size: "lg",
+                    variant: "outline",
+                    className:
+                      "rounded-full border-white/40 bg-transparent px-7 text-ivory hover:bg-white/10 hover:text-ivory",
+                  }),
+                )}
+              >
+                See crop recommendations
+              </Link>
+            </div>
+
+            <p className="mt-8 text-sm leading-relaxed text-ivory/50">
+              Prototype honesty: this page shows sample and demo data. Live
+              recommendations will only appear once real soil reports and weather
+              feeds are connected.
+            </p>
+          </div>
         </div>
       </div>
     </section>

@@ -32,9 +32,9 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-ivory text-charcoal">
+    <div className="min-h-screen bg-cream text-charcoal">
       <DashboardSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div>
+      <div className="lg:pl-72">
         <DashboardHeader
           title={titleForPath(pathname)}
           onMenuToggle={() => setSidebarOpen((v) => !v)}

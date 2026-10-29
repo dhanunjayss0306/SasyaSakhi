@@ -9,9 +9,9 @@ import { TrustSection } from "@/components/landing/trust-section";
 
 function AboutSection() {
   return (
-    <section id="about" aria-labelledby="about-heading" className="bg-ivory py-20 sm:py-28">
+    <section id="about" aria-labelledby="about-heading" className="bg-cream py-20 sm:py-28">
       <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-        <p className="text-sm font-semibold uppercase tracking-widest text-leaf">
+        <p className="text-sm font-semibold uppercase tracking-widest text-forest">
           About
         </p>
         <h2

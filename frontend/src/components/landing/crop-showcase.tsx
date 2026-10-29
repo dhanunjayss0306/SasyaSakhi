@@ -122,10 +122,10 @@ export function CropShowcase() {
   const active = CROPS.find((c) => c.key === selected) ?? null;
 
   return (
-    <section id="crops" aria-labelledby="crops-heading" className="bg-sage/40 py-20 sm:py-28">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <section id="crops" aria-labelledby="crops-heading" className="bg-cream py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-leaf">
+          <p className="text-sm font-semibold uppercase tracking-widest text-forest">
             Crop showcase
           </p>
           <h2
@@ -140,14 +140,14 @@ export function CropShowcase() {
           </p>
         </div>
 
-        <div className="mt-6 grid gap-2 sm:gap-4">
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
           {CROPS.map((crop) => (
             <CardContainer
               key={crop.key}
               containerClassName="py-4"
               className="w-full"
             >
-              <CardBody className="flex h-auto w-full max-w-xs flex-col items-center rounded-3xl border border-charcoal/10 bg-white p-8 text-center shadow-sm">
+              <CardBody className="flex h-auto w-full flex-col items-center rounded-3xl border border-charcoal/10 bg-white p-8 text-center shadow-sm">
                 <CardItem translateZ={30}>
                   <CropArt crop={crop.key} />
                 </CardItem>

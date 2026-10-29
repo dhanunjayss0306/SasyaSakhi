@@ -27,6 +27,11 @@ interface NavItem {
   icon: LucideIcon;
 }
 
+/** Sidebar order follows the preview's app shell. Two real-app notes:
+ *  - "My Crop" stays: it is one of the features the user changed, so it
+ *    keeps its place even though the preview list does not name it.
+ *  - "Season Tracker" has no dedicated route, so it points at the crop
+ *    calendar, where season tracking lives. */
 const NAV_ITEMS: NavItem[] = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { label: "Soil Reports", href: "/soil-report", icon: FileUp },
@@ -37,12 +42,14 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Weather", href: "/weather", icon: CloudSun },
   { label: "Zone & Water", href: "/zone-water", icon: Droplets },
   { label: "Crop Calendar", href: "/crop-calendar", icon: CalendarDays },
-  { label: "AI Assistant", href: "/assistant", icon: Bot },
+  { label: "Season Tracker", href: "/crop-calendar", icon: CalendarDays },
+  { label: "Sakhi Assistant", href: "/assistant", icon: Bot },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
 interface DashboardSidebarProps {
-  /** Drawer open state (all screen sizes). */
+  /** Drawer open state (small screens only — the sidebar is always
+   *  visible on desktop). */
   open: boolean;
   onClose: () => void;
 }
@@ -67,22 +74,17 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
           className="flex items-center gap-2.5"
           aria-label="SasyaSakhi home"
         >
-          <span className="flex size-10 items-center justify-center rounded-xl bg-leaf/20 ring-1 ring-leaf/40">
-            <Sprout className="size-5 text-leaf" aria-hidden />
+          <span className="flex size-10 items-center justify-center rounded-full bg-leaf/25 text-leaf">
+            <Sprout className="size-5" aria-hidden />
           </span>
-          <span className="leading-tight">
-            <span className="block font-display text-lg font-semibold tracking-tight">
-              SasyaSakhi
-            </span>
-            <span className="block text-[11px] uppercase tracking-[0.18em] text-ivory/60">
-              Demo
-            </span>
+          <span className="font-display text-lg font-semibold tracking-tight">
+            SasyaSakhi
           </span>
         </Link>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-lg p-2 text-ivory/70 hover:bg-forest hover:text-ivory"
+          className="rounded-lg p-2 text-ivory/70 hover:bg-forest hover:text-ivory lg:hidden"
           aria-label="Close navigation menu"
         >
           <X className="size-5" aria-hidden />
@@ -98,7 +100,13 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
               (item.href !== "/dashboard" && pathname.startsWith(item.href));
             const Icon = item.icon;
             return (
-              <li key={`${item.label}-${item.href}`}>
+              <li key={`${item.label}-${item.href}`} className="relative">
+                {active && (
+                  <span
+                    aria-hidden
+                    className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-full bg-gold"
+                  />
+                )}
                 <Link
                   href={item.href}
                   onClick={onClose}
@@ -106,7 +114,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
                   className={cn(
                     "flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors",
                     active
-                      ? "bg-leaf/25 text-ivory ring-1 ring-leaf/40"
+                      ? "bg-forest text-ivory"
                       : "text-ivory/70 hover:bg-forest hover:text-ivory",
                   )}
                 >
@@ -122,7 +130,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
         </ul>
       </nav>
 
-      {/* Sign out */}
+      {/* Sign out + demo badge */}
       <div className="border-t border-forest px-3 py-4">
         <button
           type="button"
@@ -132,7 +140,12 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
           <LogOut className="size-4.5 shrink-0 text-ivory/50" aria-hidden />
           Sign out
         </button>
-        <p className="mt-3 px-3.5 text-[11px] leading-relaxed text-ivory/40">
+        <p className="mt-3 px-3.5">
+          <span className="inline-flex rounded-full bg-forest px-3 py-1 text-[11px] font-semibold tracking-widest text-gold">
+            DEMO BUILD
+          </span>
+        </p>
+        <p className="mt-2 px-3.5 text-[11px] leading-relaxed text-ivory/40">
           Demo prototype — no real account data.
         </p>
       </div>
@@ -141,19 +154,26 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Fixed sidebar on desktop */}
+      <aside
+        className="fixed inset-y-0 left-0 z-40 hidden w-72 lg:block"
+        aria-label="Dashboard navigation"
+      >
+        {nav}
+      </aside>
+
+      {/* Backdrop + drawer on small screens */}
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-pine/60 backdrop-blur-sm transition-opacity",
+          "fixed inset-0 z-40 bg-pine/60 backdrop-blur-sm transition-opacity lg:hidden",
           open ? "opacity-100" : "pointer-events-none opacity-0",
         )}
         onClick={onClose}
         aria-hidden
       />
-      {/* Drawer (all screen sizes, opened by the hamburger) */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300",
+          "fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300 lg:hidden",
           open ? "translate-x-0" : "-translate-x-full",
         )}
         aria-hidden={!open}

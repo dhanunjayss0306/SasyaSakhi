@@ -2,43 +2,6 @@
 
 import { useState } from "react";
 import { Sprout } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { store, useStoredLang } from "@/lib/store";
-
-type Lang = "en" | "te";
-
-function FooterLanguageSelector() {
-  const lang = useStoredLang();
-
-  const choose = (next: Lang) => {
-    store.setLang(next);
-  };
-
-  return (
-    <div
-      role="group"
-      aria-label="Language"
-      className="flex items-center gap-1 rounded-full border border-charcoal/15 bg-ivory p-1 text-sm"
-    >
-      {(["en", "te"] as Lang[]).map((l) => (
-        <button
-          key={l}
-          type="button"
-          onClick={() => choose(l)}
-          aria-pressed={lang === l}
-          className={cn(
-            "rounded-full px-3 py-1 transition-colors",
-            lang === l
-              ? "bg-forest text-ivory"
-              : "text-charcoal/70 hover:text-charcoal",
-          )}
-        >
-          {l === "en" ? "EN" : "తెలుగు"}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 export function Footer() {
   // `typeof window` guard: `new Date()` must never evaluate during prerender (Next 16).
@@ -47,12 +10,12 @@ export function Footer() {
   );
 
   return (
-    <footer className="bg-pine text-ivory">
-      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+    <footer className="bg-forest text-ivory">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <p className="flex items-center gap-2.5">
-              <span className="flex size-9 items-center justify-center rounded-full bg-leaf/25 text-leaf">
+              <span className="flex size-9 items-center justify-center rounded-full bg-ivory text-forest">
                 <Sprout className="size-5" aria-hidden />
               </span>
               <span className="font-display text-xl font-semibold tracking-tight">
@@ -87,54 +50,59 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a
-                  href="mailto:hello@sasyasakhi.example"
-                  className="text-ivory/80 hover:text-ivory"
-                >
-                  Contact
+                <a href="/dashboard" className="text-ivory/80 hover:text-ivory">
+                  Open the demo dashboard
                 </a>
               </li>
             </ul>
           </nav>
 
-          <div>
+          <nav aria-label="Contact">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-ivory/50">
-              Legal
+              Contact
             </h2>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li>
-                <a href="#prototype-note" className="text-ivory/80 hover:text-ivory">
-                  Privacy
+                <a
+                  href="mailto:hello@sasyasakhi.example"
+                  className="text-ivory/80 hover:text-ivory"
+                >
+                  Email the team
+                </a>
+              </li>
+              <li>
+                <a href="/assistant" className="text-ivory/80 hover:text-ivory">
+                  Farmer support
                 </a>
               </li>
               <li>
                 <a href="#prototype-note" className="text-ivory/80 hover:text-ivory">
-                  Terms
+                  Privacy (prototype note)
+                </a>
+              </li>
+              <li>
+                <a href="#prototype-note" className="text-ivory/80 hover:text-ivory">
+                  Terms (prototype note)
                 </a>
               </li>
             </ul>
-            <div className="mt-5">
-              <FooterLanguageSelector />
-            </div>
-          </div>
+          </nav>
         </div>
 
-        <div
-          id="prototype-note"
-          className="mt-12 rounded-2xl border border-gold/30 bg-gold/10 p-5 text-sm leading-relaxed text-ivory/80"
-        >
-          <h2 className="font-semibold text-gold">Prototype note</h2>
-          <p className="mt-1">
+        <div className="mt-12 border-t border-white/10 pt-6">
+          <p
+            id="prototype-note"
+            className="text-xs leading-relaxed text-ivory/50"
+          >
             SasyaSakhi is a hackathon prototype. Recommendations depend on
             the data available and are illustrative only — please confirm
             important decisions with your local agricultural officer. Privacy
             and Terms notices will be published with the first release.
           </p>
-        </div>
-
-        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 text-xs text-ivory/50 sm:flex-row sm:items-center">
-          <p>© {year} SasyaSakhi. All rights reserved.</p>
-          <p>Built for farmers, starting in Andhra Pradesh.</p>
+          <div className="mt-4 flex flex-col items-start justify-between gap-3 text-xs text-ivory/50 sm:flex-row sm:items-center">
+            <p>© {year} SasyaSakhi. All rights reserved.</p>
+            <p>Built for farmers, starting in Andhra Pradesh.</p>
+          </div>
         </div>
       </div>
     </footer>
