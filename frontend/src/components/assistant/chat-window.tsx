@@ -93,19 +93,12 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
     setSpeakingId(null);
   };
 
-  const toggleSpeak = (id: number, text: string) => {
-    if (speakingId === id) {
-      stopSpeaking();
-      return;
-    }
-    if (!("speechSynthesis" in window)) {
-      setVoiceError(
-        initialLang === "te"
-          ? "వాయిస్ ప్లేబ్యాక్ ఈ బ్రౌజర్‌లో పనిచేయదు. Chrome వాడండి."
-          : "Voice playback is not supported in this browser. Please use Chrome."
-      );
-      return;
-    }
+  // Reads one reply aloud. Voice follows the reply's own script, so a
+  // Telugu answer speaks in Telugu even if the toggle is on English.
+  // Auto-play uses this silently (no error popup); the Listen button
+  // reports the error when tapped.
+  const speakMessage = (id: number, text: string): boolean => {
+    if (!("speechSynthesis" in window)) return false;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = TELUGU_RE.test(text) ? "te-IN" : initialLang === "te" ? "te-IN" : "en-IN";
@@ -116,6 +109,21 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
     utterance.onerror = () => setSpeakingId(null);
     setSpeakingId(id);
     window.speechSynthesis.speak(utterance);
+    return true;
+  };
+
+  const toggleSpeak = (id: number, text: string) => {
+    if (speakingId === id) {
+      stopSpeaking();
+      return;
+    }
+    if (!speakMessage(id, text)) {
+      setVoiceError(
+        initialLang === "te"
+          ? "వాయిస్ ప్లేబ్యాక్ ఈ బ్రౌజర్‌లో పనిచేయదు. Chrome వాడండి."
+          : "Voice playback is not supported in this browser. Please use Chrome."
+      );
+    }
   };
 
   const send = (text: string) => {
@@ -147,9 +155,12 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
                 ? { confirmed_values: confirmed }
                 : undefined,
           });
-          setMessages((prev) => [...prev, { id: nextId++, role: "assistant", text: res.answer }]);
+          const replyId = nextId++;
+          setMessages((prev) => [...prev, { id: replyId, role: "assistant", text: res.answer }]);
           setLastSource("live");
           setTyping(false);
+          // Answer in text AND voice: the reply shows on screen and speaks.
+          speakMessage(replyId, res.answer);
           return;
         } catch {
           console.debug("SasyaSakhi: backend chat unavailable, using mock reply.");
@@ -157,9 +168,12 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
       }
       timerRef.current = setTimeout(() => {
         const reply = mockChatReply(trimmed, initialLang);
-        setMessages((prev) => [...prev, { id: nextId++, role: "assistant", text: reply }]);
+        const replyId = nextId++;
+        setMessages((prev) => [...prev, { id: replyId, role: "assistant", text: reply }]);
         setLastSource("mock");
         setTyping(false);
+        // Answer in text AND voice: the reply shows on screen and speaks.
+        speakMessage(replyId, reply);
       }, 800);
     })();
   };
