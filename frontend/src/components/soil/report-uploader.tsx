@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { FileUp, FileText, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BACKEND_CONFIGURED } from "@/lib/api-client";
+import { useStoredLang } from "@/lib/store";
 
 const ACCEPTED_EXTS = [".pdf", ".jpg", ".jpeg", ".png"];
 const MAX_SIZE_MB = 10;
@@ -25,14 +26,20 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const lang = useStoredLang();
+  const te = lang === "te";
 
   function validate(candidate: File): string | null {
     const ext = candidate.name.slice(candidate.name.lastIndexOf(".")).toLowerCase();
     if (!ACCEPTED_EXTS.includes(ext)) {
-      return `Unsupported file type. Please upload one of: ${ACCEPTED_EXTS.join(", ")}`;
+      return te
+        ? `మద్దతు లేని ఫైల్ రకం. దయచేసి వీటిలో ఒకదాన్ని అప్‌లోడ్ చేయండి: ${ACCEPTED_EXTS.join(", ")}`
+        : `Unsupported file type. Please upload one of: ${ACCEPTED_EXTS.join(", ")}`;
     }
     if (candidate.size > MAX_SIZE_MB * 1024 * 1024) {
-      return `File is too large (${formatSize(candidate.size)}). Maximum size is ${MAX_SIZE_MB} MB.`;
+      return te
+        ? `ఫైల్ చాలా పెద్దది (${formatSize(candidate.size)}). గరిష్ఠ పరిమాణం ${MAX_SIZE_MB} MB.`
+        : `File is too large (${formatSize(candidate.size)}). Maximum size is ${MAX_SIZE_MB} MB.`;
     }
     return null;
   }
@@ -70,7 +77,7 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
         type="file"
         accept=".pdf,.jpg,.jpeg,.png"
         className="sr-only"
-        aria-label="Choose a soil report file"
+        aria-label={te ? "నేల నివేదిక ఫైల్ ఎంచుకోండి" : "Choose a soil report file"}
         onChange={(e) => handleFiles(e.target.files)}
       />
 
@@ -78,7 +85,7 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
       <div
         role="button"
         tabIndex={0}
-        aria-label="Upload soil report — drag a file here or press Enter to browse"
+        aria-label={te ? "నేల నివేదిక అప్‌లోడ్ చేయండి — ఫైల్‌ను ఇక్కడ లాగండి లేదా బ్రౌజ్ చేయడానికి Enter నొక్కండి" : "Upload soil report — drag a file here or press Enter to browse"}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -107,10 +114,10 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
         </span>
         <div>
           <p className="font-display text-lg font-semibold text-charcoal">
-            Drag your soil report here
+            {te ? "మీ నేల నివేదికను ఇక్కడ లాగండి" : "Drag your soil report here"}
           </p>
           <p className="mt-1 text-sm text-charcoal/70">
-            PDF, JPG or PNG — up to {MAX_SIZE_MB} MB
+            {te ? `PDF, JPG లేదా PNG — గరిష్ఠంగా ${MAX_SIZE_MB} MB` : `PDF, JPG or PNG — up to ${MAX_SIZE_MB} MB`}
           </p>
         </div>
         <Button
@@ -121,7 +128,7 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
             inputRef.current?.click();
           }}
         >
-          Browse files
+          {te ? "ఫైల్‌లు బ్రౌజ్ చేయండి" : "Browse files"}
         </Button>
       </div>
 
@@ -145,10 +152,10 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
             variant="ghost"
             size="sm"
             onClick={clearFile}
-            aria-label="Remove selected file"
+            aria-label={te ? "ఎంచుకున్న ఫైల్ తీసివేయండి" : "Remove selected file"}
           >
             <X className="h-4 w-4" aria-hidden="true" />
-            Remove
+            {te ? "తీసివేయండి" : "Remove"}
           </Button>
         </div>
       )}
@@ -164,21 +171,27 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
           {busy ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              Processing…
+              {te ? "ప్రాసెస్ చేస్తున్నాము…" : "Processing…"}
             </>
           ) : (
-            BACKEND_CONFIGURED ? "Process with OCR" : "Process with demo OCR"
+            BACKEND_CONFIGURED
+              ? te ? "OCR తో ప్రాసెస్ చేయండి" : "Process with OCR"
+              : te ? "డెమో OCR తో ప్రాసెస్ చేయండి" : "Process with demo OCR"
           )}
         </Button>
         <Button type="button" variant="outline" onClick={onSample} className="flex-1">
-          Use sample report instead
+          {te ? "బదులుగా నమూనా నివేదిక వాడండి" : "Use sample report instead"}
         </Button>
       </div>
 
       <p className="mt-4 text-xs text-charcoal/60">
         {BACKEND_CONFIGURED
-          ? "Your file is sent to the configured backend for OCR."
-          : "Demo data — uploads are simulated in this prototype; no file leaves your device."}
+          ? te
+            ? "మీ ఫైల్ OCR కోసం కాన్ఫిగర్ చేసిన బ్యాకెండ్‌కు పంపబడుతుంది."
+            : "Your file is sent to the configured backend for OCR."
+          : te
+            ? "డెమో డేటా — ఈ నమూనాలో అప్‌లోడ్‌లు అనుకరించబడతాయి; ఏ ఫైల్ మీ పరికరం నుండి బయటకు వెళ్ళదు."
+            : "Demo data — uploads are simulated in this prototype; no file leaves your device."}
       </p>
     </div>
   );

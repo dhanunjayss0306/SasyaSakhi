@@ -16,11 +16,15 @@ export default function AssistantPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">AI Assistant</h1>
+          <h1 className="font-display text-3xl font-semibold text-charcoal">{lang === "te" ? "AI సహాయకుడు" : "AI Assistant"}</h1>
           <p className="mt-1 text-sm text-charcoal/65">
             {BACKEND_CONFIGURED
-              ? "Ask about your soil report in English or Telugu. Answers come from the backend when available, otherwise scripted demos."
-              : "Ask about your soil report in English or Telugu. Responses are scripted demos."}
+              ? lang === "te"
+                ? "మీ నేల నివేదిక గురించి ఇంగ్లీష్ లేదా తెలుగులో అడగండి. బ్యాకెండ్ అందుబాటులో ఉంటే అక్కడి నుండి సమాధానాలు, లేకపోతే స్క్రిప్ట్ చేసిన డెమోలు."
+                : "Ask about your soil report in English or Telugu. Answers come from the backend when available, otherwise scripted demos."
+              : lang === "te"
+                ? "మీ నేల నివేదిక గురించి ఇంగ్లీష్ లేదా తెలుగులో అడగండి. సమాధానాలు స్క్రిప్ట్ చేసిన డెమోలు."
+                : "Ask about your soil report in English or Telugu. Responses are scripted demos."}
           </p>
         </div>
         <div role="group" aria-label="Assistant language" className="flex rounded-full border border-sage bg-ivory p-1">

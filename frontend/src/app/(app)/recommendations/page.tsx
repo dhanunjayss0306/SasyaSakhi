@@ -12,7 +12,7 @@ import {
   type CropSuitability,
   type MLResult,
 } from "@/lib/api-client";
-import { store } from "@/lib/store";
+import { store, useStoredLang } from "@/lib/store";
 import { CropCard } from "@/components/recommendations/crop-card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,12 +26,14 @@ type LiveCrop = {
   explanation: string;
 };
 
-/** Backend status labels, displayed verbatim — never mapped to numbers. */
-const STATUS_LABEL: Record<LiveCrop["status"], string> = {
-  suitable: "Suitable",
-  marginal: "Marginal",
-  unsuitable: "Unsuitable",
-  insufficient_data: "Insufficient data",
+/** Backend status labels — shown in the page language. The live
+ *  supporting/limiting text itself arrives in English from the backend
+ *  and is shown as-is; the mock path below is fully translated. */
+const STATUS_LABEL: Record<LiveCrop["status"], { en: string; te: string }> = {
+  suitable: { en: "Suitable", te: "అనుకూలం" },
+  marginal: { en: "Marginal", te: "పాక్షికం" },
+  unsuitable: { en: "Unsuitable", te: "అనుకూలం కాదు" },
+  insufficient_data: { en: "Insufficient data", te: "తగినంత డేటా లేదు" },
 };
 
 /** Frontend parameter keys -> backend canonical names (N, P, K — never oxides). */
@@ -79,6 +81,8 @@ function reportValues(): ConfirmedValue[] {
 }
 
 export default function RecommendationsPage() {
+  const lang = useStoredLang();
+  const te = lang === "te";
   const [selectedId, setSelectedId] = useState<CropId>("paddy");
   const recommendations = useMemo(() => getCropRecommendations(), []);
   const selectedCrop = CROPS.find((c) => c.id === selectedId) ?? CROPS[0];
@@ -153,20 +157,24 @@ export default function RecommendationsPage() {
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">Crop recommendations</h1>
+          <h1 className="font-display text-3xl font-semibold text-charcoal">{te ? "పంట సిఫార్సులు" : "Crop recommendations"}</h1>
           <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
             {cropsPhase === "live"
-              ? "Suitability from your soil report."
-              : "Suitability scores from your soil report."}
+              ? te
+                ? "మీ నేల నివేదిక నుండి అనుకూలత."
+                : "Suitability from your soil report."
+              : te
+                ? "మీ నేల నివేదిక నుండి అనుకూలత స్కోర్‌లు."
+                : "Suitability scores from your soil report."}
           </p>
         </div>
         <span className="rounded-full bg-gold/20 px-3 py-1 text-xs font-semibold text-charcoal">
-          {cropsPhase === "live" ? "Live" : MOCK_NOTICE.split(".")[0]}
+          {cropsPhase === "live" ? (te ? "ప్రత్యక్షం" : "Live") : te ? "డెమో డేటా — ఇది ఒక నమూనా" : MOCK_NOTICE.split(".")[0]}
         </span>
       </div>
 
       {/* Crop selector tabs */}
-      <div role="tablist" aria-label="Select a crop" className="mt-6 flex flex-wrap gap-2">
+      <div role="tablist" aria-label={te ? "పంటను ఎంచుకోండి" : "Select a crop"} className="mt-6 flex flex-wrap gap-2">
         {CROPS.map((crop) => (
           <Button
             key={crop.id}
@@ -176,14 +184,14 @@ export default function RecommendationsPage() {
             onClick={() => setSelectedId(crop.id)}
             className={cn(selectedId === crop.id && "bg-forest")}
           >
-            {crop.name} · {crop.nameTe}
+            {te ? crop.nameTe : crop.name} · {te ? crop.name : crop.nameTe}
           </Button>
         ))}
       </div>
 
       {cropsPhase === "loading" ? (
         <p className="mt-6 text-sm text-charcoal/60" role="status">
-          Loading recommendations…
+          {te ? "సిఫార్సులు లోడ్ అవుతున్నాయి…" : "Loading recommendations…"}
         </p>
       ) : (
         <>
@@ -197,7 +205,7 @@ export default function RecommendationsPage() {
                   crop={crop}
                   selected={selectedId === crop.id}
                   onSelect={setSelectedId}
-                  statusLabel={live ? STATUS_LABEL[live.status] : undefined}
+                  statusLabel={live ? (te ? STATUS_LABEL[live.status].te : STATUS_LABEL[live.status].en) : undefined}
                 />
               );
             })}
@@ -208,15 +216,19 @@ export default function RecommendationsPage() {
             <section aria-labelledby="why-heading" className="rounded-2xl border border-sage bg-white p-5 sm:p-6">
               <h2 id="why-heading" className="font-display text-xl font-semibold text-charcoal">
                 {showLiveWhy && liveSelected.status === "unsuitable"
-                  ? `Why ${selectedCrop.name} is not recommended`
-                  : `Why ${selectedCrop.name} suits your soil`}
+                  ? te
+                    ? `${selectedCrop.nameTe} ఎందుకు సిఫార్సు చేయబడలేదు`
+                    : `Why ${selectedCrop.name} is not recommended`
+                  : te
+                    ? `${selectedCrop.nameTe} మీ నేలకు ఎందుకు సరిపోతుంది`
+                    : `Why ${selectedCrop.name} suits your soil`}
               </h2>
               {showLiveWhy ? (
                 <>
                   <p className="mt-1 text-sm text-charcoal/60">
-                    Suitability:{" "}
+                    {te ? "అనుకూలత:" : "Suitability:"}{" "}
                     <span className="font-semibold text-forest">
-                      {STATUS_LABEL[liveSelected.status]}
+                      {te ? STATUS_LABEL[liveSelected.status].te : STATUS_LABEL[liveSelected.status].en}
                     </span>
                   </p>
                   {liveSelected.supporting.length > 0 && (
@@ -231,7 +243,7 @@ export default function RecommendationsPage() {
                   )}
                   {liveSelected.limiting.length > 0 && (
                     <>
-                      <h3 className="mt-5 text-sm font-semibold text-charcoal">Limiting factors</h3>
+                      <h3 className="mt-5 text-sm font-semibold text-charcoal">{te ? "పరిమితం చేసే అంశాలు" : "Limiting factors"}</h3>
                       <ul className="mt-2 space-y-3">
                         {liveSelected.limiting.map((point) => (
                           <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
@@ -244,19 +256,19 @@ export default function RecommendationsPage() {
                   )}
                   {liveSelected.missing.length > 0 && (
                     <p className="mt-4 text-xs text-charcoal/55">
-                      Missing information: {liveSelected.missing.join(", ")}.
+                      {te ? "తప్పిపోయిన సమాచారం:" : "Missing information:"} {liveSelected.missing.join(", ")}.
                     </p>
                   )}
                   <p className="mt-4 text-sm text-charcoal/70">{liveSelected.explanation}</p>
                   {mlSelected && (
                     <div className="mt-6 rounded-xl border border-sage bg-ivory p-4">
                       <h3 className="text-sm font-semibold text-charcoal">
-                        ML score — why the model agrees or disagrees
+                        {te ? "ML స్కోర్ — మోడల్ ఎందుకు అంగీకరిస్తుంది లేదా విభేదిస్తుంది" : "ML score — why the model agrees or disagrees"}
                       </h3>
                       {mlSelected.score !== null ? (
                         <>
                           <p className="mt-1 text-sm text-charcoal/70">
-                            ML suitability:{" "}
+                            {te ? "ML అనుకూలత:" : "ML suitability:"}{" "}
                             <span className="font-semibold text-forest">
                               {mlSelected.score}/100 ({mlSelected.status})
                             </span>
@@ -276,7 +288,9 @@ export default function RecommendationsPage() {
                         <p className="mt-1 text-sm text-charcoal/70">{mlSelected.explanation}</p>
                       )}
                       <p className="mt-3 text-xs text-charcoal/55">
-                        The ML score only compares gaps against the crop's ideal needs.
+                        {te
+                          ? "ML స్కోర్ పంట యొక్క ఆదర్శ అవసరాలతో అంతరాలను మాత్రమే పోలుస్తుంది."
+                          : "The ML score only compares gaps against the crop's ideal needs."}
                       </p>
                     </div>
                   )}
@@ -284,10 +298,12 @@ export default function RecommendationsPage() {
               ) : (
                 <>
                   <p className="mt-1 text-sm text-charcoal/60">
-                    Suitability score: <span className="font-semibold text-forest">{selectedRec?.suitability ?? selectedCrop.suitability}%</span>
+                    {te ? "అనుకూలత స్కోర్:" : "Suitability score:"} <span className="font-semibold text-forest">{selectedRec?.suitability ?? selectedCrop.suitability}%</span>
                   </p>
                   <ul className="mt-4 space-y-3">
-                    {(selectedRec?.why ?? selectedCrop.soilFactors).map((point) => (
+                    {(te && selectedCrop.soilFactorsTe
+                      ? selectedCrop.soilFactorsTe
+                      : (selectedRec?.why ?? selectedCrop.soilFactors)).map((point) => (
                       <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
                         <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-leaf" aria-hidden />
                         <span>{point}</span>
@@ -295,7 +311,9 @@ export default function RecommendationsPage() {
                     ))}
                   </ul>
                   <p className="mt-4 text-xs text-charcoal/55">
-                    Demo data — scores are illustrative and based on the sample soil report.
+                    {te
+                      ? "డెమో డేటా — స్కోర్‌లు ఉదాహరణలు మరియు నమూనా నేల నివేదికపై ఆధారపడి ఉన్నాయి."
+                      : "Demo data — scores are illustrative and based on the sample soil report."}
                   </p>
                 </>
               )}

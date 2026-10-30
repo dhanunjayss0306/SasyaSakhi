@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useStoredLang } from "@/lib/store";
 
 /** Sakhi, the leaf companion: ONE floating button, bottom-right on app
  *  pages. CSS/SVG only — no image files. Tapping it opens the existing
@@ -6,10 +9,11 @@ import Link from "next/link";
  *  (the chat is already open there) and reserves bottom padding on mobile
  *  so it never covers page content. */
 export function SakhiPet() {
+  const lang = useStoredLang();
   return (
     <Link
       href="/assistant"
-      aria-label="Open Sakhi assistant"
+      aria-label={lang === "te" ? "సఖి సహాయకుడు తెరవండి" : "Open Sakhi assistant"}
       className="fixed bottom-5 right-5 z-40 flex w-16 flex-col items-center gap-0.5 rounded-3xl bg-forest py-2.5 text-ivory shadow-xl shadow-pine/30 ring-2 ring-leaf/60 transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
     >
       <span className="relative flex size-9 items-center justify-center" aria-hidden>

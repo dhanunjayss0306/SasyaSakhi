@@ -47,8 +47,27 @@ function zoneSeasonsFor(zone: ZoneInfo, crop: CropId): string[] {
     .map(([season]) => season);
 }
 
+const SEASON_TE: Record<string, string> = {
+  Kharif: "ఖరీఫ్",
+  Rabi: "రబీ",
+  "Low-water": "తక్కువ నీరు",
+};
+
+const WATER_TE: Record<string, string> = {
+  High: "ఎక్కువ",
+  Medium: "మధ్యస్థం",
+  Low: "తక్కువ",
+};
+
+const NUTRIENT_TE: Record<string, string> = {
+  Nitrogen: "నత్రజని",
+  Phosphorus: "భాస్వరం",
+  Potassium: "పొటాషియం",
+};
+
 export default function MyCropPage() {
   const lang = useStoredLang();
+  const te = lang === "te";
   const [crop, setCrop] = useState<CropId>("paddy");
   const [district, setDistrict] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -78,10 +97,10 @@ export default function MyCropPage() {
           if (res.found && res.zone) {
             setZone(res.zone);
           } else {
-            setZoneMessage(res.message ?? "No zone found for this district.");
+            setZoneMessage(res.message ?? (te ? "ఈ జిల్లాకు జోన్ కనిపించలేదు." : "No zone found for this district."));
           }
         } catch {
-          setZoneMessage("Zone lookup is unavailable — is the backend running?");
+          setZoneMessage(te ? "జోన్ వెతుకులాట అందుబాటులో లేదు — బ్యాకెండ్ నడుస్తోందా?" : "Zone lookup is unavailable — is the backend running?");
         }
       }
       if (BACKEND_CONFIGURED) {
@@ -98,7 +117,7 @@ export default function MyCropPage() {
         }
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not load crop care. Please try again.");
+      setError(e instanceof Error ? e.message : te ? "పంట సంరక్షణ లోడ్ చేయలేకపోయాము. దయచేసి మళ్ళీ ప్రయత్నించండి." : "Could not load crop care. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -107,10 +126,10 @@ export default function MyCropPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
       <h1 className="font-display text-3xl font-semibold text-charcoal">
-        {lang === "te" ? "నా పంట సంరక్షణ" : "I already have a crop"}
+        {te ? "నా పంట సంరక్షణ" : "I already have a crop"}
       </h1>
       <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
-        {lang === "te"
+        {te
           ? "మట్టి నివేదిక లేకుండా మీ పంటకు సూచనలు — జోన్ మరియు పంట పుస్తకం నుండి మాత్రమే."
           : "Care for the crop already in your field — no soil report needed."}
       </p>
@@ -118,15 +137,27 @@ export default function MyCropPage() {
       {/* No-soil-report banner: the honesty label for this whole page. */}
       <div className="mt-5 rounded-2xl border border-gold/50 bg-gold/10 p-5">
         <p className="text-sm font-semibold text-charcoal">
-          No soil report — zone + crop book guidance only
+          {te ? "నేల నివేదిక లేదు — జోన్ + పంట పుస్తక మార్గదర్శకత్వం మాత్రమే" : "No soil report — zone + crop book guidance only"}
         </p>
         <p className="mt-1 text-sm leading-relaxed text-charcoal/75">
-          Nothing here is adjusted to your soil, because no soil values were
-          given. For doses adjusted to your field, upload a lab report —{" "}
-          <Link href="/soil-report" className="font-semibold text-forest hover:underline">
-            Analyze My Soil
-          </Link>
-          .
+          {te ? (
+            <>
+              ఇక్కడ ఏదీ మీ నేలకు సర్దుబాటు చేయబడలేదు, ఎందుకంటే నేల విలువలు ఇవ్వబడలేదు. మీ పొలానికి సర్దుబాటు చేసిన మోతాదుల కోసం, ల్యాబ్ నివేదికను అప్‌లోడ్ చేయండి —{" "}
+              <Link href="/soil-report" className="font-semibold text-forest hover:underline">
+                నా నేలను విశ్లేషించండి
+              </Link>
+              .
+            </>
+          ) : (
+            <>
+              Nothing here is adjusted to your soil, because no soil values were
+              given. For doses adjusted to your field, upload a lab report —{" "}
+              <Link href="/soil-report" className="font-semibold text-forest hover:underline">
+                Analyze My Soil
+              </Link>
+              .
+            </>
+          )}
         </p>
         <p className="mt-2 text-sm text-charcoal/70">
           మట్టి నివేదిక లేదు — ఈ సూచనలు జోన్ మరియు పంట పుస్తకం నుండి మాత్రమే.
@@ -135,8 +166,8 @@ export default function MyCropPage() {
 
       {/* Picker: crop + optional district */}
       <div className="mt-6 rounded-2xl border border-sage bg-white p-5 sm:p-6">
-        <p className="text-sm font-semibold text-charcoal">Which crop is in your field?</p>
-        <div role="radiogroup" aria-label="Current crop" className="mt-3 flex flex-wrap gap-2">
+        <p className="text-sm font-semibold text-charcoal">{te ? "మీ పొలంలో ఏ పంట ఉంది?" : "Which crop is in your field?"}</p>
+        <div role="radiogroup" aria-label={te ? "ప్రస్తుత పంట" : "Current crop"} className="mt-3 flex flex-wrap gap-2">
           {CROPS.map((c) => (
             <button
               key={c.id}
@@ -150,29 +181,29 @@ export default function MyCropPage() {
                   : "border-forest/30 text-forest hover:bg-sage/50"
               }`}
             >
-              {c.name} · {c.nameTe}
+              {te ? c.nameTe : c.name} · {te ? c.name : c.nameTe}
             </button>
           ))}
         </div>
         <label className="mt-5 block text-sm font-semibold text-charcoal" htmlFor="my-crop-district">
-          District <span className="font-normal text-charcoal/55">(optional — for zone guidance)</span>
+          {te ? "జిల్లా" : "District"} <span className="font-normal text-charcoal/55">{te ? "(ఐచ్ఛికం — జోన్ మార్గదర్శకత్వం కోసం)" : "(optional — for zone guidance)"}</span>
         </label>
         <input
           id="my-crop-district"
           type="text"
           value={district}
           onChange={(e) => setDistrict(e.target.value)}
-          placeholder="District, e.g. Visakhapatnam"
+          placeholder={te ? "జిల్లా, ఉదా. విశాఖపట్నం" : "District, e.g. Visakhapatnam"}
           className="mt-2 w-full rounded-xl border border-sage bg-white px-4 py-2.5 text-sm text-charcoal outline-none focus:border-forest"
         />
         <Button className="mt-4" onClick={() => void showCare()} disabled={loading}>
-          {loading ? "Loading…" : "Show my crop care"}
+          {loading ? (te ? "లోడ్ అవుతోంది…" : "Loading…") : te ? "నా పంట సంరక్షణ చూపండి" : "Show my crop care"}
         </Button>
         {!BACKEND_CONFIGURED && (
           <p className="mt-3 text-xs text-charcoal/55">
-            Demo mode: the backend is not connected, so the fertilizer plan and
-            schedule need NEXT_PUBLIC_API_URL set and the backend running. The
-            crop book and zone notes below still work from the app itself.
+            {te
+              ? "డెమో మోడ్: బ్యాకెండ్ కనెక్ట్ కాలేదు, కాబట్టి ఎరువుల ప్రణాళిక మరియు షెడ్యూల్ కోసం NEXT_PUBLIC_API_URL సెట్ చేసి బ్యాకెండ్ నడుస్తుండాలి. కింద పంట పుస్తకం మరియు జోన్ గమనికలు యాప్ నుండే పనిచేస్తాయి."
+              : "Demo mode: the backend is not connected, so the fertilizer plan and schedule need NEXT_PUBLIC_API_URL set and the backend running. The crop book and zone notes below still work from the app itself."}
           </p>
         )}
       </div>
@@ -189,21 +220,26 @@ export default function MyCropPage() {
           <section aria-labelledby="crop-book-heading" className="rounded-2xl border border-sage bg-white p-5 sm:p-6">
             <h2 id="crop-book-heading" className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal">
               <Sprout className="size-5 text-forest" aria-hidden />
-              {cropBook.name} · {cropBook.nameTe}
+              {te ? cropBook.nameTe : cropBook.name} · {te ? cropBook.name : cropBook.nameTe}
             </h2>
             <dl className="mt-4 grid gap-3 sm:grid-cols-2">
               <div className="rounded-xl bg-ivory p-4">
-                <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">Season (crop book)</dt>
-                <dd className="mt-1 text-sm font-medium text-charcoal">{cropBook.season}</dd>
+                <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">{te ? "సీజన్ (పంట పుస్తకం)" : "Season (crop book)"}</dt>
+                <dd className="mt-1 text-sm font-medium text-charcoal">
+                  {te
+                    ? cropBook.season.replace("Kharif", "ఖరీఫ్").replace("Rabi", "రబీ").replace("Jun", "జూన్").replace("Nov", "నవం").replace("Apr", "ఏప్రి").replace("Oct", "అక్టో").replace("Jul", "జులై").replace("Feb", "ఫిబ్ర")
+                    : cropBook.season}
+                </dd>
               </div>
               <div className="rounded-xl bg-ivory p-4">
-                <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">Water need (crop book)</dt>
-                <dd className="mt-1 text-sm font-medium text-charcoal">{cropBook.waterNeed}</dd>
+                <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">{te ? "నీటి అవసరం (పంట పుస్తకం)" : "Water need (crop book)"}</dt>
+                <dd className="mt-1 text-sm font-medium text-charcoal">{te ? (WATER_TE[cropBook.waterNeed] ?? cropBook.waterNeed) : cropBook.waterNeed}</dd>
               </div>
             </dl>
             <p className="mt-3 text-xs text-charcoal/55">
-              Crop book information only — not a verdict on your field. Your soil
-              test decides the final dose.
+              {te
+                ? "పంట పుస్తక సమాచారం మాత్రమే — మీ పొలంపై తీర్పు కాదు. మీ నేల పరీక్షే తుది మోతాదును నిర్ణయిస్తుంది."
+                : "Crop book information only — not a verdict on your field. Your soil test decides the final dose."}
             </p>
           </section>
 
@@ -212,7 +248,7 @@ export default function MyCropPage() {
             <section aria-labelledby="zone-heading" className="rounded-2xl border border-sage bg-white p-5 sm:p-6">
               <h2 id="zone-heading" className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal">
                 <Droplets className="size-5 text-forest" aria-hidden />
-                Your zone vs this crop
+                {te ? "మీ జోన్ vs ఈ పంట" : "Your zone vs this crop"}
               </h2>
               {zone ? (
                 <>
@@ -221,26 +257,35 @@ export default function MyCropPage() {
                   </p>
                   {seasons.length > 0 ? (
                     <p className="mt-2 text-sm leading-relaxed text-charcoal/80">
-                      Your zone suggests {cropBook.name} for:{" "}
-                      <span className="font-semibold text-forest">{seasons.join(", ")}</span>.
+                      {te ? (
+                        <>
+                          మీ జోన్ {te ? cropBook.nameTe : cropBook.name} ను సూచిస్తుంది:{" "}
+                          <span className="font-semibold text-forest">{seasons.map((s) => SEASON_TE[s] ?? s).join(", ")}</span>.
+                        </>
+                      ) : (
+                        <>
+                          Your zone suggests {cropBook.name} for:{" "}
+                          <span className="font-semibold text-forest">{seasons.join(", ")}</span>.
+                        </>
+                      )}
                     </p>
                   ) : (
                     <p className="mt-2 text-sm leading-relaxed text-charcoal/80">
-                      Your zone does not list {cropBook.name} among its suggested
-                      crops. It can still grow with the right water and care —
-                      ask Sakhi about your conditions before deciding.
+                      {te
+                        ? `మీ జోన్ సూచించిన పంటలలో ${cropBook.nameTe} లేదు. సరైన నీరు మరియు సంరక్షణతో ఇది ఇంకా పెరుగుతుంది — నిర్ణయించే ముందు మీ పరిస్థితుల గురించి సఖిని అడగండి.`
+                        : `Your zone does not list ${cropBook.name} among its suggested crops. It can still grow with the right water and care — ask Sakhi about your conditions before deciding.`}
                     </p>
                   )}
                   <dl className="mt-4 grid gap-3 sm:grid-cols-2">
                     <div className="rounded-xl bg-ivory p-4">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                        Recommended irrigation
+                        {te ? "సిఫార్సు చేసిన నీటిపారుదల" : "Recommended irrigation"}
                       </dt>
                       <dd className="mt-1 text-sm font-medium text-charcoal">{zone.recommended_irrigation}</dd>
                     </div>
                     <div className="rounded-xl bg-ivory p-4">
                       <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                        Annual water available
+                        {te ? "వార్షిక నీరు అందుబాటులో" : "Annual water available"}
                       </dt>
                       <dd className="mt-1 text-sm font-medium text-charcoal">
                         {zone.overall_water_mm !== null ? `${zone.overall_water_mm} mm` : "—"}
@@ -259,7 +304,7 @@ export default function MyCropPage() {
           <section aria-labelledby="fert-heading" className="rounded-2xl border border-sage bg-white p-5 sm:p-6">
             <h2 id="fert-heading" className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal">
               <FlaskConical className="size-5 text-forest" aria-hidden />
-              Fertilizer plan — general reference
+              {te ? "ఎరువుల ప్రణాళిక — సాధారణ సూచన" : "Fertilizer plan — general reference"}
             </h2>
             {fert ? (
               <>
@@ -268,10 +313,10 @@ export default function MyCropPage() {
                   {fert.items.map((item) => (
                     <li key={item.product} className="flex items-baseline justify-between gap-3 rounded-xl bg-ivory px-4 py-3 text-sm">
                       <span className="font-medium text-charcoal">
-                        {item.product} <span className="text-charcoal/55">({item.nutrient})</span>
+                        {item.product} <span className="text-charcoal/55">({te ? (NUTRIENT_TE[item.nutrient] ?? item.nutrient) : item.nutrient})</span>
                       </span>
                       <span className="font-semibold text-charcoal">
-                        {item.quantity} {item.unit} per {fert.area} {fert.area_unit}
+                        {item.quantity} {item.unit} {te ? `${fert.area} ఎకరాకు` : `per ${fert.area} ${fert.area_unit}`}
                       </span>
                     </li>
                   ))}
@@ -285,8 +330,12 @@ export default function MyCropPage() {
             ) : (
               <p className="mt-3 text-sm text-charcoal/70">
                 {BACKEND_CONFIGURED
-                  ? "No fertilizer plan could be loaded for this crop."
-                  : "Connect the backend to see the general-reference fertilizer plan for this crop."}
+                  ? te
+                    ? "ఈ పంటకు ఎరువుల ప్రణాళిక లోడ్ చేయలేకపోయాము."
+                    : "No fertilizer plan could be loaded for this crop."
+                  : te
+                    ? "ఈ పంటకు సాధారణ-సూచన ఎరువుల ప్రణాళికను చూడటానికి బ్యాకెండ్‌ను కనెక్ట్ చేయండి."
+                    : "Connect the backend to see the general-reference fertilizer plan for this crop."}
               </p>
             )}
           </section>
@@ -296,12 +345,14 @@ export default function MyCropPage() {
             <section aria-labelledby="schedule-heading" className="rounded-2xl border border-sage bg-white p-5 sm:p-6">
               <h2 id="schedule-heading" className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal">
                 <CalendarDays className="size-5 text-forest" aria-hidden />
-                When to apply nitrogen — stage plan
+                {te ? "నత్రజనిని ఎప్పుడు వేయాలి — దశ ప్రణాళిక" : "When to apply nitrogen — stage plan"}
               </h2>
               <p className="mt-3 text-sm text-charcoal/75">
-                {schedule.crop} · N dose {schedule.n_dose_kg_ha} kg/ha (general reference)
+                {schedule.crop} · {te ? `N మోతాదు ${schedule.n_dose_kg_ha} kg/ha (సాధారణ సూచన)` : `N dose ${schedule.n_dose_kg_ha} kg/ha (general reference)`}
                 {schedule.duration_days_min != null && schedule.duration_days_max != null
-                  ? ` · crop duration ${schedule.duration_days_min}–${schedule.duration_days_max} days (dataset window)`
+                  ? te
+                    ? ` · పంట వ్యవధి ${schedule.duration_days_min}–${schedule.duration_days_max} రోజులు (డేటాసెట్ విండో)`
+                    : ` · crop duration ${schedule.duration_days_min}–${schedule.duration_days_max} days (dataset window)`
                   : ""}
               </p>
               <ul className="mt-4 space-y-2">
@@ -309,8 +360,8 @@ export default function MyCropPage() {
                   <li key={split.stage} className="flex items-baseline justify-between gap-3 rounded-xl bg-ivory px-4 py-3 text-sm">
                     <span className="font-medium text-charcoal">{split.stage}</span>
                     <span className="text-charcoal/75">
-                      {split.n_pct !== null ? `${split.n_pct}% of N` : ""}
-                      {split.urea_kg_ha !== null ? ` · ${split.urea_kg_ha} kg/ha urea` : ""}
+                      {split.n_pct !== null ? `${split.n_pct}% ${te ? "N" : "of N"}` : ""}
+                      {split.urea_kg_ha !== null ? ` · ${split.urea_kg_ha} kg/ha ${te ? "యూరియా" : "urea"}` : ""}
                     </span>
                   </li>
                 ))}
@@ -318,7 +369,7 @@ export default function MyCropPage() {
               <p className="mt-4 text-xs leading-relaxed text-charcoal/55">{schedule.prototype_label}</p>
               {schedule.rain_advisory && (
                 <p className="mt-2 text-xs leading-relaxed text-charcoal/55">
-                  Rain advisory: {schedule.rain_advisory.text}
+                  {te ? "వర్ష సూచన:" : "Rain advisory:"} {schedule.rain_advisory.text}
                 </p>
               )}
             </section>

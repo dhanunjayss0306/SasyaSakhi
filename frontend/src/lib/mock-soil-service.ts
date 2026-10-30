@@ -222,16 +222,19 @@ export async function extractFromFile(file: File | string): Promise<SoilReport> 
  * backend call. After validation passes, the review page awaits
  * confirmBackendReport() (best-effort, never blocking) before routing.
  */
-export function confirmValues(report: SoilReport): {
+export function confirmValues(report: SoilReport, lang: "en" | "te" = "en"): {
   ok: boolean;
   errors: string[];
 } {
+  const te = lang === "te";
   const errors: string[] = [];
   for (const p of report.parameters) {
     if (p.value === null || Number.isNaN(p.value))
-      errors.push(`${p.label} needs a value.`);
+      errors.push(
+        te ? `${p.labelTe} కు విలువ అవసరం.` : `${p.label} needs a value.`,
+      );
     if (p.key === "ph" && p.value !== null && (p.value < 0 || p.value > 14))
-      errors.push("pH must be between 0 and 14.");
+      errors.push(te ? "pH 0 మరియు 14 మధ్య ఉండాలి." : "pH must be between 0 and 14.");
   }
   return { ok: errors.length === 0, errors };
 }

@@ -15,15 +15,21 @@ import {
 } from "lucide-react";
 import { ReportUploader } from "@/components/soil/report-uploader";
 import { extractFromFile, processSampleReport } from "@/lib/mock-soil-service";
-import { store } from "@/lib/store";
+import { store, useStoredLang } from "@/lib/store";
 
-const STEPS = ["Reading file…", "Running OCR…", "Extracting values…"];
+const STEPS = [
+  { en: "Reading file…", te: "ఫైల్ చదువుతున్నాము…" },
+  { en: "Running OCR…", te: "OCR నడుస్తోంది…" },
+  { en: "Extracting values…", te: "విలువలు సంగ్రహిస్తున్నాము…" },
+];
 
 type Phase = "idle" | "processing" | "error";
 type Method = "choose" | "upload";
 
 export default function SoilReportPage() {
   const router = useRouter();
+  const lang = useStoredLang();
+  const te = lang === "te";
   const [phase, setPhase] = useState<Phase>("idle");
   const [activeStep, setActiveStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -78,8 +84,12 @@ export default function SoilReportPage() {
     } catch (e) {
       setError(
         e instanceof Error
-          ? `Could not process the report: ${e.message}`
-          : "Could not process the report. Please try again."
+          ? te
+            ? `నివేదికను ప్రాసెస్ చేయలేకపోయాము: ${e.message}`
+            : `Could not process the report: ${e.message}`
+          : te
+            ? "నివేదికను ప్రాసెస్ చేయలేకపోయాము. దయచేసి మళ్ళీ ప్రయత్నించండి."
+            : "Could not process the report. Please try again."
       );
       setPhase("error");
     }
@@ -101,20 +111,31 @@ export default function SoilReportPage() {
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
       <header className="mb-8">
         <h1 className="font-display text-3xl font-semibold text-charcoal">
-          {method === "choose" ? "Share Your Soil Details" : "Upload Soil Report"}
+          {method === "choose"
+            ? te
+              ? "మీ నేల వివరాలను పంచుకోండి"
+              : "Share Your Soil Details"
+            : te
+              ? "నేల నివేదిక అప్‌లోడ్ చేయండి"
+              : "Upload Soil Report"}
         </h1>
         <p className="mt-2 text-sm text-charcoal/70">
           {method === "choose"
-            ? "Pick how you want to share soil details. Every option leads into the same review and analysis flow."
-            : "Upload your lab soil report as a PDF or photo. Our demo OCR reads the key values so you can confirm them before analysis."}
+            ? te
+              ? "మీ నేల వివరాలను ఎలా పంచుకోవాలనుకుంటున్నారో ఎంచుకోండి. ప్రతి ఎంపిక ఒకే సమీక్ష మరియు విశ్లేషణ ప్రవాహానికి దారితీస్తుంది."
+              : "Pick how you want to share soil details. Every option leads into the same review and analysis flow."
+            : te
+              ? "మీ ల్యాబ్ నేల నివేదికను PDF లేదా ఫోటోగా అప్‌లోడ్ చేయండి. మా డెమో OCR ముఖ్య విలువలను చదువుతుంది, కాబట్టి విశ్లేషణకు ముందు మీరు వాటిని నిర్ధారించవచ్చు."
+              : "Upload your lab soil report as a PDF or photo. Our demo OCR reads the key values so you can confirm them before analysis."}
         </p>
       </header>
 
       {method === "choose" && phase !== "processing" ? (
         <div className="space-y-3">
           <p className="text-sm text-charcoal/70">
-            Pick how you want to share soil details. Every option leads into
-            the same review and analysis flow.
+            {te
+              ? "మీ నేల వివరాలను ఎలా పంచుకోవాలనుకుంటున్నారో ఎంచుకోండి. ప్రతి ఎంపిక ఒకే సమీక్ష మరియు విశ్లేషణ ప్రవాహానికి దారితీస్తుంది."
+              : "Pick how you want to share soil details. Every option leads into the same review and analysis flow."}
           </p>
           <button
             type="button"
@@ -123,9 +144,11 @@ export default function SoilReportPage() {
           >
             <FileText className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
             <span>
-              <span className="block font-semibold text-charcoal">Upload soil report</span>
+              <span className="block font-semibold text-charcoal">{te ? "నేల నివేదిక అప్‌లోడ్ చేయండి" : "Upload soil report"}</span>
               <span className="mt-0.5 block text-sm text-charcoal/70">
-                PDF or photo of your lab report. The app reads the values.
+                {te
+                  ? "మీ ల్యాబ్ నివేదిక PDF లేదా ఫోటో. యాప్ విలువలను చదువుతుంది."
+                  : "PDF or photo of your lab report. The app reads the values."}
               </span>
             </span>
           </button>
@@ -135,11 +158,11 @@ export default function SoilReportPage() {
           >
             <Satellite className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
             <span>
-              <span className="block font-semibold text-charcoal">Satellite</span>
+              <span className="block font-semibold text-charcoal">{te ? "ఉపగ్రహం" : "Satellite"}</span>
               <span className="mt-0.5 block text-sm text-charcoal/70">
-                Soil estimates by field location from satellite data. Only
-                some values are available, and they are modelled estimates,
-                never a lab test.
+                {te
+                  ? "ఉపగ్రహ డేటా నుండి పొలం స్థానం ద్వారా నేల అంచనాలు. కొన్ని విలువలు మాత్రమే అందుబాటులో ఉన్నాయి, మరియు అవి నమూనా అంచనాలు, ఎప్పుడూ ల్యాబ్ పరీక్ష కాదు."
+                  : "Soil estimates by field location from satellite data. Only some values are available, and they are modelled estimates, never a lab test."}
               </span>
             </span>
           </Link>
@@ -149,9 +172,11 @@ export default function SoilReportPage() {
           >
             <FlaskConical className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
             <span>
-              <span className="block font-semibold text-charcoal">Physical test</span>
+              <span className="block font-semibold text-charcoal">{te ? "భౌతిక పరీక్ష" : "Physical test"}</span>
               <span className="mt-0.5 block text-sm text-charcoal/70">
-                You already have a physical lab test. Type its values by hand.
+                {te
+                  ? "మీ వద్ద ఇప్పటికే భౌతిక ల్యాబ్ పరీక్ష ఉంది. దాని విలువలను చేతితో టైప్ చేయండి."
+                  : "You already have a physical lab test. Type its values by hand."}
               </span>
             </span>
           </Link>
@@ -161,11 +186,11 @@ export default function SoilReportPage() {
           >
             <Camera className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
             <span>
-              <span className="block font-semibold text-charcoal">Soil photo</span>
+              <span className="block font-semibold text-charcoal">{te ? "నేల ఫోటో" : "Soil photo"}</span>
               <span className="mt-0.5 block text-sm text-charcoal/70">
-                Take a photo of your soil and attach it. Only a rough
-                organic-carbon hint carries over; the rest stays blank
-                to fill from a lab test.
+                {te
+                  ? "మీ నేల ఫోటో తీసి జతచేయండి. కేవలం సుమారు సేంద్రీయ కార్బన్ సూచన మాత్రమే వస్తుంది; మిగిలినవి ల్యాబ్ పరీక్ష నుండి నింపడానికి ఖాళీగా ఉంటాయి."
+                  : "Take a photo of your soil and attach it. Only a rough organic-carbon hint carries over; the rest stays blank to fill from a lab test."}
               </span>
             </span>
           </Link>
@@ -179,12 +204,12 @@ export default function SoilReportPage() {
           <div className="flex flex-col items-center gap-4 text-center">
             <Loader2 className="h-10 w-10 animate-spin text-forest" aria-hidden="true" />
             <h2 className="font-display text-xl font-semibold text-charcoal">
-              Reading your report
+              {te ? "మీ నివేదికను చదువుతున్నాము" : "Reading your report"}
             </h2>
           </div>
           <ol className="mx-auto mt-6 max-w-xs space-y-3">
             {STEPS.map((step, i) => (
-              <li key={step} className="flex items-center gap-3">
+              <li key={step.en} className="flex items-center gap-3">
                 {i < activeStep ? (
                   <CheckCircle2 className="h-5 w-5 shrink-0 text-leaf" aria-hidden="true" />
                 ) : (
@@ -200,7 +225,7 @@ export default function SoilReportPage() {
                     i <= activeStep ? "font-medium text-charcoal" : "text-charcoal/50"
                   }`}
                 >
-                  {step}
+                  {te ? step.te : step.en}
                 </span>
               </li>
             ))}
@@ -225,7 +250,7 @@ export default function SoilReportPage() {
               className="inline-flex items-center gap-1.5 rounded-full border border-sage bg-white px-4 py-2 text-sm font-semibold text-charcoal hover:bg-sage/60"
             >
               <ArrowLeft className="size-4" aria-hidden />
-              Back to upload
+              {te ? "అప్‌లోడ్‌కు వెనుకకు" : "Back to upload"}
             </button>
           </div>
         </div>
@@ -237,7 +262,7 @@ export default function SoilReportPage() {
             className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-sage bg-white px-4 py-2 text-sm font-semibold text-charcoal hover:bg-sage/60"
           >
             <ArrowLeft className="size-4" aria-hidden />
-            Back to options
+            {te ? "ఎంపికలకు వెనుకకు" : "Back to options"}
           </button>
           <ReportUploader onProcess={handleProcess} onSample={handleSample} />
         </>
@@ -256,7 +281,7 @@ export default function SoilReportPage() {
               onClick={() => setPhase("idle")}
               className="mt-1 text-sm font-medium text-forest underline underline-offset-2"
             >
-              Try again
+              {te ? "మళ్ళీ ప్రయత్నించండి" : "Try again"}
             </button>
           </div>
         </div>

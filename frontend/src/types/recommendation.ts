@@ -8,6 +8,7 @@ export interface FertilizerRec {
   unit: string;
   costPerAcre: number;
   note: string;
+  noteTe?: string;
   illustrative: true;
 }
 

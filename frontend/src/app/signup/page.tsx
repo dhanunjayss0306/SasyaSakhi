@@ -23,21 +23,23 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  const te = lang === "te";
+
   // Client-component pages can't export static metadata; set the tab title directly.
   useEffect(() => {
-    document.title = "Create account · SasyaSakhi";
-  }, []);
+    document.title = te ? "ఖాతా సృష్టించండి · SasyaSakhi" : "Create account · SasyaSakhi";
+  }, [te]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 
     if (password !== confirm) {
-      setError("Passwords do not match.");
+      setError(te ? "పాస్‌వర్డ్‌లు సరిపోలలేదు." : "Passwords do not match.");
       return;
     }
     if (!terms) {
-      setError("Please accept the terms to create your demo account.");
+      setError(te ? "మీ డెమో ఖాతాను సృష్టించడానికి దయచేసి నిబంధనలను అంగీకరించండి." : "Please accept the terms to create your demo account.");
       return;
     }
 
@@ -45,7 +47,7 @@ export default function SignUpPage() {
     try {
       const result = await mockSignUp(name.trim(), email.trim(), password);
       if (!result.ok || !result.user) {
-        setError(result.error ?? "Sign up failed. Please try again.");
+        setError(result.error ?? (te ? "సైన్ అప్ విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి." : "Sign up failed. Please try again."));
         return;
       }
       store.setUser(result.user);
@@ -75,25 +77,25 @@ export default function SignUpPage() {
 
         <div className="rounded-3xl border border-sage bg-white p-6 shadow-xl shadow-forest/5 sm:p-8">
           <h1 className="font-display text-3xl font-semibold tracking-tight text-charcoal">
-            Create your account
+            {te ? "మీ ఖాతాను సృష్టించండి" : "Create your account"}
           </h1>
           <p className="mt-2 text-sm text-charcoal/60">
-            Prototype — no real account is created. Demo data only.
+            {te ? "నమూనా — నిజమైన ఖాతా సృష్టించబడదు. డెమో డేటా మాత్రమే." : "Prototype — no real account is created. Demo data only."}
           </p>
 
           {success ? (
             <div role="status" className="mt-6 flex flex-col items-center gap-3 py-8 text-center">
               <CheckCircle2 className="size-12 text-leaf" aria-hidden />
               <p className="font-display text-xl font-semibold text-charcoal">
-                Account created, {name.trim() || "farmer"}!
+                {te ? `ఖాతా సృష్టించబడింది, ${name.trim() || "రైతు"}!` : `Account created, ${name.trim() || "farmer"}!`}
               </p>
-              <p className="text-sm text-charcoal/60">Taking you to your dashboard…</p>
+              <p className="text-sm text-charcoal/60">{te ? "మిమ్మల్ని మీ డాష్‌బోర్డ్‌కు తీసుకువెళ్తున్నాము…" : "Taking you to your dashboard…"}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
               <div>
                 <label htmlFor="signup-name" className="mb-1.5 block text-sm font-medium text-charcoal">
-                  Full name
+                  {te ? "పూర్తి పేరు" : "Full name"}
                 </label>
                 <input
                   id="signup-name"
@@ -104,14 +106,14 @@ export default function SignUpPage() {
                   onChange={(e) => setName(e.target.value)}
                   aria-invalid={error ? true : undefined}
                   aria-describedby={error ? "signup-error" : undefined}
-                  placeholder="e.g. Ramesh Kumar"
+                  placeholder={te ? "ఉదా. రమేష్ కుమార్" : "e.g. Ramesh Kumar"}
                   className={inputClass}
                 />
               </div>
 
               <div>
                 <label htmlFor="signup-email" className="mb-1.5 block text-sm font-medium text-charcoal">
-                  Email
+                  {te ? "ఈమెయిల్" : "Email"}
                 </label>
                 <input
                   id="signup-email"
@@ -130,7 +132,7 @@ export default function SignUpPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="signup-password" className="mb-1.5 block text-sm font-medium text-charcoal">
-                    Password
+                    {te ? "పాస్‌వర్డ్" : "Password"}
                   </label>
                   <div className="relative">
                     <input
@@ -143,14 +145,14 @@ export default function SignUpPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       aria-invalid={error ? true : undefined}
                       aria-describedby={error ? "signup-error" : undefined}
-                      placeholder="Min. 6 characters"
+                      placeholder={te ? "కనీసం 6 అక్షరాలు" : "Min. 6 characters"}
                       className={`${inputClass} pr-11`}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword((v) => !v)}
                       aria-pressed={showPassword}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={showPassword ? (te ? "పాస్‌వర్డ్ దాచండి" : "Hide password") : te ? "పాస్‌వర్డ్ చూపండి" : "Show password"}
                       className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-charcoal/50 hover:text-charcoal"
                     >
                       {showPassword ? (
@@ -163,7 +165,7 @@ export default function SignUpPage() {
                 </div>
                 <div>
                   <label htmlFor="signup-confirm" className="mb-1.5 block text-sm font-medium text-charcoal">
-                    Confirm password
+                    {te ? "పాస్‌వర్డ్ నిర్ధారించండి" : "Confirm password"}
                   </label>
                   <input
                     id="signup-confirm"
@@ -174,7 +176,7 @@ export default function SignUpPage() {
                     onChange={(e) => setConfirm(e.target.value)}
                     aria-invalid={error ? true : undefined}
                     aria-describedby={error ? "signup-error" : undefined}
-                    placeholder="Repeat password"
+                    placeholder={te ? "పాస్‌వర్డ్ మళ్ళీ టైప్ చేయండి" : "Repeat password"}
                     className={inputClass}
                   />
                 </div>
@@ -183,7 +185,7 @@ export default function SignUpPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="signup-farm" className="mb-1.5 block text-sm font-medium text-charcoal">
-                    Farm name <span className="font-normal text-charcoal/50">(optional)</span>
+                    {te ? "పొలం పేరు" : "Farm name"} <span className="font-normal text-charcoal/50">{te ? "(ఐచ్ఛికం)" : "(optional)"}</span>
                   </label>
                   <input
                     id="signup-farm"
@@ -191,13 +193,13 @@ export default function SignUpPage() {
                     autoComplete="off"
                     value={farmName}
                     onChange={(e) => setFarmName(e.target.value)}
-                    placeholder="e.g. Green Acres"
+                    placeholder={te ? "ఉదా. గ్రీన్ ఎకర్స్" : "e.g. Green Acres"}
                     className={inputClass}
                   />
                 </div>
                 <div>
                   <label htmlFor="signup-district" className="mb-1.5 block text-sm font-medium text-charcoal">
-                    District <span className="font-normal text-charcoal/50">(optional)</span>
+                    {te ? "జిల్లా" : "District"} <span className="font-normal text-charcoal/50">{te ? "(ఐచ్ఛికం)" : "(optional)"}</span>
                   </label>
                   <input
                     id="signup-district"
@@ -205,7 +207,7 @@ export default function SignUpPage() {
                     autoComplete="address-level2"
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
-                    placeholder="e.g. Visakhapatnam"
+                    placeholder={te ? "ఉదా. విశాఖపట్నం" : "e.g. Visakhapatnam"}
                     className={inputClass}
                   />
                 </div>
@@ -213,7 +215,7 @@ export default function SignUpPage() {
 
               <fieldset>
                 <legend className="mb-1.5 text-sm font-medium text-charcoal">
-                  Preferred language
+                  {te ? "ఇష్టమైన భాష" : "Preferred language"}
                 </legend>
                 <div className="flex gap-3">
                   {(
@@ -256,8 +258,9 @@ export default function SignUpPage() {
                   className="mt-0.5 size-4 rounded border-sage accent-[#123D2A]"
                 />
                 <span>
-                  I agree to the demo terms. I understand this is a prototype and no real
-                  account or data is stored.
+                  {te
+                    ? "నేను డెమో నిబంధనలకు అంగీకరిస్తున్నాను. ఇది నమూనా అని, నిజమైన ఖాతా లేదా డేటా నిల్వ చేయబడదని నాకు తెలుసు."
+                    : "I agree to the demo terms. I understand this is a prototype and no real account or data is stored."}
                 </span>
               </label>
 
@@ -276,19 +279,19 @@ export default function SignUpPage() {
                 {loading ? (
                   <>
                     <Loader2 className="animate-spin" aria-hidden />
-                    Creating account…
+                    {te ? "ఖాతా సృష్టిస్తున్నాము…" : "Creating account…"}
                   </>
                 ) : (
-                  "Create account"
+                  te ? "ఖాతా సృష్టించండి" : "Create account"
                 )}
               </Button>
             </form>
           )}
 
           <p className="mt-6 text-center text-sm text-charcoal/60">
-            Already have an account?{" "}
+            {te ? "ఇప్పటికే ఖాతా ఉందా? " : "Already have an account? "}
             <Link href="/login" className="font-semibold text-forest hover:underline">
-              Sign in
+              {te ? "సైన్ ఇన్" : "Sign in"}
             </Link>
           </p>
         </div>

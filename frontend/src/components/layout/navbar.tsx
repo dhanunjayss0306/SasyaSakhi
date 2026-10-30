@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils";
 import { store, useStoredLang } from "@/lib/store";
 
 const NAV_LINKS = [
-  { href: "#top", label: "Home" },
-  { href: "#features", label: "Features" },
-  { href: "#how-it-works", label: "How It Works" },
-  { href: "#crops", label: "Crops" },
-  { href: "#about", label: "About" },
+  { href: "#top", label: "Home", labelTe: "హోమ్" },
+  { href: "#features", label: "Features", labelTe: "ఫీచర్లు" },
+  { href: "#how-it-works", label: "How It Works", labelTe: "ఎలా పనిచేస్తుంది" },
+  { href: "#crops", label: "Crops", labelTe: "పంటలు" },
+  { href: "#about", label: "About", labelTe: "గురించి" },
 ];
 
 type Lang = "en" | "te";
@@ -53,6 +53,7 @@ function LanguageSelector({ onSelect }: { onSelect?: () => void }) {
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const lang = useStoredLang();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-charcoal/10 bg-cream">
@@ -80,7 +81,7 @@ export function Navbar() {
                 href={link.href}
                 className="rounded-full px-4 py-2 text-sm font-medium text-charcoal/80 transition-colors hover:bg-forest/5 hover:text-charcoal"
               >
-                {link.label}
+                {lang === "te" ? link.labelTe : link.label}
               </a>
             </li>
           ))}
@@ -99,7 +100,7 @@ export function Navbar() {
               }),
             )}
           >
-            Sign In
+            {lang === "te" ? "సైన్ ఇన్" : "Sign In"}
           </Link>
           <Link
             href="/signup"
@@ -110,7 +111,7 @@ export function Navbar() {
               }),
             )}
           >
-            Get Started
+            {lang === "te" ? "ప్రారంభించండి" : "Get Started"}
           </Link>
         </div>
 
@@ -144,7 +145,7 @@ export function Navbar() {
                   onClick={() => setOpen(false)}
                   className="block rounded-xl px-3 py-3 text-base font-medium text-charcoal/90 transition-colors hover:bg-forest/5"
                 >
-                  {link.label}
+                  {lang === "te" ? link.labelTe : link.label}
                 </a>
               </li>
             ))}
@@ -161,7 +162,7 @@ export function Navbar() {
                 }),
               )}
             >
-              Sign In
+              {lang === "te" ? "సైన్ ఇన్" : "Sign In"}
             </Link>
             <Link
               href="/signup"
@@ -172,7 +173,7 @@ export function Navbar() {
                 }),
               )}
             >
-              Get Started
+              {lang === "te" ? "ప్రారంభించండి" : "Get Started"}
             </Link>
           </div>
         </div>

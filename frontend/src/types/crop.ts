@@ -10,4 +10,5 @@ export interface Crop {
   season: string;
   waterNeed: "Low" | "Medium" | "High";
   soilFactors: string[];
+  soilFactorsTe?: string[];
 }

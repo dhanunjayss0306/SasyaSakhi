@@ -8,6 +8,7 @@ import {
   CardItem,
 } from "@/components/ui/3d-card";
 import { cn } from "@/lib/utils";
+import { useStoredLang } from "@/lib/store";
 
 type CropKey = "paddy" | "cotton" | "chilli";
 
@@ -16,12 +17,12 @@ const CROPS: {
   name: string;
   telugu: string;
   score: number;
-  tagline: string;
+  tagline: { en: string; te: string };
   demo: {
-    ph: string;
+    ph: { en: string; te: string };
     temperature: string;
-    water: string;
-    note: string;
+    water: { en: string; te: string };
+    note: { en: string; te: string };
   };
 }[] = [
   {
@@ -29,12 +30,18 @@ const CROPS: {
     name: "Paddy",
     telugu: "వరి",
     score: 92,
-    tagline: "Thrives in the slightly acidic loams of the Godavari delta.",
+    tagline: {
+      en: "Thrives in the slightly acidic loams of the Godavari delta.",
+      te: "గోదావరి డెల్టా యొక్క కొద్దిగా ఆమ్ల లోమ్‌లలో బాగా పెరుగుతుంది.",
+    },
     demo: {
-      ph: "5.5 – 6.5 ideal",
+      ph: { en: "5.5 – 6.5 ideal", te: "5.5 – 6.5 ఆదర్శం" },
       temperature: "25–35°C",
-      water: "High — standing water",
-      note: "Demo: sample soil (pH 6.1, clay loam) matches paddy closely; nitrogen top-up recommended at tillering.",
+      water: { en: "High — standing water", te: "ఎక్కువ — నిల్వ నీరు" },
+      note: {
+        en: "Demo: sample soil (pH 6.1, clay loam) matches paddy closely; nitrogen top-up recommended at tillering.",
+        te: "డెమో: నమూనా నేల (pH 6.1, క్లే లోమ్) వరికి దగ్గరగా సరిపోతుంది; టిల్లరింగ్ దశలో నత్రజని అదనంగా సిఫార్సు చేయబడింది.",
+      },
     },
   },
   {
@@ -42,12 +49,18 @@ const CROPS: {
     name: "Cotton",
     telugu: "పత్తి",
     score: 78,
-    tagline: "A strong fit for deep black soils with good drainage.",
+    tagline: {
+      en: "A strong fit for deep black soils with good drainage.",
+      te: "మంచి నీటి పారుదల ఉన్న లోతైన నల్ల నేలలకు బాగా సరిపోతుంది.",
+    },
     demo: {
-      ph: "6.0 – 7.5 ideal",
+      ph: { en: "6.0 – 7.5 ideal", te: "6.0 – 7.5 ఆదర్శం" },
       temperature: "20–30°C",
-      water: "Moderate — rainfed OK",
-      note: "Demo: sample soil is a partial match; potash is the limiting factor for boll development.",
+      water: { en: "Moderate — rainfed OK", te: "మధ్యస్థం — వర్షాధారం సరిపోతుంది" },
+      note: {
+        en: "Demo: sample soil is a partial match; potash is the limiting factor for boll development.",
+        te: "డెమో: నమూనా నేల పాక్షిక సరిపోలిక; కాయ అభివృద్ధికి పొటాష్ పరిమితం చేసే అంశం.",
+      },
     },
   },
   {
@@ -55,12 +68,18 @@ const CROPS: {
     name: "Chilli",
     telugu: "మిరప",
     score: 85,
-    tagline: "Loves warm, well-drained soils — a Guntur-region classic.",
+    tagline: {
+      en: "Loves warm, well-drained soils — a Guntur-region classic.",
+      te: "వెచ్చని, బాగా నీరు పారే నేలలు ఇష్టం — గుంటూరు ప్రాంత ప్రత్యేకత.",
+    },
     demo: {
-      ph: "6.0 – 7.0 ideal",
+      ph: { en: "6.0 – 7.0 ideal", te: "6.0 – 7.0 ఆదర్శం" },
       temperature: "20–32°C",
-      water: "Moderate — avoid waterlogging",
-      note: "Demo: sample soil suits chilli well; ensure drainage before the monsoon flush.",
+      water: { en: "Moderate — avoid waterlogging", te: "మధ్యస్థం — నీరు నిల్వ ఉండకుండా చూడండి" },
+      note: {
+        en: "Demo: sample soil suits chilli well; ensure drainage before the monsoon flush.",
+        te: "డెమో: నమూనా నేల మిరపకు బాగా సరిపోతుంది; రుతుపవనాల ముందు నీటి పారుదల ఉండేలా చూసుకోండి.",
+      },
     },
   },
 ];
@@ -120,23 +139,26 @@ function CropArt({ crop }: { crop: CropKey }) {
 export function CropShowcase() {
   const [selected, setSelected] = useState<CropKey | null>(null);
   const active = CROPS.find((c) => c.key === selected) ?? null;
+  const lang = useStoredLang();
+  const te = lang === "te";
 
   return (
     <section id="crops" aria-labelledby="crops-heading" className="bg-cream py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-widest text-forest">
-            Crop showcase
+            {te ? "పంట ప్రదర్శన" : "Crop showcase"}
           </p>
           <h2
             id="crops-heading"
             className="mt-3 font-display text-4xl font-semibold tracking-tight text-charcoal text-balance sm:text-5xl"
           >
-            Three crops, scored against your soil
+            {te ? "మూడు పంటలు, మీ నేలకు స్కోర్ చేయబడ్డాయి" : "Three crops, scored against your soil"}
           </h2>
           <p className="mt-4 text-lg leading-relaxed text-charcoal/70">
-            Select a card to see sample suitability details. Scores below are
-            demo values.
+            {te
+              ? "నమూనా అనుకూలత వివరాలను చూడటానికి ఒక కార్డును ఎంచుకోండి. కింద స్కోర్‌లు డెమో విలువలు."
+              : "Select a card to see sample suitability details. Scores below are demo values."}
           </p>
         </div>
 
@@ -153,20 +175,20 @@ export function CropShowcase() {
                 </CardItem>
                 <CardItem translateZ={20} className="mt-4">
                   <h3 className="font-display text-2xl font-semibold text-charcoal">
-                    {crop.name}
+                    {te ? crop.telugu : crop.name}
                     <span className="ml-2 text-base font-normal text-charcoal/50">
-                      {crop.telugu}
+                      {te ? crop.name : crop.telugu}
                     </span>
                   </h3>
                 </CardItem>
                 <CardItem translateZ={10} className="mt-2">
                   <p className="text-sm leading-relaxed text-charcoal/65">
-                    {crop.tagline}
+                    {te ? crop.tagline.te : crop.tagline.en}
                   </p>
                 </CardItem>
                 <CardItem translateZ={20} className="mt-5 w-full">
                   <div className="flex items-baseline justify-between text-sm">
-                    <span className="font-medium text-charcoal/70">Suitability</span>
+                    <span className="font-medium text-charcoal/70">{te ? "అనుకూలత" : "Suitability"}</span>
                     <span className="font-display text-3xl font-semibold text-forest">
                       {crop.score}%
                     </span>
@@ -195,7 +217,9 @@ export function CropShowcase() {
                         : "bg-forest text-ivory hover:bg-pine",
                     )}
                   >
-                    {selected === crop.key ? "Hide details" : "View suitability"}
+                    {selected === crop.key
+                      ? te ? "వివరాలు దాచండి" : "Hide details"
+                      : te ? "అనుకూలత చూడండి" : "View suitability"}
                   </button>
                 </CardItem>
               </CardBody>
@@ -214,23 +238,23 @@ export function CropShowcase() {
           {active && (
             <div>
               <p className="flex items-center justify-between text-xs font-semibold uppercase tracking-widest text-leaf">
-                Soil suitability — {active.name}
+                {te ? "నేల అనుకూలత" : "Soil suitability"} — {te ? active.telugu : active.name}
                 <span className="rounded-full bg-gold/20 px-3 py-1 normal-case tracking-normal text-charcoal/70">
-                  Demo data
+                  {te ? "డెమో డేటా" : "Demo data"}
                 </span>
               </p>
               <div className="mt-5 grid gap-4">
                 <div className="rounded-2xl bg-ivory p-4">
                   <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/50">
-                    <Droplets className="size-4" aria-hidden /> Soil pH
+                    <Droplets className="size-4" aria-hidden /> {te ? "నేల pH" : "Soil pH"}
                   </p>
                   <p className="mt-2 font-display text-xl font-semibold text-charcoal">
-                    {active.demo.ph}
+                    {te ? active.demo.ph.te : active.demo.ph.en}
                   </p>
                 </div>
                 <div className="rounded-2xl bg-ivory p-4">
                   <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/50">
-                    <Thermometer className="size-4" aria-hidden /> Temperature
+                    <Thermometer className="size-4" aria-hidden /> {te ? "ఉష్ణోగ్రత" : "Temperature"}
                   </p>
                   <p className="mt-2 font-display text-xl font-semibold text-charcoal">
                     {active.demo.temperature}
@@ -238,15 +262,15 @@ export function CropShowcase() {
                 </div>
                 <div className="rounded-2xl bg-ivory p-4">
                   <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/50">
-                    <Sun className="size-4" aria-hidden /> Water need
+                    <Sun className="size-4" aria-hidden /> {te ? "నీటి అవసరం" : "Water need"}
                   </p>
                   <p className="mt-2 font-display text-xl font-semibold text-charcoal">
-                    {active.demo.water}
+                    {te ? active.demo.water.te : active.demo.water.en}
                   </p>
                 </div>
               </div>
               <p className="mt-5 text-sm leading-relaxed text-charcoal/70">
-                {active.demo.note}
+                {te ? active.demo.note.te : active.demo.note.en}
               </p>
             </div>
           )}

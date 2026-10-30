@@ -9,12 +9,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { SatelliteCheck } from "@/components/soil/satellite-check";
 import { Droplets } from "lucide-react";
+import { useStoredLang } from "@/lib/store";
 
 /** Zone + water lookup: district -> agro-climatic zone, water, crops.
  *  Zone survey data (IMD/CGWB/ICAR), not satellite imagery and not lab
  *  soil values — the card says so every time. */
 
 export default function ZoneWaterPage() {
+  const lang = useStoredLang();
+  const te = lang === "te";
   const [district, setDistrict] = useState("");
   const [phase, setPhase] = useState<"idle" | "loading" | "done">("idle");
   const [zone, setZone] = useState<ZoneInfo | null>(null);
@@ -33,14 +36,14 @@ export default function ZoneWaterPage() {
       if (res.found && res.zone) {
         setZone(res.zone);
       } else if (res.matches && res.matches.length > 1) {
-        setMessage("More than one zone mentions this district — pick a zone:");
+        setMessage(te ? "ఈ జిల్లాను ఒకటి కంటే ఎక్కువ జోన్‌లు పేర్కొంటున్నాయి — ఒక జోన్‌ను ఎంచుకోండి:" : "More than one zone mentions this district — pick a zone:");
         setCandidates(res.matches.map((m) => m.zone_name));
       } else {
-        setMessage(res.message ?? "No zone found for this district.");
+        setMessage(res.message ?? (te ? "ఈ జిల్లాకు జోన్ కనుగొనబడలేదు." : "No zone found for this district."));
         setCandidates(res.candidates ?? []);
       }
     } catch {
-      setMessage("Zone lookup is unavailable — is the backend running?");
+      setMessage(te ? "జోన్ వెతకడం అందుబాటులో లేదు — బ్యాకెండ్ నడుస్తుందా?" : "Zone lookup is unavailable — is the backend running?");
     } finally {
       setPhase("done");
     }
@@ -49,19 +52,19 @@ export default function ZoneWaterPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
       <h1 className="font-display text-3xl font-semibold text-charcoal">
-        Zone &amp; water
+        {te ? "జోన్ & నీరు" : "Zone & water"}
       </h1>
       <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
-        Type your district to see its agro-climatic zone, seasonal water
-        availability, groundwater stage, and water-tier crop suggestions.
-        This is zone survey data (IMD rainfall 2011-2025, CGWB groundwater),
-        not satellite imagery and not lab soil values.
+        {te
+          ? "మీ జిల్లాను టైప్ చేసి దాని వ్యవసాయ-వాతావరణ జోన్, సీజనల్ నీటి లభ్యత, భూగర్భజల స్థాయి మరియు నీటి-స్థాయి పంట సూచనలను చూడండి. ఇది జోన్ సర్వే డేటా (IMD వర్షపాతం 2011-2025, CGWB భూగర్భజలం), ఉపగ్రహ చిత్రాలు కాదు మరియు ల్యాబ్ నేల విలువలు కాదు."
+          : "Type your district to see its agro-climatic zone, seasonal water availability, groundwater stage, and water-tier crop suggestions. This is zone survey data (IMD rainfall 2011-2025, CGWB groundwater), not satellite imagery and not lab soil values."}
       </p>
 
       {!BACKEND_CONFIGURED && (
         <p className="mt-4 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm text-charcoal/75">
-          Demo mode: the backend is not connected, so zone lookup needs
-          NEXT_PUBLIC_API_URL set in frontend/.env.local and the backend running.
+          {te
+            ? "డెమో మోడ్: బ్యాకెండ్ కనెక్ట్ చేయబడలేదు, కాబట్టి జోన్ వెతకడానికి frontend/.env.localలో NEXT_PUBLIC_API_URL సెట్ చేసి బ్యాకెండ్ నడుస్తుండాలి."
+            : "Demo mode: the backend is not connected, so zone lookup needs NEXT_PUBLIC_API_URL set in frontend/.env.local and the backend running."}
         </p>
       )}
 
@@ -76,12 +79,12 @@ export default function ZoneWaterPage() {
           type="text"
           value={district}
           onChange={(e) => setDistrict(e.target.value)}
-          placeholder="District, e.g. Visakhapatnam"
-          aria-label="District"
+          placeholder={te ? "జిల్లా, ఉదా. విశాఖపట్నం" : "District, e.g. Visakhapatnam"}
+          aria-label={te ? "జిల్లా" : "District"}
           className="min-w-0 flex-1 rounded-xl border border-sage bg-white px-4 py-2.5 text-sm text-charcoal outline-none focus:border-forest"
         />
         <Button type="submit" disabled={phase === "loading" || !district.trim()}>
-          {phase === "loading" ? "Searching…" : "Find my zone"}
+          {phase === "loading" ? (te ? "వెతుకుతున్నాము…" : "Searching…") : te ? "నా జోన్ కనుగొనండి" : "Find my zone"}
         </Button>
       </form>
 
@@ -119,20 +122,20 @@ export default function ZoneWaterPage() {
                 {zone.zone_name}
               </h2>
               <p className="text-sm text-charcoal/60">
-                {zone.zone_id} · {zone.state} · Districts: {zone.districts}
+                {zone.zone_id} · {zone.state} · {te ? "జిల్లాలు:" : "Districts:"} {zone.districts}
               </p>
             </div>
           </div>
           <dl className="mt-5 grid gap-3 sm:grid-cols-2">
             <div className="rounded-xl bg-ivory p-4">
               <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                Dominant soil
+                {te ? "ప్రధాన నేల" : "Dominant soil"}
               </dt>
               <dd className="mt-1 text-sm font-medium text-charcoal">{zone.dominant_soil}</dd>
             </div>
             <div className="rounded-xl bg-ivory p-4">
               <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                Annual water available
+                {te ? "వార్షిక నీరు అందుబాటులో" : "Annual water available"}
               </dt>
               <dd className="mt-1 text-sm font-medium text-charcoal">
                 {zone.overall_water_mm !== null ? `${zone.overall_water_mm} mm` : "—"}
@@ -140,7 +143,7 @@ export default function ZoneWaterPage() {
             </div>
             <div className="rounded-xl bg-ivory p-4">
               <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                Avg rainfall (2011-2025)
+                {te ? "సగటు వర్షపాతం (2011-2025)" : "Avg rainfall (2011-2025)"}
               </dt>
               <dd className="mt-1 text-sm font-medium text-charcoal">
                 {zone.avg_rainfall_mm !== null ? `${zone.avg_rainfall_mm} mm` : "—"}
@@ -148,7 +151,7 @@ export default function ZoneWaterPage() {
             </div>
             <div className="rounded-xl bg-ivory p-4">
               <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                Groundwater stage
+                {te ? "భూగర్భజల స్థాయి" : "Groundwater stage"}
               </dt>
               <dd className="mt-1 text-sm font-medium text-charcoal">
                 {zone.groundwater_stage_pct !== null ? `${zone.groundwater_stage_pct}%` : "—"} ·{" "}
@@ -157,7 +160,7 @@ export default function ZoneWaterPage() {
             </div>
             <div className="rounded-xl bg-ivory p-4">
               <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                Kharif / Rabi water
+                {te ? "ఖరీఫ్ / రబీ నీరు" : "Kharif / Rabi water"}
               </dt>
               <dd className="mt-1 text-sm font-medium text-charcoal">
                 {zone.kharif_water_mm !== null ? `${zone.kharif_water_mm} mm` : "—"} /{" "}
@@ -166,7 +169,7 @@ export default function ZoneWaterPage() {
             </div>
             <div className="rounded-xl bg-ivory p-4">
               <dt className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                Recommended irrigation
+                {te ? "సిఫార్సు చేయబడిన నీటిపారుదల" : "Recommended irrigation"}
               </dt>
               <dd className="mt-1 text-sm font-medium text-charcoal">
                 {zone.recommended_irrigation}
@@ -175,15 +178,15 @@ export default function ZoneWaterPage() {
           </dl>
           <div className="mt-5 space-y-3 text-sm leading-relaxed text-charcoal/75">
             <p>
-              <span className="font-semibold text-charcoal">Kharif crops: </span>
+              <span className="font-semibold text-charcoal">{te ? "ఖరీఫ్ పంటలు: " : "Kharif crops: "}</span>
               {zone.suggested_kharif_crops}
             </p>
             <p>
-              <span className="font-semibold text-charcoal">Rabi crops: </span>
+              <span className="font-semibold text-charcoal">{te ? "రబీ పంటలు: " : "Rabi crops: "}</span>
               {zone.suggested_rabi_crops}
             </p>
             <p>
-              <span className="font-semibold text-charcoal">Low-water options: </span>
+              <span className="font-semibold text-charcoal">{te ? "తక్కువ నీటి ఎంపికలు: " : "Low-water options: "}</span>
               {zone.suggested_low_water_crops}
             </p>
           </div>

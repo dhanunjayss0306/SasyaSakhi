@@ -6,15 +6,15 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { mockSignIn } from "@/lib/mock-auth";
-import { store } from "@/lib/store";
+import { store, useStoredLang } from "@/lib/store";
 
 /** Inline SVG farmland illustration for the auth panel. */
-function FarmlandArt() {
+function FarmlandArt({ te }: { te: boolean }) {
   return (
     <svg
       viewBox="0 0 400 300"
       role="img"
-      aria-label="Illustration of green farmland at sunset"
+      aria-label={te ? "సూర్యాస్తమయం వద్ద పచ్చని పొలం చిత్రం" : "Illustration of green farmland at sunset"}
       className="h-auto w-full"
     >
       <defs>
@@ -85,6 +85,8 @@ function FarmlandArt() {
 
 export default function LoginPage() {
   const router = useRouter();
+  const lang = useStoredLang();
+  const te = lang === "te";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -95,8 +97,8 @@ export default function LoginPage() {
 
   // Client-component pages can't export static metadata; set the tab title directly.
   useEffect(() => {
-    document.title = "Sign in · SasyaSakhi";
-  }, []);
+    document.title = te ? "సైన్ ఇన్ · SasyaSakhi" : "Sign in · SasyaSakhi";
+  }, [te]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -105,7 +107,7 @@ export default function LoginPage() {
     try {
       const result = await mockSignIn(email.trim(), password);
       if (!result.ok || !result.user) {
-        setError(result.error ?? "Sign in failed. Please try again.");
+        setError(result.error ?? (te ? "సైన్ ఇన్ విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి." : "Sign in failed. Please try again."));
         return;
       }
       store.setUser(result.user);
@@ -137,15 +139,15 @@ export default function LoginPage() {
         </Link>
 
         <div className="relative">
-          <FarmlandArt />
+          <FarmlandArt te={te} />
         </div>
 
         <blockquote className="relative">
           <p className="font-display text-2xl font-medium leading-snug text-ivory">
-            “Know your soil, and it will tell you what to grow.”
+            {te ? "“మీ నేలను తెలుసుకోండి, అది ఏమి పండించాలో చెబుతుంది.”" : "“Know your soil, and it will tell you what to grow.”"}
           </p>
           <footer className="mt-3 text-sm text-ivory/60">
-            Soil health guidance for Indian farmers — in English and Telugu.
+            {te ? "భారతీయ రైతుల కోసం నేల ఆరోగ్య మార్గదర్శకత్వం — ఇంగ్లీష్ మరియు తెలుగులో." : "Soil health guidance for Indian farmers — in English and Telugu."}
           </footer>
         </blockquote>
       </div>
@@ -168,10 +170,10 @@ export default function LoginPage() {
 
           <div className="rounded-3xl border border-sage bg-white p-6 shadow-xl shadow-forest/5 sm:p-8">
             <h1 className="font-display text-3xl font-semibold tracking-tight text-charcoal">
-              Welcome back
+              {te ? "తిరిగి స్వాగతం" : "Welcome back"}
             </h1>
             <p className="mt-2 text-sm text-charcoal/60">
-              Sign in to continue to your farm dashboard.
+              {te ? "మీ పొలం డాష్‌బోర్డ్‌కు కొనసాగడానికి సైన్ ఇన్ చేయండి." : "Sign in to continue to your farm dashboard."}
             </p>
 
             <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
@@ -180,7 +182,7 @@ export default function LoginPage() {
                   htmlFor="login-email"
                   className="mb-1.5 block text-sm font-medium text-charcoal"
                 >
-                  Email
+                  {te ? "ఈమెయిల్" : "Email"}
                 </label>
                 <input
                   id="login-email"
@@ -201,7 +203,7 @@ export default function LoginPage() {
                   htmlFor="login-password"
                   className="mb-1.5 block text-sm font-medium text-charcoal"
                 >
-                  Password
+                  {te ? "పాస్‌వర్డ్" : "Password"}
                 </label>
                 <div className="relative">
                   <input
@@ -220,7 +222,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
                     aria-pressed={showPassword}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={showPassword ? (te ? "పాస్‌వర్డ్ దాచండి" : "Hide password") : te ? "పాస్‌వర్డ్ చూపండి" : "Show password"}
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-charcoal/50 hover:text-charcoal"
                   >
                     {showPassword ? (
@@ -241,20 +243,20 @@ export default function LoginPage() {
                     onChange={(e) => setRemember(e.target.checked)}
                     className="size-4 rounded border-sage accent-[#123D2A]"
                   />
-                  Remember me
+                  {te ? "నన్ను గుర్తుంచుకోండి" : "Remember me"}
                 </label>
                 <button
                   type="button"
                   onClick={() => setResetNotice(true)}
                   className="font-medium text-forest hover:underline"
                 >
-                  Forgot password?
+                  {te ? "పాస్‌వర్డ్ మర్చిపోయారా?" : "Forgot password?"}
                 </button>
               </div>
 
               {resetNotice && (
                 <p role="status" className="rounded-xl bg-sage/60 px-3.5 py-2.5 text-sm text-charcoal">
-                  Demo: password reset is not wired in the prototype.
+                  {te ? "డెమో: ఈ నమూనాలో పాస్‌వర్డ్ రీసెట్ కనెక్ట్ చేయబడలేదు." : "Demo: password reset is not wired in the prototype."}
                 </p>
               )}
 
@@ -273,17 +275,17 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="animate-spin" aria-hidden />
-                    Signing in…
+                    {te ? "సైన్ ఇన్ అవుతున్నాము…" : "Signing in…"}
                   </>
                 ) : (
-                  "Sign in"
+                  te ? "సైన్ ఇన్" : "Sign in"
                 )}
               </Button>
             </form>
 
             <div className="my-5 flex items-center gap-3" aria-hidden>
               <span className="h-px flex-1 bg-sage" />
-              <span className="text-xs uppercase tracking-wider text-charcoal/40">or</span>
+              <span className="text-xs uppercase tracking-wider text-charcoal/40">{te ? "లేదా" : "or"}</span>
               <span className="h-px flex-1 bg-sage" />
             </div>
 
@@ -292,7 +294,7 @@ export default function LoginPage() {
               variant="outline"
               size="lg"
               disabled
-              title="Google sign-in is not connected in this demo"
+              title={te ? "Google సైన్-ఇన్ ఈ డెమోలో కనెక్ట్ చేయబడలేదు" : "Google sign-in is not connected in this demo"}
               className="w-full cursor-not-allowed opacity-70"
             >
               <span
@@ -301,19 +303,19 @@ export default function LoginPage() {
               >
                 G
               </span>
-              Google sign-in (demo — not connected)
+              {te ? "Google సైన్-ఇన్ (డెమో — కనెక్ట్ చేయబడలేదు)" : "Google sign-in (demo — not connected)"}
             </Button>
 
             <p className="mt-6 text-center text-sm text-charcoal/60">
-              New to SasyaSakhi?{" "}
+              {te ? "SasyaSakhiకి కొత్తవారా? " : "New to SasyaSakhi? "}
               <Link href="/signup" className="font-semibold text-forest hover:underline">
-                Create account
+                {te ? "ఖాతా సృష్టించండి" : "Create account"}
               </Link>
             </p>
           </div>
 
           <p className="mt-4 text-center text-xs text-charcoal/50">
-            Demo prototype — no real credentials are stored or verified.
+            {te ? "డెమో నమూనా — నిజమైన ఆధారాలు నిల్వ చేయబడవు లేదా ధృవీకరించబడవు." : "Demo prototype — no real credentials are stored or verified."}
           </p>
         </div>
       </div>

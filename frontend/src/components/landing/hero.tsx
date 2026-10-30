@@ -5,37 +5,38 @@ import Link from "next/link";
 import { ArrowRight, ChevronDown, FlaskConical, Sprout, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useStoredLang } from "@/lib/store";
 
 /** The 7-step process, shown by the "How to Use This" guide. Same journey
  *  as the app itself: language first, soil report in, guidance out. */
-const HOW_TO_USE_STEPS: { title: string; detail: string }[] = [
+const HOW_TO_USE_STEPS: { title: { en: string; te: string }; detail: { en: string; te: string } }[] = [
   {
-    title: "Choose your language",
-    detail: "English or Telugu — the whole app, including Sakhi's answers, follows your choice.",
+    title: { en: "Choose your language", te: "మీ భాషను ఎంచుకోండి" },
+    detail: { en: "English or Telugu — the whole app, including Sakhi's answers, follows your choice.", te: "ఇంగ్లీష్ లేదా తెలుగు — సఖి సమాధానాలతో సహా మొత్తం యాప్ మీ ఎంపికను అనుసరిస్తుంది." },
   },
   {
-    title: "Upload your soil report",
-    detail: "A lab soil health card as a PDF or photo — or try the sample report first.",
+    title: { en: "Upload your soil report", te: "మీ నేల నివేదికను అప్‌లోడ్ చేయండి" },
+    detail: { en: "A lab soil health card as a PDF or photo — or try the sample report first.", te: "ల్యాబ్ నేల ఆరోగ్య కార్డును PDF లేదా ఫోటోగా — లేదా ముందు నమూనా నివేదికను ప్రయత్నించండి." },
   },
   {
-    title: "Review and confirm the values",
-    detail: "Check what was read from your report and fix anything before analysis.",
+    title: { en: "Review and confirm the values", te: "విలువలను సమీక్షించి నిర్ధారించండి" },
+    detail: { en: "Check what was read from your report and fix anything before analysis.", te: "మీ నివేదిక నుండి చదివినదాన్ని తనిఖీ చేసి, విశ్లేషణకు ముందు ఏదైనా సరిచేయండి." },
   },
   {
-    title: "See your soil analysis",
-    detail: "What each value (pH, EC, organic carbon, N, P, K) means for your field.",
+    title: { en: "See your soil analysis", te: "మీ నేల విశ్లేషణ చూడండి" },
+    detail: { en: "What each value (pH, EC, organic carbon, N, P, K) means for your field.", te: "ప్రతి విలువ (pH, EC, సేంద్రీయ కార్బన్, N, P, K) మీ పొలానికి అర్థం ఏమిటి." },
   },
   {
-    title: "See which crops match",
-    detail: "Paddy, cotton and chilli, scored against your soil by the rules engine.",
+    title: { en: "See which crops match", te: "ఏ పంటలు సరిపోతాయో చూడండి" },
+    detail: { en: "Paddy, cotton and chilli, scored against your soil by the rules engine.", te: "వరి, పత్తి మరియు మిరప — నియమాల ఇంజిన్ ద్వారా మీ నేలకు స్కోర్ చేయబడ్డాయి." },
   },
   {
-    title: "Get your fertilizer plan",
-    detail: "How much urea, DAP and MOP for the crop you pick, for your area.",
+    title: { en: "Get your fertilizer plan", te: "మీ ఎరువుల ప్రణాళిక పొందండి" },
+    detail: { en: "How much urea, DAP and MOP for the crop you pick, for your area.", te: "మీరు ఎంచుకున్న పంటకు, మీ విస్తీర్ణానికి ఎంత యూరియా, DAP మరియు MOP." },
   },
   {
-    title: "Weather, calendar and Sakhi",
-    detail: "Field weather, your season tasks, and Sakhi in the corner for any question.",
+    title: { en: "Weather, calendar and Sakhi", te: "వాతావరణం, క్యాలెండర్ మరియు సఖి" },
+    detail: { en: "Field weather, your season tasks, and Sakhi in the corner for any question.", te: "పొలం వాతావరణం, మీ సీజన్ పనులు, మరియు ఏ ప్రశ్నకైనా మూలలో సఖి." },
   },
 ];
 
@@ -46,6 +47,8 @@ function HowToUseGuide({
   open: boolean;
   onClose: () => void;
 }) {
+  const lang = useStoredLang();
+  const te = lang === "te";
   if (!open) return null;
   return (
     <div
@@ -64,10 +67,12 @@ function HowToUseGuide({
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="font-display text-2xl font-semibold text-charcoal">
-              How to use SasyaSakhi
+              {te ? "SasyaSakhi ని ఎలా వాడాలి" : "How to use SasyaSakhi"}
             </h2>
             <p className="mt-1 text-sm text-charcoal/65">
-              Seven steps from your soil report to a sowing decision.
+              {te
+                ? "మీ నేల నివేదిక నుండి విత్తే నిర్ణయం వరకు ఏడు దశలు."
+                : "Seven steps from your soil report to a sowing decision."}
             </p>
           </div>
           <button
@@ -81,23 +86,33 @@ function HowToUseGuide({
         </div>
         <ol className="mt-6 space-y-4">
           {HOW_TO_USE_STEPS.map((step, i) => (
-            <li key={step.title} className="flex gap-3.5">
+            <li key={step.title.en} className="flex gap-3.5">
               <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-forest font-display text-sm font-semibold text-ivory">
                 {i + 1}
               </span>
               <div>
-                <p className="font-semibold text-charcoal">{step.title}</p>
+                <p className="font-semibold text-charcoal">{te ? step.title.te : step.title.en}</p>
                 <p className="mt-0.5 text-sm leading-relaxed text-charcoal/70">
-                  {step.detail}
+                  {te ? step.detail.te : step.detail.en}
                 </p>
               </div>
             </li>
           ))}
         </ol>
         <p className="mt-6 rounded-xl bg-gold/15 p-4 text-sm leading-relaxed text-charcoal/75">
-          Already growing a crop and have no soil report? Use{" "}
-          <span className="font-semibold text-charcoal">I Already Have a Crop</span>{" "}
-          instead — it guides you from your crop and district alone.
+          {te ? (
+            <>
+              ఇప్పటికే పంట వేసి, నేల నివేదిక లేదా? బదులుగా{" "}
+              <span className="font-semibold text-charcoal">నాకు ఇప్పటికే పంట ఉంది</span>{" "}
+              వాడండి — ఇది మీ పంట మరియు జిల్లా నుండే మార్గనిర్దేశం చేస్తుంది.
+            </>
+          ) : (
+            <>
+              Already growing a crop and have no soil report? Use{" "}
+              <span className="font-semibold text-charcoal">I Already Have a Crop</span>{" "}
+              instead — it guides you from your crop and district alone.
+            </>
+          )}
         </p>
       </div>
     </div>
@@ -108,14 +123,16 @@ function HowToUseGuide({
  *  and labelling are the real app's own sample values — no farm, district
  *  or report number is claimed, because this card has none. */
 function SampleInsightCard() {
+  const lang = useStoredLang();
+  const te = lang === "te";
   return (
     <div className="rounded-3xl border border-white/25 bg-forest/60 shadow-2xl shadow-pine/40 backdrop-blur-md">
       <div className="p-5 text-left text-ivory sm:p-6">
         <p className="flex items-center gap-2 font-display text-lg font-semibold">
           <FlaskConical className="size-5 text-gold" aria-hidden />
-          Soil insight
+          {te ? "నేల అంతర్దృష్టి" : "Soil insight"}
           <span className="ml-auto rounded-full border border-white/30 px-2.5 py-0.5 font-sans text-[11px] font-medium normal-case tracking-normal text-ivory/85">
-            Sample
+            {te ? "నమూనా" : "Sample"}
           </span>
         </p>
         <dl className="mt-5 grid grid-cols-3 gap-3 text-center">
@@ -132,10 +149,11 @@ function SampleInsightCard() {
             <dd className="mt-1 font-display text-xl font-semibold">0.62%</dd>
           </div>
         </dl>
-        <p className="mt-5 font-semibold text-ivory">Best match: Paddy</p>
+        <p className="mt-5 font-semibold text-ivory">{te ? "ఉత్తమ సరిపోలిక: వరి" : "Best match: Paddy"}</p>
         <p className="mt-1 text-sm leading-relaxed text-ivory/80">
-          Slightly acidic loam — good for paddy. Add 25 kg/acre MOP before
-          transplanting.
+          {te
+            ? "కొద్దిగా ఆమ్ల లోమ్ — వరికి మంచిది. నాటే ముందు ఎకరాకు 25 కిలోల MOP వేయండి."
+            : "Slightly acidic loam — good for paddy. Add 25 kg/acre MOP before transplanting."}
         </p>
         <Link
           href="/dashboard"
@@ -146,7 +164,7 @@ function SampleInsightCard() {
             }),
           )}
         >
-          View sample analysis
+          {te ? "నమూనా విశ్లేషణ చూడండి" : "View sample analysis"}
         </Link>
       </div>
     </div>
@@ -155,6 +173,8 @@ function SampleInsightCard() {
 
 export function Hero() {
   const [guideOpen, setGuideOpen] = useState(false);
+  const lang = useStoredLang();
+  const te = lang === "te";
 
   return (
     <section
@@ -182,19 +202,19 @@ export function Hero() {
         <div className="text-center lg:col-span-7 lg:text-left">
           <p className="inline-flex items-center gap-2 rounded-full bg-black/40 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold backdrop-blur">
             <span aria-hidden className="size-1.5 rounded-full bg-gold" />
-            AI guidance for Indian farmers
+            {te ? "భారతీయ రైతులకు AI మార్గదర్శకత్వం" : "AI guidance for Indian farmers"}
           </p>
 
           <h1 className="mt-6 font-display text-5xl font-semibold leading-[1.05] text-ivory text-balance sm:text-6xl xl:text-7xl">
-            <span className="block">Your Soil.</span>
-            <span className="block italic text-gold">Your Support.</span>
-            <span className="block">Better Farming.</span>
+            <span className="block">{te ? "మీ నేల." : "Your Soil."}</span>
+            <span className="block italic text-gold">{te ? "మీ మద్దతు." : "Your Support."}</span>
+            <span className="block">{te ? "మెరుగైన వ్యవసాయం." : "Better Farming."}</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/85 lg:mx-0">
-            Upload your soil test report and get clear answers: what your soil
-            needs, which crops suit it, and exactly how much fertilizer to use —
-            in English or Telugu.
+            {te
+              ? "మీ నేల పరీక్ష నివేదికను అప్‌లోడ్ చేయండి మరియు స్పష్టమైన సమాధానాలు పొందండి: మీ నేలకు ఏమి కావాలి, ఏ పంటలు సరిపోతాయి, మరియు ఎంత ఎరువు వాడాలి — తెలుగు లేదా ఇంగ్లీష్‌లో."
+              : "Upload your soil test report and get clear answers: what your soil needs, which crops suit it, and exactly how much fertilizer to use — in English or Telugu."}
           </p>
 
           <div className="mt-8 flex flex-col items-center gap-3 lg:flex-row lg:flex-wrap lg:items-start lg:justify-start">
@@ -207,7 +227,7 @@ export function Hero() {
                 }),
               )}
             >
-              Analyze My Soil
+              {te ? "నా నేలను విశ్లేషించండి" : "Analyze My Soil"}
               <ArrowRight className="size-4" aria-hidden />
             </Link>
             <Link
@@ -222,7 +242,7 @@ export function Hero() {
               )}
             >
               <Sprout className="size-4" aria-hidden />
-              I Already Have a Crop
+              {te ? "నాకు ఇప్పటికే పంట ఉంది" : "I Already Have a Crop"}
             </Link>
             <button
               type="button"
@@ -236,19 +256,21 @@ export function Hero() {
                 }),
               )}
             >
-              How to Use This
+              {te ? "దీన్ని ఎలా వాడాలి" : "How to Use This"}
             </button>
           </div>
 
           <p className="mt-6 text-sm text-ivory/70">
-            Free prototype · No account needed to try the demo · Works on any phone
+            {te
+              ? "ఉచిత నమూనా · డెమో ప్రయత్నించడానికి ఖాతా అవసరం లేదు · ఏ ఫోన్‌లోనైనా పనిచేస్తుంది"
+              : "Free prototype · No account needed to try the demo · Works on any phone"}
           </p>
         </div>
 
         <div className="mx-auto w-full max-w-md lg:col-span-5 lg:mx-0 lg:justify-self-end">
           <SampleInsightCard />
           <p className="mt-3 text-center text-xs text-ivory/60">
-            Sample preview — your report becomes the input.
+            {te ? "నమూనా ముందస్తు చూపు — మీ నివేదికే ఇన్‌పుట్ అవుతుంది." : "Sample preview — your report becomes the input."}
           </p>
         </div>
       </div>

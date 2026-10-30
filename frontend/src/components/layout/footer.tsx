@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import { Sprout } from "lucide-react";
+import { useStoredLang } from "@/lib/store";
 
 export function Footer() {
   // `typeof window` guard: `new Date()` must never evaluate during prerender (Next 16).
   const [year] = useState(() =>
     typeof window === "undefined" ? 2026 : new Date().getFullYear()
   );
+  const lang = useStoredLang();
+  const te = lang === "te";
 
   return (
     <footer className="bg-forest text-ivory">
@@ -23,35 +26,35 @@ export function Footer() {
               </span>
             </p>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-ivory/70">
-              Your soil. Our support. Better farming. SasyaSakhi reads your
-              soil test reports and turns them into clear, practical guidance —
-              in English and Telugu.
+              {te
+                ? "మీ నేల. మా మద్దతు. మెరుగైన వ్యవసాయం. SasyaSakhi మీ నేల పరీక్ష నివేదికలను చదివి, స్పష్టమైన, ఆచరణాత్మక మార్గదర్శకత్వంగా మారుస్తుంది — తెలుగు మరియు ఇంగ్లీష్‌లో."
+                : "Your soil. Our support. Better farming. SasyaSakhi reads your soil test reports and turns them into clear, practical guidance — in English and Telugu."}
             </p>
           </div>
 
           <nav aria-label="Footer">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-ivory/50">
-              Explore
+              {te ? "అన్వేషించండి" : "Explore"}
             </h2>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li>
                 <a href="#features" className="text-ivory/80 hover:text-ivory">
-                  Features
+                  {te ? "ఫీచర్లు" : "Features"}
                 </a>
               </li>
               <li>
                 <a href="#how-it-works" className="text-ivory/80 hover:text-ivory">
-                  How It Works
+                  {te ? "ఎలా పనిచేస్తుంది" : "How It Works"}
                 </a>
               </li>
               <li>
                 <a href="#crops" className="text-ivory/80 hover:text-ivory">
-                  Crops
+                  {te ? "పంటలు" : "Crops"}
                 </a>
               </li>
               <li>
                 <a href="/dashboard" className="text-ivory/80 hover:text-ivory">
-                  Open the demo dashboard
+                  {te ? "డెమో డాష్‌బోర్డ్ తెరవండి" : "Open the demo dashboard"}
                 </a>
               </li>
             </ul>
@@ -59,7 +62,7 @@ export function Footer() {
 
           <nav aria-label="Contact">
             <h2 className="text-sm font-semibold uppercase tracking-widest text-ivory/50">
-              Contact
+              {te ? "సంప్రదించండి" : "Contact"}
             </h2>
             <ul className="mt-4 space-y-2.5 text-sm">
               <li>
@@ -67,22 +70,22 @@ export function Footer() {
                   href="mailto:hello@sasyasakhi.example"
                   className="text-ivory/80 hover:text-ivory"
                 >
-                  Email the team
+                  {te ? "బృందానికి ఈమెయిల్ చేయండి" : "Email the team"}
                 </a>
               </li>
               <li>
                 <a href="/assistant" className="text-ivory/80 hover:text-ivory">
-                  Farmer support
+                  {te ? "రైతు మద్దతు" : "Farmer support"}
                 </a>
               </li>
               <li>
                 <a href="#prototype-note" className="text-ivory/80 hover:text-ivory">
-                  Privacy (prototype note)
+                  {te ? "గోప్యత (నమూనా గమనిక)" : "Privacy (prototype note)"}
                 </a>
               </li>
               <li>
                 <a href="#prototype-note" className="text-ivory/80 hover:text-ivory">
-                  Terms (prototype note)
+                  {te ? "నిబంధనలు (నమూనా గమనిక)" : "Terms (prototype note)"}
                 </a>
               </li>
             </ul>
@@ -94,14 +97,13 @@ export function Footer() {
             id="prototype-note"
             className="text-xs leading-relaxed text-ivory/50"
           >
-            SasyaSakhi is a hackathon prototype. Recommendations depend on
-            the data available and are illustrative only — please confirm
-            important decisions with your local agricultural officer. Privacy
-            and Terms notices will be published with the first release.
+            {te
+              ? "SasyaSakhi ఒక హ్యాకథాన్ నమూనా. సిఫార్సులు అందుబాటులో ఉన్న డేటాపై ఆధారపడి ఉంటాయి మరియు కేవలం సూచనలు మాత్రమే — ముఖ్యమైన నిర్ణయాలను మీ స్థానిక వ్యవసాయ అధికారితో నిర్ధారించుకోండి. గోప్యత మరియు నిబంధనల నోటీసులు మొదటి విడుదలతో ప్రచురించబడతాయి."
+              : "SasyaSakhi is a hackathon prototype. Recommendations depend on the data available and are illustrative only — please confirm important decisions with your local agricultural officer. Privacy and Terms notices will be published with the first release."}
           </p>
           <div className="mt-4 flex flex-col items-start justify-between gap-3 text-xs text-ivory/50 sm:flex-row sm:items-center">
-            <p>© {year} SasyaSakhi. All rights reserved.</p>
-            <p>Built for farmers, starting in Andhra Pradesh.</p>
+            <p>© {year} SasyaSakhi. {te ? "అన్ని హక్కులు రిజర్వ్ చేయబడ్డాయి." : "All rights reserved."}</p>
+            <p>{te ? "రైతుల కోసం నిర్మించబడింది, ఆంధ్రప్రదేశ్ నుండి ప్రారంభం." : "Built for farmers, starting in Andhra Pradesh."}</p>
           </div>
         </div>
       </div>

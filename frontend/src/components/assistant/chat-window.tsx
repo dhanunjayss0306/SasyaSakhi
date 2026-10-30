@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { SUGGESTED_QUESTIONS, mockChatReply } from "@/lib/mock-data";
+import { SUGGESTED_QUESTIONS, SUGGESTED_QUESTIONS_TE, mockChatReply } from "@/lib/mock-data";
 import { BACKEND_CONFIGURED, chatWithAssistant } from "@/lib/api-client";
 import { store } from "@/lib/store";
 import { Button } from "@/components/ui/button";
@@ -119,7 +119,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
         }
       }
       timerRef.current = setTimeout(() => {
-        const reply = mockChatReply(trimmed);
+        const reply = mockChatReply(trimmed, initialLang);
         setMessages((prev) => [...prev, { id: nextId++, role: "assistant", text: reply }]);
         setLastSource("mock");
         setTyping(false);
@@ -212,16 +212,22 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
             <p className="font-display text-base font-semibold text-charcoal">SasyaSakhi Assistant</p>
             <p className="text-xs text-charcoal/60">
               {lastSource === "live"
-                ? "Live answers"
+                ? initialLang === "te"
+                  ? "ప్రత్యక్ష సమాధానాలు"
+                  : "Live answers"
                 : lastSource === "mock"
-                  ? "Mock AI — demo responses"
-                  : "Ask about your soil report"}
+                  ? initialLang === "te"
+                    ? "మాక్ AI — డెమో సమాధానాలు"
+                    : "Mock AI — demo responses"
+                  : initialLang === "te"
+                    ? "మీ నేల నివేదిక గురించి అడగండి"
+                    : "Ask about your soil report"}
             </p>
           </div>
         </div>
-        <Button variant="ghost" size="sm" onClick={clearChat} aria-label="Clear chat">
+        <Button variant="ghost" size="sm" onClick={clearChat} aria-label={initialLang === "te" ? "చాట్ తొలగించండి" : "Clear chat"}>
           <Eraser className="h-4 w-4" aria-hidden />
-          Clear
+          {initialLang === "te" ? "తొలగించండి" : "Clear"}
         </Button>
       </div>
 
@@ -235,7 +241,9 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
         {messages.length === 1 && (
           <div className="rounded-xl border border-dashed border-sage bg-ivory p-4 text-center">
             <p className="text-sm text-charcoal/65">
-              Start with a question below, or tap one of the suggestions.
+              {initialLang === "te"
+                ? "కింద ప్రశ్నతో ప్రారంభించండి, లేదా సూచనలలో ఒకదాన్ని నొక్కండి."
+                : "Start with a question below, or tap one of the suggestions."}
             </p>
           </div>
         )}
@@ -284,8 +292,8 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
 
       {/* Suggestion chips */}
       <div className="border-t border-sage px-4 pt-3">
-        <div className="flex flex-wrap gap-2" aria-label="Suggested questions">
-          {SUGGESTED_QUESTIONS.map((q) => (
+        <div className="flex flex-wrap gap-2" aria-label={initialLang === "te" ? "సూచించిన ప్రశ్నలు" : "Suggested questions"}>
+          {(initialLang === "te" ? SUGGESTED_QUESTIONS_TE : SUGGESTED_QUESTIONS).map((q) => (
             <button
               key={q}
               type="button"
@@ -308,7 +316,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
         }}
       >
         <label htmlFor="assistant-input" className="sr-only">
-          Ask the soil assistant
+          {initialLang === "te" ? "నేల సహాయకుడిని అడగండి" : "Ask the soil assistant"}
         </label>
         <input
           id="assistant-input"
@@ -323,8 +331,8 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
           type="button"
           onClick={toggleVoice}
           disabled={typing}
-          aria-label={listening ? "Stop listening" : "Speak your question"}
-          title={listening ? "Stop listening" : "Speak your question"}
+          aria-label={listening ? (initialLang === "te" ? "వినడం ఆపండి" : "Stop listening") : initialLang === "te" ? "మీ ప్రశ్న మాట్లాడండి" : "Speak your question"}
+          title={listening ? (initialLang === "te" ? "వినడం ఆపండి" : "Stop listening") : initialLang === "te" ? "మీ ప్రశ్న మాట్లాడండి" : "Speak your question"}
           className={cn(
             "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors disabled:opacity-50",
             listening
@@ -334,7 +342,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
         >
           {listening ? <MicOff className="h-4 w-4" aria-hidden /> : <Mic className="h-4 w-4" aria-hidden />}
         </button>
-        <Button type="submit" disabled={!input.trim() || typing} aria-label="Send message">
+        <Button type="submit" disabled={!input.trim() || typing} aria-label={initialLang === "te" ? "సందేశం పంపండి" : "Send message"}>
           <Send className="h-4 w-4" aria-hidden />
         </Button>
       </form>

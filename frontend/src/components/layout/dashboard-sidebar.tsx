@@ -19,10 +19,11 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { store } from "@/lib/store";
+import { store, useStoredLang } from "@/lib/store";
 
 interface NavItem {
   label: string;
+  labelTe: string;
   href: string;
   icon: LucideIcon;
 }
@@ -33,18 +34,18 @@ interface NavItem {
  *  - "Season Tracker" has no dedicated route, so it points at the crop
  *    calendar, where season tracking lives. */
 const NAV_ITEMS: NavItem[] = [
-  { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Soil Reports", href: "/soil-report", icon: FileUp },
-  { label: "Soil Health", href: "/soil-analysis", icon: FlaskConical },
-  { label: "Crop Recommendations", href: "/recommendations", icon: Wheat },
-  { label: "My Crop", href: "/my-crop", icon: Sprout },
-  { label: "Fertilizer Planner", href: "/fertilizer-planner", icon: Calculator },
-  { label: "Weather", href: "/weather", icon: CloudSun },
-  { label: "Zone & Water", href: "/zone-water", icon: Droplets },
-  { label: "Crop Calendar", href: "/crop-calendar", icon: CalendarDays },
-  { label: "Season Tracker", href: "/crop-calendar", icon: CalendarDays },
-  { label: "Sakhi Assistant", href: "/assistant", icon: Bot },
-  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Overview", labelTe: "డాష్‌బోర్డ్", href: "/dashboard", icon: LayoutDashboard },
+  { label: "Soil Reports", labelTe: "నేల నివేదికలు", href: "/soil-report", icon: FileUp },
+  { label: "Soil Health", labelTe: "నేల ఆరోగ్యం", href: "/soil-analysis", icon: FlaskConical },
+  { label: "Crop Recommendations", labelTe: "పంట సిఫార్సులు", href: "/recommendations", icon: Wheat },
+  { label: "My Crop", labelTe: "నా పంట", href: "/my-crop", icon: Sprout },
+  { label: "Fertilizer Planner", labelTe: "ఎరువుల ప్రణాళిక", href: "/fertilizer-planner", icon: Calculator },
+  { label: "Weather", labelTe: "వాతావరణం", href: "/weather", icon: CloudSun },
+  { label: "Zone & Water", labelTe: "జోన్ & నీరు", href: "/zone-water", icon: Droplets },
+  { label: "Crop Calendar", labelTe: "పంట క్యాలెండర్", href: "/crop-calendar", icon: CalendarDays },
+  { label: "Season Tracker", labelTe: "సీజన్ ట్రాకర్", href: "/crop-calendar", icon: CalendarDays },
+  { label: "Sakhi Assistant", labelTe: "సఖి సహాయకుడు", href: "/assistant", icon: Bot },
+  { label: "Settings", labelTe: "సెట్టింగ్‌లు", href: "/settings", icon: Settings },
 ];
 
 interface DashboardSidebarProps {
@@ -57,6 +58,7 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const lang = useStoredLang();
 
   const handleSignOut = () => {
     store.clear();
@@ -122,7 +124,7 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
                     className={cn("size-4.5 shrink-0", active ? "text-gold" : "text-ivory/50")}
                     aria-hidden
                   />
-                  {item.label}
+                  {lang === "te" ? item.labelTe : item.label}
                 </Link>
               </li>
             );
@@ -138,15 +140,17 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
           className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-ivory/70 transition-colors hover:bg-forest hover:text-ivory"
         >
           <LogOut className="size-4.5 shrink-0 text-ivory/50" aria-hidden />
-          Sign out
+          {lang === "te" ? "సైన్ అవుట్" : "Sign out"}
         </button>
         <p className="mt-3 px-3.5">
           <span className="inline-flex rounded-full bg-forest px-3 py-1 text-[11px] font-semibold tracking-widest text-gold">
-            DEMO BUILD
+            {lang === "te" ? "డెమో బిల్డ్" : "DEMO BUILD"}
           </span>
         </p>
         <p className="mt-2 px-3.5 text-[11px] leading-relaxed text-ivory/40">
-          Demo prototype — no real account data.
+          {lang === "te"
+            ? "డెమో నమూనా — నిజమైన ఖాతా డేటా లేదు."
+            : "Demo prototype — no real account data."}
         </p>
       </div>
     </div>

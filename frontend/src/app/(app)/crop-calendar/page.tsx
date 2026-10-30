@@ -5,20 +5,28 @@ import { getCalendarEvents } from "@/lib/mock-weather-service";
 import type { CalendarEvent } from "@/lib/mock-data";
 import { CalendarDays, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useStoredLang } from "@/lib/store";
+
+const CROP_TE: Record<string, string> = {
+  Paddy: "వరి",
+  Cotton: "పత్తి",
+  Chilli: "మిరప",
+  All: "అన్నీ",
+};
 
 function monthKey(date: string) {
   return date.slice(0, 7); // "2026-10"
 }
 
-function monthLabel(key: string) {
+function monthLabel(key: string, te: boolean) {
   const [y, m] = key.split("-").map(Number);
-  return new Date(y, m - 1, 1).toLocaleString("en-IN", { month: "long", year: "numeric" });
+  return new Date(y, m - 1, 1).toLocaleString(te ? "te-IN" : "en-IN", { month: "long", year: "numeric" });
 }
 
-function dayLabel(date: string) {
+function dayLabel(date: string, te: boolean) {
   // Parse at noon to avoid timezone day-shift on the ISO date.
   const d = new Date(`${date}T12:00:00`);
-  return d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+  return d.toLocaleDateString(te ? "te-IN" : "en-IN", { weekday: "short", day: "numeric", month: "short" });
 }
 
 function SkeletonRow() {
@@ -31,6 +39,8 @@ function SkeletonRow() {
 }
 
 export default function CropCalendarPage() {
+  const lang = useStoredLang();
+  const te = lang === "te";
   const [events, setEvents] = useState<CalendarEvent[] | null>(null);
   const [error, setError] = useState(false);
   const [done, setDone] = useState<Record<string, boolean>>({});
@@ -70,20 +80,20 @@ export default function CropCalendarPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">Crop calendar</h1>
+          <h1 className="font-display text-3xl font-semibold text-charcoal">{te ? "పంట క్యాలెండర్" : "Crop calendar"}</h1>
           <p className="mt-1 text-sm text-charcoal/65">
-            {events ? `${completedCount} of ${events.length} tasks done` : "Your season tasks, month by month."}
+            {events ? (te ? `${completedCount} / ${events.length} పనులు పూర్తయ్యాయి` : `${completedCount} of ${events.length} tasks done`) : te ? "మీ సీజన్ పనులు, నెలవారీగా." : "Your season tasks, month by month."}
           </p>
         </div>
         <span className="rounded-full bg-gold/20 px-3 py-1 text-xs font-semibold text-charcoal">
-          Demo data
+          {te ? "డెమో డేటా" : "Demo data"}
         </span>
       </div>
 
       {error && (
         <div role="alert" className="mt-6 rounded-xl border border-red-300 bg-red-50 p-5 text-sm text-red-900">
-          <p className="font-semibold">Could not load the calendar.</p>
-          <p className="mt-1">This is a prototype with demo data — please try reloading the page.</p>
+          <p className="font-semibold">{te ? "క్యాలెండర్ లోడ్ చేయలేకపోయాము." : "Could not load the calendar."}</p>
+          <p className="mt-1">{te ? "ఇది డెమో డేటాతో కూడిన నమూనా — దయచేసి పేజీని మళ్ళీ లోడ్ చేయండి." : "This is a prototype with demo data — please try reloading the page."}</p>
         </div>
       )}
 
@@ -95,7 +105,7 @@ export default function CropCalendarPage() {
                 <section key={mk} aria-labelledby={`month-${mk}`}>
                   <h2 id={`month-${mk}`} className="flex items-center gap-2 font-display text-lg font-semibold text-forest">
                     <CalendarDays className="h-5 w-5" aria-hidden />
-                    {monthLabel(mk)}
+                    {monthLabel(mk, te)}
                   </h2>
                   <ul className="mt-3 space-y-3">
                     {list.map(({ event, key }) => {
@@ -112,7 +122,7 @@ export default function CropCalendarPage() {
                             type="button"
                             role="checkbox"
                             aria-checked={checked}
-                            aria-label={`Mark "${event.title}" as ${checked ? "not done" : "done"}`}
+                            aria-label={te ? `"${event.titleTe}" ను ${checked ? "పూర్తికానట్లు" : "పూర్తయినట్లు"} గుర్తించండి` : `Mark "${event.title}" as ${checked ? "not done" : "done"}`}
                             onClick={() => toggle(key)}
                             className={cn(
                               "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-colors",
@@ -123,16 +133,16 @@ export default function CropCalendarPage() {
                           </button>
                           <div className="min-w-0 flex-1">
                             <p className={cn("font-medium text-charcoal", checked && "line-through text-charcoal/50")}>
-                              {event.title}
+                              {te ? event.titleTe : event.title}
                             </p>
                             <p className={cn("text-sm", checked ? "text-charcoal/40" : "text-forest/75")}>
-                              {event.titleTe}
+                              {te ? event.title : event.titleTe}
                             </p>
                           </div>
                           <div className="shrink-0 text-right">
-                            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">{dayLabel(event.date)}</p>
+                            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">{dayLabel(event.date, te)}</p>
                             <p className="mt-0.5 inline-block rounded-full bg-forest/10 px-2 py-0.5 text-xs font-medium text-forest">
-                              {event.crop}
+                              {te ? (CROP_TE[event.crop] ?? event.crop) : event.crop}
                             </p>
                           </div>
                         </li>

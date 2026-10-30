@@ -4,6 +4,34 @@ import type { Crop, CropId } from "@/types/crop";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Droplets } from "lucide-react";
+import { useStoredLang } from "@/lib/store";
+
+const MONTH_TE: Record<string, string> = {
+  Jan: "జన",
+  Feb: "ఫిబ్ర",
+  Mar: "మార్చి",
+  Apr: "ఏప్రి",
+  May: "మే",
+  Jun: "జూన్",
+  Jul: "జులై",
+  Aug: "ఆగ",
+  Sep: "సెప్టెం",
+  Oct: "అక్టో",
+  Nov: "నవం",
+  Dec: "డిసెం",
+};
+
+function seasonTe(season: string): string {
+  let out = season.replace("Kharif", "ఖరీఫ్").replace("Rabi", "రబీ");
+  for (const [en, t] of Object.entries(MONTH_TE)) out = out.replace(en, t);
+  return out;
+}
+
+const WATER_TE: Record<Crop["waterNeed"], string> = {
+  Low: "తక్కువ",
+  Medium: "మధ్యస్థం",
+  High: "ఎక్కువ",
+};
 
 interface CropCardProps {
   crop: Crop;
@@ -71,6 +99,8 @@ const WATER_STYLE: Record<Crop["waterNeed"], string> = {
 };
 
 export function CropCard({ crop, selected, onSelect, statusLabel }: CropCardProps) {
+  const lang = useStoredLang();
+  const te = lang === "te";
   return (
     <article
       data-selected={selected}
@@ -89,9 +119,9 @@ export function CropCard({ crop, selected, onSelect, statusLabel }: CropCardProp
       </div>
 
       <h3 className="mt-4 font-display text-xl font-semibold text-charcoal">
-        {crop.name} <span className="text-base font-normal text-forest/70">· {crop.nameTe}</span>
+        {te ? crop.nameTe : crop.name} <span className="text-base font-normal text-forest/70">· {te ? crop.name : crop.nameTe}</span>
       </h3>
-      <p className="mt-1 text-sm leading-relaxed text-charcoal/70">{crop.description}</p>
+      <p className="mt-1 text-sm leading-relaxed text-charcoal/70">{te ? crop.descriptionTe : crop.description}</p>
 
       {!statusLabel && (
         <div className="mt-4" aria-label={`Suitability for ${crop.name}: ${crop.suitability} percent`}>
@@ -105,10 +135,10 @@ export function CropCard({ crop, selected, onSelect, statusLabel }: CropCardProp
       )}
 
       <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-        <span className="rounded-full bg-sage px-2.5 py-1 font-medium text-forest">{crop.season}</span>
+        <span className="rounded-full bg-sage px-2.5 py-1 font-medium text-forest">{te ? seasonTe(crop.season) : crop.season}</span>
         <span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-medium", WATER_STYLE[crop.waterNeed])}>
           <Droplets className="h-3 w-3" aria-hidden />
-          {crop.waterNeed} water
+          {te ? `${WATER_TE[crop.waterNeed]} నీరు` : `${crop.waterNeed} water`}
         </span>
       </div>
 
@@ -117,7 +147,7 @@ export function CropCard({ crop, selected, onSelect, statusLabel }: CropCardProp
         variant={selected ? "default" : "outline"}
         onClick={() => onSelect(crop.id)}
       >
-        {selected ? "Plan selected" : "View plan"}
+        {selected ? (te ? "ప్రణాళిక ఎంచుకోబడింది" : "Plan selected") : te ? "ప్రణాళిక చూడండి" : "View plan"}
       </Button>
     </article>
   );

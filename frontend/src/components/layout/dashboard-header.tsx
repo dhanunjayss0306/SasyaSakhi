@@ -12,11 +12,38 @@ interface DashboardHeaderProps {
   onMenuToggle: () => void;
 }
 
-const DEMO_NOTIFICATIONS = [
-  { title: "Soil report analyzed", body: "sample-soil-report.pdf is ready to review." },
-  { title: "Rain likely Sunday", body: "Hold fertilizer application — 70% rain chance." },
-  { title: "Basal DAP due soon", body: "Scheduled for 26 Oct on your crop calendar." },
+const DEMO_NOTIFICATIONS: { en: { title: string; body: string }; te: { title: string; body: string } }[] = [
+  {
+    en: { title: "Soil report analyzed", body: "sample-soil-report.pdf is ready to review." },
+    te: { title: "నేల నివేదిక విశ్లేషించబడింది", body: "sample-soil-report.pdf సమీక్షకు సిద్ధంగా ఉంది." },
+  },
+  {
+    en: { title: "Rain likely Sunday", body: "Hold fertilizer application — 70% rain chance." },
+    te: { title: "ఆదివారం వర్షం అవకాశం", body: "ఎరువు వేయడం ఆపండి — 70% వర్షం అవకాశం." },
+  },
+  {
+    en: { title: "Basal DAP due soon", body: "Scheduled for 26 Oct on your crop calendar." },
+    te: { title: "బేసల్ DAP త్వరలో", body: "మీ పంట క్యాలెండర్‌లో 26 అక్టోబర్‌కు షెడ్యూల్ చేయబడింది." },
+  },
 ];
+
+/** URL segments to Telugu breadcrumb labels. */
+const CRUMB_TE: Record<string, string> = {
+  dashboard: "డాష్‌బోర్డ్",
+  "soil-report": "నేల నివేదిక",
+  "soil-analysis": "నేల ఆరోగ్యం",
+  recommendations: "పంట సిఫార్సులు",
+  "fertilizer-planner": "ఎరువుల ప్రణాళిక",
+  "my-crop": "నా పంట",
+  weather: "వాతావరణం",
+  "zone-water": "జోన్ & నీరు",
+  "crop-calendar": "పంట క్యాలెండర్",
+  assistant: "సఖి సహాయకుడు",
+  settings: "సెట్టింగ్‌లు",
+  manual: "మాన్యువల్",
+  photo: "ఫోటో",
+  review: "సమీక్ష",
+};
 
 export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
   const router = useRouter();
@@ -31,7 +58,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
   // a useState initializer rendered the stored name on the client while the
   // server rendered "Guest Farmer".
   const storedUser = useStoredUser();
-  const userName = storedUser?.name ?? "Guest Farmer";
+  const userName = storedUser?.name ?? (lang === "te" ? "అతిథి రైతు" : "Guest Farmer");
 
   // Close dropdowns on outside click / Escape.
   useEffect(() => {
@@ -80,10 +107,12 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
     .split("/")
     .filter(Boolean)
     .map((seg) =>
-      seg
-        .split("-")
-        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(" "),
+      lang === "te" && CRUMB_TE[seg]
+        ? CRUMB_TE[seg]
+        : seg
+            .split("-")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" "),
     );
 
   const initial = (userName || "G").charAt(0).toUpperCase();
@@ -107,11 +136,11 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
         <button
           type="button"
           onClick={handleBack}
-          aria-label="Go back"
+          aria-label={lang === "te" ? "వెనుకకు వెళ్ళు" : "Go back"}
           className="flex shrink-0 items-center gap-0.5 rounded-full border border-charcoal/20 bg-cream px-3 py-2 text-sm font-semibold text-charcoal hover:bg-sage"
         >
           <ChevronLeft className="size-5" aria-hidden />
-          <span>Back</span>
+          <span>{lang === "te" ? "వెనుకకు" : "Back"}</span>
         </button>
 
         {/* Title + breadcrumb */}
@@ -191,18 +220,23 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
               className="absolute right-0 top-12 w-80 overflow-hidden rounded-2xl border border-sage bg-white shadow-xl shadow-forest/10"
             >
               <p className="border-b border-sage/70 bg-sage/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-charcoal/70">
-                Demo notifications
+                {lang === "te" ? "డెమో నోటిఫికేషన్‌లు" : "Demo notifications"}
               </p>
               <ul className="divide-y divide-sage/60">
-                {DEMO_NOTIFICATIONS.map((n) => (
-                  <li key={n.title} className="px-4 py-3">
-                    <p className="text-sm font-semibold text-charcoal">{n.title}</p>
-                    <p className="mt-0.5 text-xs text-charcoal/60">{n.body}</p>
-                  </li>
-                ))}
+                {DEMO_NOTIFICATIONS.map((n) => {
+                  const item = lang === "te" ? n.te : n.en;
+                  return (
+                    <li key={n.en.title} className="px-4 py-3">
+                      <p className="text-sm font-semibold text-charcoal">{item.title}</p>
+                      <p className="mt-0.5 text-xs text-charcoal/60">{item.body}</p>
+                    </li>
+                  );
+                })}
               </ul>
               <p className="bg-ivory px-4 py-2 text-[11px] text-charcoal/50">
-                Demo only — not connected to a real notification service.
+                {lang === "te"
+                  ? "డెమో మాత్రమే — నిజమైన నోటిఫికేషన్ సేవకు కనెక్ట్ కాలేదు."
+                  : "Demo only — not connected to a real notification service."}
               </p>
             </div>
           )}
@@ -243,7 +277,9 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
                 </span>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-charcoal">{userName}</p>
-                  <p className="text-[11px] text-charcoal/50">Demo account</p>
+                  <p className="text-[11px] text-charcoal/50">
+                    {lang === "te" ? "డెమో ఖాతా" : "Demo account"}
+                  </p>
                 </div>
               </div>
               <div className="p-2">
@@ -254,7 +290,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
                   className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-charcoal hover:bg-sage/60"
                 >
                   <UserRound className="size-4 text-charcoal/50" aria-hidden />
-                  Profile settings
+                  {lang === "te" ? "ప్రొఫైల్ సెట్టింగ్‌లు" : "Profile settings"}
                 </Link>
                 <button
                   type="button"
@@ -263,7 +299,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
                   className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-charcoal hover:bg-sage/60"
                 >
                   <LogOut className="size-4 text-charcoal/50" aria-hidden />
-                  Sign out
+                  {lang === "te" ? "సైన్ అవుట్" : "Sign out"}
                 </button>
               </div>
             </div>

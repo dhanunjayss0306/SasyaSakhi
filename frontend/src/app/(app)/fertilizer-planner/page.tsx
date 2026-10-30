@@ -9,7 +9,7 @@ import {
   fertilizerRecommendation,
   type ConfirmedValue,
 } from "@/lib/api-client";
-import { store } from "@/lib/store";
+import { store, useStoredLang } from "@/lib/store";
 import {
   FertilizerPanel,
   type LiveFertilizerPlan,
@@ -59,6 +59,8 @@ function reportValues(): ConfirmedValue[] {
 }
 
 export default function FertilizerPlannerPage() {
+  const lang = useStoredLang();
+  const te = lang === "te";
   const [selectedId, setSelectedId] = useState<CropId>("paddy");
   const selectedCrop = CROPS.find((c) => c.id === selectedId) ?? CROPS[0];
   const fertilizerItems = getFertilizerPlan(selectedId);
@@ -111,18 +113,20 @@ export default function FertilizerPlannerPage() {
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">Fertilizer Planner</h1>
+          <h1 className="font-display text-3xl font-semibold text-charcoal">{te ? "ఎరువుల ప్రణాళిక" : "Fertilizer Planner"}</h1>
           <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
-            Doses per acre for the selected crop, from the rules engine.
+            {te
+              ? "నియమాల ఇంజిన్ నుండి ఎంచుకున్న పంటకు ఎకరాకు మోతాదులు."
+              : "Doses per acre for the selected crop, from the rules engine."}
           </p>
         </div>
         <span className="rounded-full bg-gold/20 px-3 py-1 text-xs font-semibold text-charcoal">
-          {BACKEND_CONFIGURED ? "Live" : MOCK_NOTICE.split(".")[0]}
+          {BACKEND_CONFIGURED ? (te ? "ప్రత్యక్షం" : "Live") : te ? "డెమో డేటా — ఇది ఒక నమూనా" : MOCK_NOTICE.split(".")[0]}
         </span>
       </div>
 
       {/* Crop selector tabs */}
-      <div role="tablist" aria-label="Select a crop" className="mt-6 flex flex-wrap gap-2">
+      <div role="tablist" aria-label={te ? "పంటను ఎంచుకోండి" : "Select a crop"} className="mt-6 flex flex-wrap gap-2">
         {CROPS.map((crop) => (
           <Button
             key={crop.id}
@@ -132,7 +136,7 @@ export default function FertilizerPlannerPage() {
             onClick={() => setSelectedId(crop.id)}
             className={cn(selectedId === crop.id && "bg-forest")}
           >
-            {crop.name} · {crop.nameTe}
+            {te ? crop.nameTe : crop.name} · {te ? crop.name : crop.nameTe}
           </Button>
         ))}
       </div>
@@ -140,11 +144,11 @@ export default function FertilizerPlannerPage() {
       <div className="mt-6">
         {BACKEND_CONFIGURED && fertResult === undefined ? (
           <p className="text-sm text-charcoal/60" role="status">
-            Loading fertilizer plan…
+            {te ? "ఎరువుల ప్రణాళిక లోడ్ అవుతోంది…" : "Loading fertilizer plan…"}
           </p>
         ) : (
           <FertilizerPanel
-            cropName={selectedCrop.name}
+            cropName={te ? selectedCrop.nameTe : selectedCrop.name}
             items={fertilizerItems}
             live={fertResult?.status === "live" ? fertResult.plan : null}
           />

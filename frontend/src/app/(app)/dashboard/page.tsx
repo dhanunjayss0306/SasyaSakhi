@@ -67,6 +67,79 @@ function daypartForHour(h: number): Daypart {
   return h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
 }
 
+/** Telugu display strings for values that arrive in English from mock data. */
+const STATUS_TE: Record<ParamStatus, string> = {
+  optimal: "ఆదర్శం",
+  low: "తక్కువ",
+  high: "ఎక్కువ",
+  unknown: "తెలియదు",
+};
+
+const WATER_TE: Record<string, string> = {
+  High: "ఎక్కువ",
+  Medium: "మధ్యస్థం",
+  Low: "తక్కువ",
+};
+
+const DAY_TE: Record<string, string> = {
+  Today: "ఈరోజు",
+  Sat: "శని",
+  Sun: "ఆది",
+  Mon: "సోమ",
+  Tue: "మంగళ",
+  Wed: "బుధ",
+  Thu: "గురు",
+  Fri: "శుక్ర",
+};
+
+const ADVICE_TE: Record<string, string> = {
+  "Good day for field work.": "పొలం పనులకు మంచి రోజు.",
+  "Ideal for spraying in the morning.": "ఉదయం పిచికారీకి అనుకూలం.",
+  "Hold fertilizer application; rain likely.": "ఎరువు వేయడం ఆపండి; వర్షం అవకాశం ఉంది.",
+  "Check drainage in low patches.": "తక్కువ ప్రాంతాల్లో నీటి పారుదల తనిఖీ చేయండి.",
+  "Resume field operations.": "పొలం పనులు తిరిగి ప్రారంభించండి.",
+};
+
+const TE_MOCK_NOTICE =
+  "డెమో డేటా — ఇది ఒక నమూనా. విలువలు ఉదాహరణ నమూనాలు మాత్రమే, ల్యాబ్ ఫలితాలు కావు.";
+
+const MONTH_TE: Record<string, string> = {
+  Jan: "జన",
+  Feb: "ఫిబ్ర",
+  Mar: "మార్చి",
+  Apr: "ఏప్రి",
+  May: "మే",
+  Jun: "జూన్",
+  Jul: "జులై",
+  Aug: "ఆగ",
+  Sep: "సెప్టెం",
+  Oct: "అక్టో",
+  Nov: "నవం",
+  Dec: "డిసెం",
+};
+
+function seasonTe(season: string): string {
+  let out = season.replace("Kharif", "ఖరీఫ్").replace("Rabi", "రబీ");
+  for (const [en, t] of Object.entries(MONTH_TE)) out = out.replace(en, t);
+  return out;
+}
+
+/** "20 Oct 2026" → "20 అక్టో 2026" for the report-history date line. */
+function reportDateTe(date: string): string {
+  const parts = date.split(" ");
+  if (parts.length === 3 && MONTH_TE[parts[1]]) {
+    return `${parts[0]} ${MONTH_TE[parts[1]]} ${parts[2]}`;
+  }
+  return date;
+}
+
+const CROP_TE: Record<string, string> = {
+  Paddy: "వరి",
+  Cotton: "పత్తి",
+  Chilli: "మిరప",
+  All: "అన్నీ",
+};
+
 const emptySubscribe = () => () => {};
 
 function getDaypartSnapshot(): Daypart {
@@ -76,8 +149,9 @@ function getDaypartSnapshot(): Daypart {
 
 export default function DashboardPage() {
   const storedUser = useStoredUser();
-  const name = storedUser?.name ?? "Guest Farmer";
   const lang = useStoredLang();
+  const te = lang === "te";
+  const name = storedUser?.name ?? (te ? "అతిథి రైతు" : "Guest Farmer");
   // The greeting depends on the client's clock, which the server cannot
   // know; reading the real hour during render mismatched the server's
   // "Good morning" in afternoons/evenings. useSyncExternalStore renders
@@ -91,8 +165,8 @@ export default function DashboardPage() {
   const greeting = GREETINGS[daypart];
 
   useEffect(() => {
-    document.title = "Overview · SasyaSakhi";
-  }, []);
+    document.title = te ? "డాష్‌బోర్డ్ · SasyaSakhi" : "Overview · SasyaSakhi";
+  }, [te]);
 
   const latestReport = MOCK_REPORT_HISTORY[0];
   const upcoming = MOCK_CALENDAR.filter((e) => !e.done).slice(0, 3);
@@ -110,17 +184,27 @@ export default function DashboardPage() {
     storedReport !== null && storedReport.mockNotice !== MOCK_NOTICE;
   const latestFileName = storedReport?.fileName ?? latestReport.fileName;
   const latestDate = storedReport
-    ? new Date(storedReport.uploadedAt).toLocaleDateString("en-IN", {
+    ? new Date(storedReport.uploadedAt).toLocaleDateString(te ? "te-IN" : "en-IN", {
         day: "numeric",
         month: "short",
         year: "numeric",
       })
-    : latestReport.date;
-  const latestStatus = isLiveReport
+    : te
+      ? reportDateTe(latestReport.date)
+      : latestReport.date;
+  const latestStatusEn = isLiveReport
     ? "Your report"
     : storedReport
       ? "Sample values"
       : latestReport.status;
+  const latestStatus =
+    te && latestStatusEn === "Your report"
+      ? "మీ నివేదిక"
+      : te && latestStatusEn === "Sample values"
+        ? "నమూనా విలువలు"
+        : te && latestStatusEn === "Analyzed"
+          ? "విశ్లేషించబడింది"
+          : latestStatusEn;
 
   return (
     <div className="space-y-8">
@@ -128,17 +212,23 @@ export default function DashboardPage() {
       <div className="flex flex-wrap items-center gap-3">
         <span
           className="inline-flex items-center gap-1.5 rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold text-[#8A6A2F] ring-1 ring-gold/50"
-          title={MOCK_NOTICE}
+          title={te ? TE_MOCK_NOTICE : MOCK_NOTICE}
         >
           <BadgeCheck className="size-3.5" aria-hidden />
-          {isLiveReport ? "Live report" : "Demo data"}
+          {isLiveReport ? (te ? "ప్రత్యక్ష నివేదిక" : "Live report") : te ? "డెమో డేటా" : "Demo data"}
         </span>
         <p className="text-xs text-charcoal/60">
           {isLiveReport
-            ? "Showing your uploaded report. Weather, calendar and crop matches below are still sample data."
+            ? te
+              ? "మీరు అప్‌లోడ్ చేసిన నివేదిక చూపబడుతోంది. కింద వాతావరణం, క్యాలెండర్ మరియు పంట సరిపోలికలు ఇంకా నమూనా డేటానే."
+              : "Showing your uploaded report. Weather, calendar and crop matches below are still sample data."
             : storedReport
-              ? "Your upload could not be read, so sample values are shown instead. Try a clearer photo or PDF."
-              : MOCK_NOTICE}
+              ? te
+                ? "మీ అప్‌లోడ్ చదవబడలేదు, కాబట్టి బదులుగా నమూనా విలువలు చూపబడుతున్నాయి. స్పష్టమైన ఫోటో లేదా PDF ప్రయత్నించండి."
+                : "Your upload could not be read, so sample values are shown instead. Try a clearer photo or PDF."
+              : te
+                ? TE_MOCK_NOTICE
+                : MOCK_NOTICE}
         </p>
       </div>
 
@@ -146,13 +236,15 @@ export default function DashboardPage() {
       <section className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3">
           <p className="text-sm font-medium uppercase tracking-wider text-leaf">
-            {lang === "te" ? "మీ పొలం డాష్‌బోర్డ్" : "Your farm dashboard"}
+            {te ? "మీ పొలం డాష్‌బోర్డ్" : "Your farm dashboard"}
           </p>
           <h2 className="mt-1 font-display text-3xl font-semibold tracking-tight text-charcoal sm:text-4xl">
-            {lang === "te" ? greeting.te : greeting.en}, {name}
+            {te ? greeting.te : greeting.en}, {name}
           </h2>
           <p className="mt-2 text-sm text-charcoal/60">
-            Demo farm · Andhra Pradesh — sample data shown throughout.
+            {te
+              ? "డెమో పొలం · ఆంధ్రప్రదేశ్ — అంతటా నమూనా డేటా చూపబడుతోంది."
+              : "Demo farm · Andhra Pradesh — sample data shown throughout."}
           </p>
 
           {/* Latest report card */}
@@ -167,7 +259,7 @@ export default function DashboardPage() {
                 </span>
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wider text-charcoal/50">
-                    Latest soil report
+                    {te ? "తాజా నేల నివేదిక" : "Latest soil report"}
                   </p>
                   <p className="mt-1 font-medium text-charcoal">{latestFileName}</p>
                   <p className="mt-0.5 text-sm text-charcoal/60">
@@ -197,24 +289,29 @@ export default function DashboardPage() {
                 <Upload className="size-5 text-leaf" aria-hidden />
               </span>
               <h3 className="mt-4 font-display text-2xl font-semibold tracking-tight">
-                Upload Soil Report
+                {te ? "నేల నివేదిక అప్‌లోడ్ చేయండి" : "Upload Soil Report"}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-ivory/70">
-                Add a new lab report (PDF or photo) and get a fresh soil health
-                analysis in seconds.
+                {te
+                  ? "కొత్త ల్యాబ్ నివేదిక (PDF లేదా ఫోటో) జోడించి, సెకన్లలో తాజా నేల ఆరోగ్య విశ్లేషణ పొందండి."
+                  : "Add a new lab report (PDF or photo) and get a fresh soil health analysis in seconds."}
               </p>
               <div className="mt-auto pt-6">
                 <Link
                   href="/soil-report"
                   className={cn(buttonVariants({ size: "lg" }), "w-full bg-gold text-pine hover:bg-gold/90")}
                 >
-                  Upload report
+                  {te ? "నివేదిక అప్‌లోడ్ చేయండి" : "Upload report"}
                   <ArrowRight aria-hidden />
                 </Link>
                 <p className="mt-2.5 text-center text-[11px] text-ivory/50">
                   {BACKEND_CONFIGURED
-                    ? "Uploads are processed by the live backend."
-                    : "Demo — uploads are not actually processed."}
+                    ? te
+                      ? "అప్‌లోడ్‌లు ప్రత్యక్ష బ్యాకెండ్ ద్వారా ప్రాసెస్ చేయబడతాయి."
+                      : "Uploads are processed by the live backend."
+                    : te
+                      ? "డెమో — అప్‌లోడ్‌లు నిజంగా ప్రాసెస్ చేయబడవు."
+                      : "Demo — uploads are not actually processed."}
                 </p>
               </div>
             </div>
@@ -227,10 +324,10 @@ export default function DashboardPage() {
         <div className="mb-4 flex items-center justify-between">
           <h3 id="params-heading" className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal">
             <FlaskConical className="size-5 text-forest" aria-hidden />
-            Soil parameters
+            {te ? "నేల పారామితులు" : "Soil parameters"}
           </h3>
           <Link href="/soil-analysis" className="text-sm font-semibold text-forest hover:underline">
-            Full analysis
+            {te ? "పూర్తి విశ్లేషణ" : "Full analysis"}
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
@@ -241,7 +338,7 @@ export default function DashboardPage() {
             >
               <div className="flex items-center justify-between gap-2">
                 <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
-                  {p.label}
+                  {te ? p.labelTe : p.label}
                 </p>
                 <span className={`size-2 rounded-full ${STATUS_DOT[p.status]}`} aria-hidden />
               </div>
@@ -254,7 +351,7 @@ export default function DashboardPage() {
               <span
                 className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ring-1 ${STATUS_STYLE[p.status]}`}
               >
-                {p.status}
+                {te ? STATUS_TE[p.status] : p.status}
               </span>
             </div>
           ))}
@@ -266,10 +363,10 @@ export default function DashboardPage() {
         <div className="mb-4 flex items-center justify-between">
           <h3 id="crops-heading" className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal">
             <Wheat className="size-5 text-forest" aria-hidden />
-            Top crop matches
+            {te ? "అగ్ర పంట సరిపోలికలు" : "Top crop matches"}
           </h3>
           <Link href="/recommendations" className="text-sm font-semibold text-forest hover:underline">
-            All recommendations
+            {te ? "అన్ని సిఫార్సులు" : "All recommendations"}
           </Link>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -281,10 +378,11 @@ export default function DashboardPage() {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h4 className="font-display text-lg font-semibold text-charcoal">
-                    {lang === "te" ? crop.nameTe : crop.name}
+                    {te ? crop.nameTe : crop.name}
                   </h4>
                   <p className="mt-0.5 text-xs text-charcoal/55">
-                    {crop.season} · Water: {crop.waterNeed}
+                    {te ? seasonTe(crop.season) : crop.season} · {te ? "నీరు" : "Water"}:{" "}
+                    {te ? (WATER_TE[crop.waterNeed] ?? crop.waterNeed) : crop.waterNeed}
                   </p>
                 </div>
                 <span className="rounded-full bg-forest px-2.5 py-1 text-xs font-bold text-ivory">
@@ -298,13 +396,13 @@ export default function DashboardPage() {
                 />
               </div>
               <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-charcoal/70">
-                {lang === "te" ? crop.descriptionTe : crop.description}
+                {te ? crop.descriptionTe : crop.description}
               </p>
               <Link
                 href="/recommendations"
                 className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-forest hover:underline"
               >
-                View plan
+                {te ? "ప్రణాళిక చూడండి" : "View plan"}
                 <ArrowRight className="size-4" aria-hidden />
               </Link>
             </article>
@@ -313,15 +411,15 @@ export default function DashboardPage() {
       </section>
 
       {/* Weather + calendar */}
-      <section className="grid gap-4 lg:grid-cols-2" aria-label="Weather and upcoming activities">
+      <section className="grid gap-4 lg:grid-cols-2" aria-label={te ? "వాతావరణం మరియు రాబోయే కార్యకలాపాలు" : "Weather and upcoming activities"}>
         <div className="rounded-2xl border border-sage bg-white p-5">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal">
               <CloudSun className="size-5 text-forest" aria-hidden />
-              Weather
+              {te ? "వాతావరణం" : "Weather"}
             </h3>
             <Link href="/weather" className="text-sm font-semibold text-forest hover:underline">
-              Full forecast
+              {te ? "పూర్తి సూచన" : "Full forecast"}
             </Link>
           </div>
           <ul className="divide-y divide-sage/60">
@@ -333,8 +431,8 @@ export default function DashboardPage() {
                     <Icon className="size-5 text-forest" aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-charcoal">{w.day}</p>
-                    <p className="truncate text-xs text-charcoal/55">{w.advice}</p>
+                    <p className="text-sm font-semibold text-charcoal">{te ? (DAY_TE[w.day] ?? w.day) : w.day}</p>
+                    <p className="truncate text-xs text-charcoal/55">{te ? (ADVICE_TE[w.advice] ?? w.advice) : w.advice}</p>
                   </div>
                   <div className="text-right text-sm">
                     <p className="font-semibold text-charcoal">
@@ -355,10 +453,10 @@ export default function DashboardPage() {
           <div className="mb-4 flex items-center justify-between">
             <h3 className="flex items-center gap-2 font-display text-xl font-semibold text-charcoal">
               <CalendarDays className="size-5 text-forest" aria-hidden />
-              Upcoming activities
+              {te ? "రాబోయే కార్యకలాపాలు" : "Upcoming activities"}
             </h3>
             <Link href="/crop-calendar" className="text-sm font-semibold text-forest hover:underline">
-              Full calendar
+              {te ? "పూర్తి క్యాలెండర్" : "Full calendar"}
             </Link>
           </div>
           <ul className="space-y-3">
@@ -372,14 +470,14 @@ export default function DashboardPage() {
                     {new Date(`${ev.date}T00:00:00`).getDate()}
                   </span>
                   <span className="mt-0.5 text-[10px] uppercase leading-none opacity-75">
-                    {new Date(`${ev.date}T00:00:00`).toLocaleString("en-IN", { month: "short" })}
+                    {new Date(`${ev.date}T00:00:00`).toLocaleString(te ? "te-IN" : "en-IN", { month: "short" })}
                   </span>
                 </span>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-charcoal">
-                    {lang === "te" ? ev.titleTe : ev.title}
+                    {te ? ev.titleTe : ev.title}
                   </p>
-                  <p className="text-xs text-charcoal/55">{ev.crop}</p>
+                  <p className="text-xs text-charcoal/55">{te ? (CROP_TE[ev.crop] ?? ev.crop) : ev.crop}</p>
                 </div>
               </li>
             ))}
@@ -399,10 +497,12 @@ export default function DashboardPage() {
           </span>
           <div>
             <h3 className="font-display text-lg font-semibold text-charcoal">
-              Ask the AI assistant
+              {te ? "AI సహాయకుడిని అడగండి" : "Ask the AI assistant"}
             </h3>
             <p className="text-sm text-charcoal/60">
-              “What does my pH mean?” — answers in English or Telugu, from your soil data.
+              {te
+                ? "“నా pH అంటే ఏమిటి?” — మీ నేల డేటా నుండి ఇంగ్లీష్ లేదా తెలుగులో సమాధానాలు."
+                : "“What does my pH mean?” — answers in English or Telugu, from your soil data."}
             </p>
           </div>
         </div>
@@ -410,7 +510,7 @@ export default function DashboardPage() {
           href="/assistant"
           className={cn(buttonVariants(), "shrink-0 bg-forest text-ivory hover:bg-pine")}
         >
-          Open assistant
+          {te ? "సహాయకుడు తెరవండి" : "Open assistant"}
           <ArrowRight aria-hidden />
         </Link>
       </LiquidGlass>

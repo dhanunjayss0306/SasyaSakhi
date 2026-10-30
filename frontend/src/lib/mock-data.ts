@@ -36,6 +36,7 @@ export const CROPS: Crop[] = [
     season: "Kharif (Jun–Nov)",
     waterNeed: "High",
     soilFactors: ["pH 6.5 in ideal 5.5–7.0 band", "Nitrogen 280 kg/ha supports tillering", "Good water retention expected"],
+    soilFactorsTe: ["pH 6.5 ఆదర్శ 5.5–7.0 పరిధిలో ఉంది", "నత్రజని 280 kg/ha టిల్లరింగ్‌కు తోడ్పడుతుంది", "మంచి నీటి నిలుపుదల ఆశించబడుతుంది"],
   },
   {
     id: "cotton",
@@ -48,6 +49,7 @@ export const CROPS: Crop[] = [
     season: "Kharif (Apr–Oct)",
     waterNeed: "Medium",
     soilFactors: ["Tolerates higher potassium", "Needs phosphorus correction at sowing", "Prefers well-drained patches"],
+    soilFactorsTe: ["ఎక్కువ పొటాషియంను తట్టుకుంటుంది", "విత్తేటప్పుడు భాస్వరం సరిదిద్దుడు అవసరం", "బాగా నీరు పారే ప్రాంతాలు ఇష్టం"],
   },
   {
     id: "chilli",
@@ -60,6 +62,7 @@ export const CROPS: Crop[] = [
     season: "Kharif/Rabi (Jul–Feb)",
     waterNeed: "Medium",
     soilFactors: ["Sensitive to low phosphorus", "Benefits from organic manure", "Avoid waterlogging"],
+    soilFactorsTe: ["తక్కువ భాస్వరానికి సున్నితం", "సేంద్రీయ ఎరువు వల్ల ప్రయోజనం", "నీరు నిల్వ ఉండకుండా చూడండి"],
   },
 ];
 
@@ -107,6 +110,13 @@ export const SUGGESTED_QUESTIONS = [
   "నా నేల ఆరోగ్యం ఎలా ఉంది?",
 ];
 
+export const SUGGESTED_QUESTIONS_TE = [
+  "నా pH అంటే ఏమిటి?",
+  "వరి నా నేలకు ఎందుకు సరిపోతుంది?",
+  "నేను ఎంత యూరియా వేయాలి?",
+  "నా నేల ఆరోగ్యం ఎలా ఉంది?",
+];
+
 export const MOCK_CHAT_RESPONSES: Record<string, string> = {
   default:
     "Based on your sample report (demo data): your soil health is Good. pH 6.5 is in the ideal band for paddy and cotton. Phosphorus is a touch low at 22 kg/ha, so basal DAP at sowing is worth prioritizing. Want me to explain any single value in detail?",
@@ -119,11 +129,24 @@ export const MOCK_CHAT_RESPONSES: Record<string, string> = {
     "మీ నమూనా నివేదిక ప్రకారం మీ నేల ఆరోగ్యం బాగుంది. pH 6.5 వరి మరియు పత్తికి అనుకూలం. భాస్వరం కొద్దిగా తక్కువగా ఉంది (22 kg/ha), కాబట్టి విత్తేటప్పుడు DAP వేయడం మంచిది.",
 };
 
-export function mockChatReply(question: string): string {
+/** Telugu versions of the mock templates, used when the Telugu toggle is
+ *  on — so the demo chat is fully Telugu, not just its chrome. */
+export const MOCK_CHAT_RESPONSES_TE: Record<string, string> = {
+  default:
+    "మీ నమూనా నివేదిక (డెమో డేటా) ప్రకారం మీ నేల ఆరోగ్యం మంచిది. pH 6.5 వరి మరియు పత్తికి ఆదర్శ పరిధిలో ఉంది. భాస్వరం 22 kg/ha వద్ద కొద్దిగా తక్కువగా ఉంది, కాబట్టి విత్తేటప్పుడు బేసల్ DAP కు ప్రాధాన్యత ఇవ్వడం మంచిది. ఏ ఒక్క విలువనైనా వివరంగా వివరించమంటారా?",
+  ph: "pH 6.5 అంటే మీ నేల చాలా కొద్దిగా ఆమ్లంగా ఉంది — సరైన పరిధిలో (6.0–7.0) ఉంది, ఇక్కడ వరి, పత్తి మరియు మిరప అన్నీ పోషకాలను బాగా గ్రహిస్తాయి. ఈ నమూనాకు సున్నం లేదా జిప్సం సరిదిద్దుడు అవసరం లేదు.",
+  paddy:
+    "వరి మీ నమూనా నేలకు 92% స్కోర్ చేస్తుంది, ఎందుకంటే pH 6.5 దాని ఆదర్శ 5.5–7.0 పరిధిలో ఉంది మరియు నత్రజని 280 kg/ha బలమైన టిల్లరింగ్‌కు తోడ్పడుతుంది. సీజన్ అంతటా ఖచ్చితమైన నీటిపారుదల అవసరం.",
+  urea:
+    "నమూనా నివేదిక కోసం, ఉదాహరణ ప్రణాళిక ఎకరాకు 50 కిలోల యూరియాను టాప్-డ్రెస్ మోతాదుగా సూచిస్తుంది (సుమారు ₹300). ఇది డెమో డేటా — కొనే ముందు ఎల్లప్పుడూ మీ స్థానిక వ్యవసాయ అధికారితో మోతాదులను నిర్ధారించుకోండి.",
+};
+
+export function mockChatReply(question: string, lang: "en" | "te" = "en"): string {
   const q = question.toLowerCase();
   if (/[\u0c00-\u0c7f]/.test(question)) return MOCK_CHAT_RESPONSES.telugu;
-  if (q.includes("ph")) return MOCK_CHAT_RESPONSES.ph;
-  if (q.includes("paddy") || q.includes("వరి")) return MOCK_CHAT_RESPONSES.paddy;
-  if (q.includes("urea") || q.includes("fertilizer") || q.includes("dap")) return MOCK_CHAT_RESPONSES.urea;
-  return MOCK_CHAT_RESPONSES.default;
+  const te = lang === "te";
+  if (q.includes("ph")) return te ? MOCK_CHAT_RESPONSES_TE.ph : MOCK_CHAT_RESPONSES.ph;
+  if (q.includes("paddy") || q.includes("వరి")) return te ? MOCK_CHAT_RESPONSES_TE.paddy : MOCK_CHAT_RESPONSES.paddy;
+  if (q.includes("urea") || q.includes("fertilizer") || q.includes("dap")) return te ? MOCK_CHAT_RESPONSES_TE.urea : MOCK_CHAT_RESPONSES.urea;
+  return te ? MOCK_CHAT_RESPONSES_TE.default : MOCK_CHAT_RESPONSES.default;
 }
