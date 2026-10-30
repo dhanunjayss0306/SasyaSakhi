@@ -6,7 +6,7 @@ import { BACKEND_CONFIGURED, chatWithAssistant } from "@/lib/api-client";
 import { store } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Bot, Eraser, Mic, MicOff, Send, Sprout, User } from "lucide-react";
+import { Bot, Eraser, Mic, MicOff, Send, Sprout, User, Volume2, VolumeX } from "lucide-react";
 
 interface ChatWindowProps {
   initialLang: "en" | "te";
@@ -66,6 +66,8 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
   const [lastSource, setLastSource] = useState<"live" | "mock" | null>(null);
   const [listening, setListening] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
+  // Which assistant message is being read aloud right now, if any.
+  const [speakingId, setSpeakingId] = useState<number | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recognitionRef = useRef<SpeechRecognitionInstance | null>(null);
@@ -79,12 +81,47 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       if (recognitionRef.current) recognitionRef.current.stop();
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     };
   }, []);
+
+  // Voice replies: the browser reads the answer aloud — no server, no key.
+  // The reply's own script picks the voice: Telugu text gets a Telugu
+  // voice even if the toggle is on English, mirroring the input rule.
+  const stopSpeaking = () => {
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+    setSpeakingId(null);
+  };
+
+  const toggleSpeak = (id: number, text: string) => {
+    if (speakingId === id) {
+      stopSpeaking();
+      return;
+    }
+    if (!("speechSynthesis" in window)) {
+      setVoiceError(
+        initialLang === "te"
+          ? "వాయిస్ ప్లేబ్యాక్ ఈ బ్రౌజర్‌లో పనిచేయదు. Chrome వాడండి."
+          : "Voice playback is not supported in this browser. Please use Chrome."
+      );
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = TELUGU_RE.test(text) ? "te-IN" : initialLang === "te" ? "te-IN" : "en-IN";
+    const voices = window.speechSynthesis.getVoices();
+    const match = voices.find((v) => v.lang.toLowerCase().startsWith(utterance.lang.toLowerCase()));
+    if (match) utterance.voice = match;
+    utterance.onend = () => setSpeakingId(null);
+    utterance.onerror = () => setSpeakingId(null);
+    setSpeakingId(id);
+    window.speechSynthesis.speak(utterance);
+  };
 
   const send = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || typing) return;
+    stopSpeaking();
     setMessages((prev) => [...prev, { id: nextId++, role: "user", text: trimmed }]);
     setInput("");
     setTyping(true);
@@ -129,6 +166,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
 
   const clearChat = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
+    stopSpeaking();
     setTyping(false);
     setLastSource(null);
     setMessages([{ id: nextId++, role: "assistant", text: greeting(initialLang) }]);
@@ -258,15 +296,46 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
             >
               {m.role === "assistant" ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
             </span>
-            <div
-              className={cn(
-                "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
-                m.role === "assistant"
-                  ? "rounded-tl-sm bg-ivory text-charcoal"
-                  : "rounded-tr-sm bg-forest text-ivory"
+            <div className="max-w-[80%]">
+              <div
+                className={cn(
+                  "rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
+                  m.role === "assistant"
+                    ? "rounded-tl-sm bg-ivory text-charcoal"
+                    : "rounded-tr-sm bg-forest text-ivory"
+                )}
+              >
+                {m.text}
+              </div>
+              {m.role === "assistant" && (
+                <button
+                  type="button"
+                  onClick={() => toggleSpeak(m.id, m.text)}
+                  aria-label={
+                    speakingId === m.id
+                      ? initialLang === "te"
+                        ? "చదవడం ఆపండి"
+                        : "Stop reading"
+                      : initialLang === "te"
+                        ? "సమాధానం వినండి"
+                        : "Listen to answer"
+                  }
+                  className="mt-1 ml-1 flex items-center gap-1 text-xs font-medium text-forest/70 hover:text-forest"
+                >
+                  {speakingId === m.id ? (
+                    <VolumeX className="h-3.5 w-3.5" aria-hidden />
+                  ) : (
+                    <Volume2 className="h-3.5 w-3.5" aria-hidden />
+                  )}
+                  {speakingId === m.id
+                    ? initialLang === "te"
+                      ? "ఆపండి"
+                      : "Stop"
+                    : initialLang === "te"
+                      ? "వినండి"
+                      : "Listen"}
+                </button>
               )}
-            >
-              {m.text}
             </div>
           </div>
         ))}
