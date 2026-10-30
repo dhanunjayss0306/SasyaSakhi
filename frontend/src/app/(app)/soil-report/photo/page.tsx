@@ -12,12 +12,13 @@ import { store } from "@/lib/store";
  * Soil photo path: the farmer takes (or picks) a photo of the soil itself
  * and attaches it. Honest limit, stated on screen: the app has no model
  * that reads soil properties from a photo of dirt — OCR reads text from
- * documents, not nutrients from soil colour. So continuing uses the
- * clearly labelled demo values (the same sample the review page already
- * marks "Demo data — edit freely"), never numbers presented as analysis
- * of the photo. No random values: random numbers could be impossible
- * (pH 19, negative nitrogen) and would break the crop and fertilizer
- * logic downstream.
+ * documents, not nutrients from soil colour. So a photo carries only
+ * what it can realistically hint at: soil colour suggests organic matter,
+ * roughly, so only the organic-carbon value carries over (labelled demo).
+ * pH, EC, N, P and K stay blank for the farmer to fill from a lab test
+ * on the review screen. No random values: random numbers could be
+ * impossible (pH 19, negative nitrogen) and would break the crop and
+ * fertilizer logic downstream.
  */
 export default function SoilPhotoPage() {
   const router = useRouter();
@@ -39,10 +40,20 @@ export default function SoilPhotoPage() {
 
   function handleContinue() {
     if (!file) return;
+    // Only what a photo can realistically hint at: soil colour suggests
+    // organic matter, roughly — so only the organic-carbon value carries
+    // over (labelled demo). pH, EC, N, P and K cannot be read from a photo
+    // at all, so they stay blank for the farmer to fill from a lab test
+    // on the review screen (confirming requires all six values).
     const report = structuredClone(SAMPLE_SOIL_REPORT);
     report.id = `photo-${Date.now()}`;
     report.fileName = file.name;
     report.uploadedAt = new Date().toISOString();
+    report.parameters = report.parameters.map((p) =>
+      p.key === "oc"
+        ? { ...p, status: "unknown" as const, uncertain: true }
+        : { ...p, value: null, status: "unknown" as const, uncertain: true },
+    );
     store.setReport(report);
     router.push("/soil-report/review");
   }
@@ -90,10 +101,12 @@ export default function SoilPhotoPage() {
           )}
           <p className="mt-3 text-sm font-medium text-charcoal">{file.name}</p>
           <p className="mt-1 text-sm text-charcoal/70">
-            Photo attached. Photo analysis is not built yet, so continuing
-            uses clearly labelled demo values — the review screen marks
-            them “Demo data — edit freely”. Nothing here is presented as
-            measured from your photo.
+            Photo attached. From a photo, only a rough organic-carbon hint
+            is possible — soil colour suggests organic matter, but it is
+            not a lab value. pH, EC, nitrogen, phosphorus and potassium
+            cannot be read from a photo, so they stay blank for you to
+            fill from a lab test on the next screen. Nothing here is
+            presented as measured from your photo.
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Button
@@ -101,7 +114,7 @@ export default function SoilPhotoPage() {
               onClick={handleContinue}
               className="flex-1 bg-forest text-ivory hover:bg-pine"
             >
-              Continue with demo values
+              Continue with partial values
             </Button>
             <Button
               type="button"

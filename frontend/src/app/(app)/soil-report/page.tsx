@@ -163,9 +163,9 @@ export default function SoilReportPage() {
             <span>
               <span className="block font-semibold text-charcoal">Soil photo</span>
               <span className="mt-0.5 block text-sm text-charcoal/70">
-                Take a photo of your soil and attach it. Photo analysis is
-                not built yet, so you continue with clearly labelled demo
-                values.
+                Take a photo of your soil and attach it. Only a rough
+                organic-carbon hint carries over; the rest stays blank
+                to fill from a lab test.
               </span>
             </span>
           </Link>
