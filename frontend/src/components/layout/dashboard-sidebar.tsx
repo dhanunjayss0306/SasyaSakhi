@@ -38,7 +38,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Soil Health", href: "/soil-analysis", icon: FlaskConical },
   { label: "Crop Recommendations", href: "/recommendations", icon: Wheat },
   { label: "My Crop", href: "/my-crop", icon: Sprout },
-  { label: "Fertilizer Planner", href: "/recommendations", icon: Calculator },
+  { label: "Fertilizer Planner", href: "/fertilizer-planner", icon: Calculator },
   { label: "Weather", href: "/weather", icon: CloudSun },
   { label: "Zone & Water", href: "/zone-water", icon: Droplets },
   { label: "Crop Calendar", href: "/crop-calendar", icon: CalendarDays },

@@ -3,11 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import type { CropId } from "@/types/crop";
 import { CROPS, MOCK_NOTICE, SAMPLE_SOIL_REPORT } from "@/lib/mock-data";
-import { getCropRecommendations, getFertilizerPlan } from "@/lib/mock-recommendation-service";
+import { getCropRecommendations } from "@/lib/mock-recommendation-service";
 import {
   BACKEND_CONFIGURED,
   cropSuitability,
-  fertilizerRecommendation,
   mlSuitability,
   type ConfirmedValue,
   type CropSuitability,
@@ -15,10 +14,6 @@ import {
 } from "@/lib/api-client";
 import { store } from "@/lib/store";
 import { CropCard } from "@/components/recommendations/crop-card";
-import {
-  FertilizerPanel,
-  type LiveFertilizerPlan,
-} from "@/components/recommendations/fertilizer-panel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CheckCircle2 } from "lucide-react";
@@ -88,7 +83,6 @@ export default function RecommendationsPage() {
   const recommendations = useMemo(() => getCropRecommendations(), []);
   const selectedCrop = CROPS.find((c) => c.id === selectedId) ?? CROPS[0];
   const selectedRec = recommendations.find((r) => r.cropId === selectedId);
-  const fertilizerItems = getFertilizerPlan(selectedId);
 
   // Live backend state. When the backend is unset, everything below stays
   // null and the page renders exactly as before (mock).
@@ -97,12 +91,6 @@ export default function RecommendationsPage() {
   );
   const [liveCrops, setLiveCrops] = useState<Map<CropId, LiveCrop> | null>(null);
   const [mlResults, setMlResults] = useState<Map<CropId, MLResult> | null>(null);
-  // Fertilizer results are keyed per crop and written only from async
-  // callbacks (never synchronously in an effect body). No entry for a crop
-  // yet means its plan is still loading.
-  const [fertResults, setFertResults] = useState<
-    Partial<Record<CropId, { status: "live" | "mock"; plan: LiveFertilizerPlan | null }>>
-  >({});
 
   // Fetch crop suitability once. Any failure (no values, bad response,
   // network) falls back to the mock rendering — never an error page.
@@ -157,59 +145,9 @@ export default function RecommendationsPage() {
     };
   }, []);
 
-  // Fetch the fertilizer plan for the selected crop once crops are live.
-  // State is written only inside the async callback below.
-  useEffect(() => {
-    if (cropsPhase !== "live") return;
-    let alive = true;
-    (async () => {
-      try {
-        const res = await fertilizerRecommendation(selectedId, {
-          values: reportValues(),
-          area: 1,
-          area_unit: "acre",
-        });
-        if (!res.success || res.items.length === 0) throw new Error("no items");
-        if (alive) {
-          setFertResults((prev) => ({
-            ...prev,
-            [selectedId]: {
-              status: "live",
-              plan: {
-                items: res.items.map((i) => ({
-                  product: i.product,
-                  nutrient: i.nutrient,
-                  quantity: i.quantity,
-                  unit: i.unit,
-                })),
-                ruleId: res.rule_id,
-                explanation: res.explanation,
-                area: res.area,
-                areaUnit: res.area_unit,
-                totalCost: res.total_cost,
-                currency: res.currency,
-              },
-            },
-          }));
-        }
-      } catch {
-        if (alive) {
-          setFertResults((prev) => ({
-            ...prev,
-            [selectedId]: { status: "mock", plan: null },
-          }));
-        }
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [selectedId, cropsPhase]);
-
   const liveSelected = cropsPhase === "live" ? (liveCrops?.get(selectedId) ?? null) : null;
   const mlSelected = cropsPhase === "live" ? (mlResults?.get(selectedId) ?? null) : null;
   const showLiveWhy = liveSelected !== null;
-  const fertResult = cropsPhase === "live" ? fertResults[selectedId] : undefined;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
@@ -218,8 +156,8 @@ export default function RecommendationsPage() {
           <h1 className="font-display text-3xl font-semibold text-charcoal">Crop recommendations</h1>
           <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
             {cropsPhase === "live"
-              ? "Suitability from your soil report, with a fertilizer plan for the selected crop."
-              : "Suitability scores from your soil report, with an illustrative fertilizer plan for the selected crop."}
+              ? "Suitability from your soil report."
+              : "Suitability scores from your soil report."}
           </p>
         </div>
         <span className="rounded-full bg-gold/20 px-3 py-1 text-xs font-semibold text-charcoal">
@@ -265,8 +203,8 @@ export default function RecommendationsPage() {
             })}
           </div>
 
-          {/* Why suitable + fertilizer plan for the selected crop */}
-          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
+          {/* Why suitable for the selected crop — fertilizer lives only in Fertilizer Planner */}
+          <div className="mt-8">
             <section aria-labelledby="why-heading" className="rounded-2xl border border-sage bg-white p-5 sm:p-6">
               <h2 id="why-heading" className="font-display text-xl font-semibold text-charcoal">
                 {showLiveWhy && liveSelected.status === "unsuitable"
@@ -339,7 +277,6 @@ export default function RecommendationsPage() {
                       )}
                       <p className="mt-3 text-xs text-charcoal/55">
                         The ML score only compares gaps against the crop's ideal needs.
-                        Fertilizer doses still come from the rules engine, never from the model.
                       </p>
                     </div>
                   )}
@@ -364,17 +301,6 @@ export default function RecommendationsPage() {
               )}
             </section>
 
-            {cropsPhase === "live" && fertResult === undefined ? (
-              <p className="text-sm text-charcoal/60" role="status">
-                Loading fertilizer plan…
-              </p>
-            ) : (
-              <FertilizerPanel
-                cropName={selectedCrop.name}
-                items={fertilizerItems}
-                live={fertResult?.status === "live" ? fertResult.plan : null}
-              />
-            )}
           </div>
         </>
       )}
