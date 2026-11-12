@@ -38,7 +38,7 @@ const STATUS_STYLE: Record<ParamStatus, string> = {
   optimal: "bg-leaf/15 text-[#2E6B40] ring-leaf/40",
   low: "bg-amber-100 text-amber-800 ring-amber-300",
   high: "bg-orange-100 text-orange-800 ring-orange-300",
-  unknown: "bg-charcoal/5 text-charcoal/60 ring-charcoal/15",
+  unknown: "bg-charcoal/5 text-charcoal/80 ring-charcoal/15",
 };
 
 const STATUS_DOT: Record<ParamStatus, string> = {
@@ -207,7 +207,7 @@ export default function DashboardPage() {
           : latestStatusEn;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Demo badge + notice */}
       <div className="flex flex-wrap items-center gap-3">
         <span
@@ -217,7 +217,7 @@ export default function DashboardPage() {
           <BadgeCheck className="size-3.5" aria-hidden />
           {isLiveReport ? (te ? "ప్రత్యక్ష నివేదిక" : "Live report") : te ? "డెమో డేటా" : "Demo data"}
         </span>
-        <p className="text-xs text-charcoal/60">
+        <p className="text-xs text-charcoal/80">
           {isLiveReport
             ? te
               ? "మీరు అప్‌లోడ్ చేసిన నివేదిక చూపబడుతోంది. కింద వాతావరణం, క్యాలెండర్ మరియు పంట సరిపోలికలు ఇంకా నమూనా డేటానే."
@@ -238,10 +238,10 @@ export default function DashboardPage() {
           <p className="text-sm font-medium uppercase tracking-wider text-leaf">
             {te ? "మీ పొలం డాష్‌బోర్డ్" : "Your farm dashboard"}
           </p>
-          <h2 className="mt-1 font-display text-3xl font-semibold tracking-tight text-charcoal sm:text-4xl">
+          <h2 className="mt-1 font-display text-4xl font-semibold tracking-tight text-charcoal sm:text-5xl">
             {te ? greeting.te : greeting.en}, {name}
           </h2>
-          <p className="mt-2 text-sm text-charcoal/60">
+          <p className="mt-2 text-sm text-charcoal/80">
             {te
               ? "డెమో పొలం · ఆంధ్రప్రదేశ్ — అంతటా నమూనా డేటా చూపబడుతోంది."
               : "Demo farm · Andhra Pradesh — sample data shown throughout."}
@@ -258,17 +258,17 @@ export default function DashboardPage() {
                   <FileText className="size-5 text-forest" aria-hidden />
                 </span>
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-wider text-charcoal/50">
+                  <p className="text-xs font-medium uppercase tracking-wider text-charcoal/70">
                     {te ? "తాజా నేల నివేదిక" : "Latest soil report"}
                   </p>
                   <p className="mt-1 font-medium text-charcoal">{latestFileName}</p>
-                  <p className="mt-0.5 text-sm text-charcoal/60">
+                  <p className="mt-0.5 text-sm text-charcoal/80">
                     {latestDate} ·{" "}
                     <span className="font-medium text-[#2E6B40]">{latestStatus}</span>
                   </p>
                 </div>
               </div>
-              <ArrowRight className="size-5 shrink-0 text-charcoal/40" aria-hidden />
+              <ArrowRight className="size-5 shrink-0 text-charcoal/60" aria-hidden />
             </div>
           </Link>
         </div>
@@ -291,7 +291,7 @@ export default function DashboardPage() {
               <h3 className="mt-4 font-display text-2xl font-semibold tracking-tight">
                 {te ? "నేల నివేదిక అప్‌లోడ్ చేయండి" : "Upload Soil Report"}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-ivory/70">
+              <p className="mt-2 text-sm leading-relaxed text-ivory/85">
                 {te
                   ? "కొత్త ల్యాబ్ నివేదిక (PDF లేదా ఫోటో) జోడించి, సెకన్లలో తాజా నేల ఆరోగ్య విశ్లేషణ పొందండి."
                   : "Add a new lab report (PDF or photo) and get a fresh soil health analysis in seconds."}
@@ -304,7 +304,7 @@ export default function DashboardPage() {
                   {te ? "నివేదిక అప్‌లోడ్ చేయండి" : "Upload report"}
                   <ArrowRight aria-hidden />
                 </Link>
-                <p className="mt-2.5 text-center text-[11px] text-ivory/50">
+                <p className="mt-2.5 text-center text-[11px] text-ivory/70">
                   {BACKEND_CONFIGURED
                     ? te
                       ? "అప్‌లోడ్‌లు ప్రత్యక్ష బ్యాకెండ్ ద్వారా ప్రాసెస్ చేయబడతాయి."
@@ -337,7 +337,7 @@ export default function DashboardPage() {
               className="rounded-2xl border border-sage bg-white p-4"
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/50">
+                <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/70">
                   {te ? p.labelTe : p.label}
                 </p>
                 <span className={`size-2 rounded-full ${STATUS_DOT[p.status]}`} aria-hidden />
@@ -345,7 +345,7 @@ export default function DashboardPage() {
               <p className="mt-2 font-display text-2xl font-semibold text-charcoal">
                 {p.value ?? "—"}
                 {p.unit && (
-                  <span className="ml-1 text-xs font-normal text-charcoal/50">{p.unit}</span>
+                  <span className="ml-1 text-xs font-normal text-charcoal/70">{p.unit}</span>
                 )}
               </p>
               <span
@@ -380,7 +380,7 @@ export default function DashboardPage() {
                   <h4 className="font-display text-lg font-semibold text-charcoal">
                     {te ? crop.nameTe : crop.name}
                   </h4>
-                  <p className="mt-0.5 text-xs text-charcoal/55">
+                  <p className="mt-0.5 text-xs text-charcoal/75">
                     {te ? seasonTe(crop.season) : crop.season} · {te ? "నీరు" : "Water"}:{" "}
                     {te ? (WATER_TE[crop.waterNeed] ?? crop.waterNeed) : crop.waterNeed}
                   </p>
@@ -395,7 +395,7 @@ export default function DashboardPage() {
                   style={{ width: `${crop.suitability}%` }}
                 />
               </div>
-              <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-charcoal/70">
+              <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-charcoal/85">
                 {te ? crop.descriptionTe : crop.description}
               </p>
               <Link
@@ -432,13 +432,13 @@ export default function DashboardPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-charcoal">{te ? (DAY_TE[w.day] ?? w.day) : w.day}</p>
-                    <p className="truncate text-xs text-charcoal/55">{te ? (ADVICE_TE[w.advice] ?? w.advice) : w.advice}</p>
+                    <p className="truncate text-xs text-charcoal/75">{te ? (ADVICE_TE[w.advice] ?? w.advice) : w.advice}</p>
                   </div>
                   <div className="text-right text-sm">
                     <p className="font-semibold text-charcoal">
-                      {w.tempHigh}°<span className="text-charcoal/45"> / {w.tempLow}°</span>
+                      {w.tempHigh}°<span className="text-charcoal/65"> / {w.tempLow}°</span>
                     </p>
-                    <p className="flex items-center justify-end gap-1 text-xs text-charcoal/55">
+                    <p className="flex items-center justify-end gap-1 text-xs text-charcoal/75">
                       <Droplets className="size-3" aria-hidden />
                       {w.rainChance}%
                     </p>
@@ -477,7 +477,7 @@ export default function DashboardPage() {
                   <p className="truncate text-sm font-semibold text-charcoal">
                     {te ? ev.titleTe : ev.title}
                   </p>
-                  <p className="text-xs text-charcoal/55">{te ? (CROP_TE[ev.crop] ?? ev.crop) : ev.crop}</p>
+                  <p className="text-xs text-charcoal/75">{te ? (CROP_TE[ev.crop] ?? ev.crop) : ev.crop}</p>
                 </div>
               </li>
             ))}
@@ -499,7 +499,7 @@ export default function DashboardPage() {
             <h3 className="font-display text-lg font-semibold text-charcoal">
               {te ? "AI సహాయకుడిని అడగండి" : "Ask the AI assistant"}
             </h3>
-            <p className="text-sm text-charcoal/60">
+            <p className="text-sm text-charcoal/80">
               {te
                 ? "“నా pH అంటే ఏమిటి?” — మీ నేల డేటా నుండి ఇంగ్లీష్ లేదా తెలుగులో సమాధానాలు."
                 : "“What does my pH mean?” — answers in English or Telugu, from your soil data."}

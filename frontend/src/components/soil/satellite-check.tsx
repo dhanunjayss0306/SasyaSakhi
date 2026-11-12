@@ -182,7 +182,7 @@ export function SatelliteCheck() {
         <Satellite className="size-5 text-forest" aria-hidden />
         {te ? "ఉపగ్రహ నేల తనిఖీ" : "Satellite soil check"}
       </h2>
-      <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
+      <p className="mt-1 max-w-2xl text-sm text-charcoal/85">
         {te ? (
           <>ల్యాబ్ నివేదిక లేదా? ISRIC SoilGrids నుండి సుమారు నమూనా నేపథ్యం కోసం మీ పొలం అక్షాంశం మరియు రేఖాంశాన్ని నమోదు చేయండి. ఇది <span className="font-semibold text-charcoal">నేల పరీక్ష కాదు</span> — ఇది కొన్ని పారామితులను మాత్రమే కవర్ చేస్తుంది, సుమారు 250&nbsp;మీ రిజల్యూషన్‌తో.</>
         ) : (
@@ -194,10 +194,10 @@ export function SatelliteCheck() {
       </p>
 
       {!BACKEND_CONFIGURED && (
-        <p className="mt-4 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm text-charcoal/75">
+        <p className="mt-4 rounded-xl border border-gold/40 bg-gold/10 p-4 text-sm text-charcoal/90">
           {te
-            ? "డెమో మోడ్: బ్యాకెండ్ కనెక్ట్ చేయబడలేదు, కాబట్టి ఉపగ్రహ తనిఖీకి frontend/.env.localలో NEXT_PUBLIC_API_URL సెట్ చేసి బ్యాకెండ్ నడుస్తుండాలి."
-            : "Demo mode: the backend is not connected, so the satellite check needs NEXT_PUBLIC_API_URL set in frontend/.env.local and the backend running."}
+            ? "డెమో మోడ్: బ్యాకెండ్ కనెక్ట్ చేయబడలేదు. ఉపగ్రహ తనిఖీకి NEXT_PUBLIC_API_URL సెట్ చేసి బ్యాకెండ్ నడుస్తుండాలి."
+            : "Demo mode: the backend is not connected. The satellite check needs NEXT_PUBLIC_API_URL set and the backend running."}
         </p>
       )}
 
@@ -239,10 +239,10 @@ export function SatelliteCheck() {
 
       {result && !result.available && (
         <div className="mt-6 rounded-2xl border border-sage bg-white p-5">
-          <p className="text-sm text-charcoal/75">{result.reason}</p>
+          <p className="text-sm text-charcoal/90">{result.reason}</p>
           <ul className="mt-3 space-y-1">
             {result.disclaimers.map((d) => (
-              <li key={d} className="text-xs leading-relaxed text-charcoal/55">· {d}</li>
+              <li key={d} className="text-xs leading-relaxed text-charcoal/75">· {d}</li>
             ))}
           </ul>
         </div>
@@ -250,7 +250,7 @@ export function SatelliteCheck() {
 
       {result?.available && (
         <div className="mt-6 space-y-6">
-          <p className="rounded-xl border border-sage bg-white p-4 text-xs leading-relaxed text-charcoal/60">
+          <p className="rounded-xl border border-sage bg-white p-4 text-xs leading-relaxed text-charcoal/80">
             {te ? (
               <>మూలం: {result.source} · రిజల్యూషన్ ~{result.resolution_m} మీ · నమూనా అంచనాలు, ల్యాబ్ కొలతలు కాదు. నత్రజని g/kgలో ఉంది మరియు ల్యాబ్ kg/ha విలువలతో పోల్చలేము. కింద బ్యాండ్‌లు నమూనా విలువలకు మాత్రమే సుమారు మార్గదర్శకాలు — ల్యాబ్ ప్రమాణాలు కాదు — మరియు వాటి నుండి ఏ ఎరువు మోతాదు లెక్కించబడదు.</>
             ) : (
@@ -278,7 +278,7 @@ export function SatelliteCheck() {
                       {band === "low" ? (te ? "తక్కువ" : "Low") : band === "high" ? (te ? "ఎక్కువ" : "High") : te ? "మధ్యస్థం" : "Medium"}
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-charcoal/70">
+                  <p className="mt-1 text-sm text-charcoal/85">
                     {te ? (
                       <>నమూనా సగటు {g.mean.toFixed(g.parameter === "pH" ? 2 : 3)} {g.unit} — {g.readings.map((r) => `${r.depth}: ${r.value}`).join(", ")} సగటు.</>
                     ) : (
@@ -288,11 +288,11 @@ export function SatelliteCheck() {
                     )}
                   </p>
                   {g.parameter === "N" && (
-                    <p className="mt-2 rounded-lg bg-gold/15 px-3 py-2 text-xs font-semibold text-charcoal/75">
+                    <p className="mt-2 rounded-lg bg-gold/15 px-3 py-2 text-xs font-semibold text-charcoal/90">
                       {te ? "g/kg, kg/ha కాదు — ల్యాబ్ kg/ha విలువలతో పోల్చవద్దు." : "g/kg, NOT kg/ha — do not compare with lab kg/ha values."}
                     </p>
                   )}
-                  <p className="mt-3 text-sm leading-relaxed text-charcoal/80">{text}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-charcoal/90">{text}</p>
                 </article>
               );
             })}
@@ -303,7 +303,7 @@ export function SatelliteCheck() {
             <h3 className="font-display text-lg font-semibold text-charcoal">
               {te ? "ఉపగ్రహం ద్వారా కొలవబడలేదు" : "Not measured by satellite"}
             </h3>
-            <p className="mt-1 text-sm leading-relaxed text-charcoal/75">
+            <p className="mt-1 text-sm leading-relaxed text-charcoal/90">
               {te
                 ? "ఉపగ్రహ డేటా వీటిని అస్సలు కొలవలేదు. వీటి లేకుండా, ఏ ఎరువు మోతాదును నిర్ణయించలేము — పరిమాణాలు కాదు, దిశ మాత్రమే."
                 : "Satellite data cannot measure these at all. Without them, no fertilizer dose can be set — only direction, not quantities."}
@@ -325,7 +325,7 @@ export function SatelliteCheck() {
 
           <ul className="space-y-1">
             {result.disclaimers.map((d) => (
-              <li key={d} className="text-xs leading-relaxed text-charcoal/55">· {d}</li>
+              <li key={d} className="text-xs leading-relaxed text-charcoal/75">· {d}</li>
             ))}
           </ul>
         </div>

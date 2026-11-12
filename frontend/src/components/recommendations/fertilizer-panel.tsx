@@ -57,10 +57,10 @@ function FertilizerRow({ item }: { item: FertilizerRec }) {
       >
         <div>
           <p className="font-semibold text-charcoal">{item.product}</p>
-          <p className="text-xs text-charcoal/60">{te ? "ఎకరాకు" : item.unit}</p>
+          <p className="text-xs text-charcoal/80">{te ? "ఎకరాకు" : item.unit}</p>
         </div>
-        <span className="hidden text-sm text-charcoal/80 sm:block">{item.nutrientQty}</span>
-        <span className="hidden text-sm text-charcoal/80 sm:block">{item.productQty}</span>
+        <span className="hidden text-sm text-charcoal/90 sm:block">{item.nutrientQty}</span>
+        <span className="hidden text-sm text-charcoal/90 sm:block">{item.productQty}</span>
         <span className="hidden font-display text-base font-semibold text-forest sm:block">
           ₹{item.costPerAcre}
         </span>
@@ -69,12 +69,12 @@ function FertilizerRow({ item }: { item: FertilizerRec }) {
           <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} aria-hidden />
         </span>
         {/* Mobile-only inline summary */}
-        <span className="col-span-2 text-sm text-charcoal/80 sm:hidden">
+        <span className="col-span-2 text-sm text-charcoal/90 sm:hidden">
           {item.nutrientQty} · {item.productQty} · <span className="font-semibold text-forest">₹{item.costPerAcre}</span>
         </span>
       </button>
       {open && (
-        <div id={rowId} className="border-t border-sage px-4 py-3 text-sm leading-relaxed text-charcoal/75">
+        <div id={rowId} className="border-t border-sage px-4 py-3 text-sm leading-relaxed text-charcoal/90">
           <span className="font-medium text-forest">{te ? "ఎందుకు ఇది? " : "Why this? "}</span>
           {te && item.noteTe ? item.noteTe : item.note}
         </div>
@@ -108,7 +108,7 @@ export function FertilizerPanel({ cropName, items, live }: FertilizerPanelProps)
 
       {isLive ? (
         <>
-          <div className="mt-4 hidden grid-cols-[1.4fr_1fr_1fr_0.8fr] gap-3 px-4 text-xs font-semibold uppercase tracking-wide text-charcoal/50 sm:grid">
+          <div className="mt-4 hidden grid-cols-[1.4fr_1fr_1fr_0.8fr] gap-3 px-4 text-xs font-semibold uppercase tracking-wide text-charcoal/70 sm:grid">
             <span>{te ? "ఉత్పత్తి" : "Product"}</span>
             <span>{te ? "పోషకం" : "Nutrient"}</span>
             <span>{te ? "పరిమాణం" : "Quantity"}</span>
@@ -122,14 +122,14 @@ export function FertilizerPanel({ cropName, items, live }: FertilizerPanelProps)
               >
                 <div>
                   <p className="font-semibold text-charcoal">{item.product}</p>
-                  <p className="text-xs text-charcoal/60">{te ? "ఎకరాకు" : item.unit}</p>
+                  <p className="text-xs text-charcoal/80">{te ? "ఎకరాకు" : item.unit}</p>
                 </div>
-                <span className="hidden text-sm text-charcoal/80 sm:block">{te ? (NUTRIENT_TE[item.nutrient] ?? item.nutrient) : item.nutrient}</span>
-                <span className="hidden text-sm text-charcoal/80 sm:block">
+                <span className="hidden text-sm text-charcoal/90 sm:block">{te ? (NUTRIENT_TE[item.nutrient] ?? item.nutrient) : item.nutrient}</span>
+                <span className="hidden text-sm text-charcoal/90 sm:block">
                   {item.quantity} {item.unit}
                 </span>
-                <span className="hidden text-sm text-charcoal/80 sm:block">—</span>
-                <span className="text-sm text-charcoal/80 sm:hidden">
+                <span className="hidden text-sm text-charcoal/90 sm:block">—</span>
+                <span className="text-sm text-charcoal/90 sm:hidden">
                   {item.quantity} {item.unit}
                 </span>
               </div>
@@ -144,13 +144,13 @@ export function FertilizerPanel({ cropName, items, live }: FertilizerPanelProps)
               </span>
             </div>
           ) : (
-            <p className="mt-4 text-sm text-charcoal/70">
+            <p className="mt-4 text-sm text-charcoal/85">
               {te
                 ? `${live.area} ఎకరాకు పరిమాణాలు · ధరలు కాన్ఫిగర్ చేయబడలేదు.`
                 : `Quantities for ${live.area} ${live.areaUnit} · prices not configured.`}
             </p>
           )}
-          <p className="mt-3 text-xs text-charcoal/60">
+          <p className="mt-3 text-xs text-charcoal/80">
             {live.explanation}
             {live.ruleId ? ` ${te ? "నియమం:" : "Rule:"} ${live.ruleId}.` : ""}
           </p>
@@ -158,7 +158,7 @@ export function FertilizerPanel({ cropName, items, live }: FertilizerPanelProps)
       ) : items.length === 0 ? (
         <div className="mt-6 rounded-xl border border-dashed border-sage bg-ivory p-8 text-center">
           <p className="font-medium text-charcoal">{te ? "ఈ పంటకు ఇంకా ఎరువుల ప్రణాళిక అందుబాటులో లేదు." : "No fertilizer plan available for this crop yet."}</p>
-          <p className="mt-1 text-sm text-charcoal/60">
+          <p className="mt-1 text-sm text-charcoal/80">
             {te
               ? "మరో పంటను ఎంచుకోండి, లేదా సిఫార్సు ఇంజిన్ కనెక్ట్ అయిన తర్వాత మళ్ళీ చూడండి."
               : "Select another crop, or check back after the recommendation engine is connected."}
@@ -166,7 +166,7 @@ export function FertilizerPanel({ cropName, items, live }: FertilizerPanelProps)
         </div>
       ) : (
         <>
-          <div className="mt-4 hidden grid-cols-[1.4fr_1fr_1fr_0.8fr_auto] gap-3 px-4 text-xs font-semibold uppercase tracking-wide text-charcoal/50 sm:grid">
+          <div className="mt-4 hidden grid-cols-[1.4fr_1fr_1fr_0.8fr_auto] gap-3 px-4 text-xs font-semibold uppercase tracking-wide text-charcoal/70 sm:grid">
             <span>{te ? "ఉత్పత్తి" : "Product"}</span>
             <span>{te ? "పోషకం" : "Nutrient"}</span>
             <span>{te ? "పరిమాణం" : "Quantity"}</span>
@@ -182,7 +182,7 @@ export function FertilizerPanel({ cropName, items, live }: FertilizerPanelProps)
             <span className="text-sm font-medium">{te ? "అంచనా మొత్తం" : "Estimated total"}</span>
             <span className="font-display text-lg font-semibold">₹{total} <span className="text-xs font-normal opacity-80">{te ? "ఎకరాకు" : "per acre"}</span></span>
           </div>
-          <p className="mt-3 text-xs text-charcoal/60">
+          <p className="mt-3 text-xs text-charcoal/80">
             {te
               ? "డెమో డేటా — పరిమాణాలు మరియు ధరలు ఉదాహరణ నమూనాలు, కొనుగోలు సలహా కాదు."
               : "Demo data — quantities and prices are illustrative samples, not purchase advice."}

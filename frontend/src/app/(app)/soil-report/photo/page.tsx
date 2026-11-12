@@ -63,13 +63,13 @@ export default function SoilPhotoPage() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
       <header className="mb-6">
-        <h1 className="font-display text-3xl font-semibold text-charcoal">
+        <h1 className="font-display text-4xl font-semibold text-charcoal">
           {te ? "నేల ఫోటో" : "Soil Photo"}
         </h1>
-        <p className="mt-2 text-sm text-charcoal/70">
+        <p className="mt-2 text-sm text-charcoal/85">
           {te
-            ? "మీ నేల ఫోటో తీసి జతచేయండి. ఫోన్‌లో ఇది కెమెరాను తెరుస్తుంది; కంప్యూటర్‌లో ఫైల్ పికర్‌ను తెరుస్తుంది."
-            : "Take a photo of your soil and attach it. On a phone this opens the camera; on a computer it opens the file picker."}
+            ? "మీ నేల ఫోటో తీసి జతచేయండి. ఫోన్‌లో కెమెరా తెరుచుకుంటుంది; కంప్యూటర్‌లో ఫైల్ పికర్ తెరుచుకుంటుంది."
+            : "Take a photo of your soil and attach it. On a phone this opens the camera; on a computer, the file picker."}
         </p>
       </header>
 
@@ -80,7 +80,7 @@ export default function SoilPhotoPage() {
         >
           <Camera className="h-10 w-10 text-forest" aria-hidden="true" />
           <span className="font-semibold text-charcoal">{te ? "నేల ఫోటో తీయండి లేదా ఎంచుకోండి" : "Take or choose a soil photo"}</span>
-          <span className="text-sm text-charcoal/70">{te ? "JPG లేదా PNG, ఒక ఫోటో" : "JPG or PNG, one photo"}</span>
+          <span className="text-sm text-charcoal/85">{te ? "JPG లేదా PNG, ఒక ఫోటో" : "JPG or PNG, one photo"}</span>
           <input
             id="soil-photo-input"
             type="file"
@@ -103,10 +103,10 @@ export default function SoilPhotoPage() {
             />
           )}
           <p className="mt-3 text-sm font-medium text-charcoal">{file.name}</p>
-          <p className="mt-1 text-sm text-charcoal/70">
+          <p className="mt-1 text-sm text-charcoal/85">
             {te
-              ? "ఫోటో జతచేయబడింది. ఫోటో నుండి, కేవలం సుమారు సేంద్రీయ కార్బన్ సూచన మాత్రమే సాధ్యం — నేల రంగు సేంద్రీయ పదార్థాన్ని సూచిస్తుంది, కానీ అది ల్యాబ్ విలువ కాదు. pH, EC, నత్రజని, భాస్వరం మరియు పొటాషియం ఫోటో నుండి చదవబడవు, కాబట్టి తదుపరి స్క్రీన్‌లో ల్యాబ్ పరీక్ష నుండి నింపడానికి అవి ఖాళీగా ఉంటాయి. ఇక్కడ ఏదీ మీ ఫోటో నుండి కొలిచినట్లు చూపబడలేదు."
-              : "Photo attached. From a photo, only a rough organic-carbon hint is possible — soil colour suggests organic matter, but it is not a lab value. pH, EC, nitrogen, phosphorus and potassium cannot be read from a photo, so they stay blank for you to fill from a lab test on the next screen. Nothing here is presented as measured from your photo."}
+              ? "ఫోటో జతచేయబడింది. ఫోటో నుండి కేవలం సుమారు సేంద్రీయ కార్బన్ సూచన మాత్రమే సాధ్యం — నేల రంగు సేంద్రీయ పదార్థాన్ని సూచిస్తుంది, కానీ అది ల్యాబ్ విలువ కాదు. pH, EC, N, P, K ఫోటో నుండి చదవబడవు, కాబట్టి తదుపరి స్క్రీన్‌లో ల్యాబ్ విలువలతో నింపడానికి అవి ఖాళీగా ఉంటాయి."
+              : "Photo attached. A photo gives only a rough organic-carbon hint — soil colour suggests organic matter, but it is not a lab value. pH, EC, N, P and K cannot be read from a photo, so they stay blank for your lab test values on the next screen."}
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Button

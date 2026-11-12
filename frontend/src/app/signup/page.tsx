@@ -61,7 +61,7 @@ export default function SignUpPage() {
   };
 
   const inputClass =
-    "w-full rounded-xl border border-sage bg-ivory/50 px-3.5 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-leaf focus:outline-none focus:ring-2 focus:ring-leaf/40";
+    "w-full rounded-xl border border-sage bg-ivory/50 px-3.5 py-2.5 text-sm text-charcoal placeholder:text-charcoal/60 focus:border-leaf focus:outline-none focus:ring-2 focus:ring-leaf/40";
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-ivory px-4 py-10 sm:px-8">
@@ -76,10 +76,10 @@ export default function SignUpPage() {
         </Link>
 
         <div className="rounded-3xl border border-sage bg-white p-6 shadow-xl shadow-forest/5 sm:p-8">
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-charcoal">
+          <h1 className="font-display text-4xl font-semibold tracking-tight text-charcoal">
             {te ? "మీ ఖాతాను సృష్టించండి" : "Create your account"}
           </h1>
-          <p className="mt-2 text-sm text-charcoal/60">
+          <p className="mt-2 text-sm text-charcoal/80">
             {te ? "నమూనా — నిజమైన ఖాతా సృష్టించబడదు. డెమో డేటా మాత్రమే." : "Prototype — no real account is created. Demo data only."}
           </p>
 
@@ -89,7 +89,7 @@ export default function SignUpPage() {
               <p className="font-display text-xl font-semibold text-charcoal">
                 {te ? `ఖాతా సృష్టించబడింది, ${name.trim() || "రైతు"}!` : `Account created, ${name.trim() || "farmer"}!`}
               </p>
-              <p className="text-sm text-charcoal/60">{te ? "మిమ్మల్ని మీ డాష్‌బోర్డ్‌కు తీసుకువెళ్తున్నాము…" : "Taking you to your dashboard…"}</p>
+              <p className="text-sm text-charcoal/80">{te ? "మిమ్మల్ని మీ డాష్‌బోర్డ్‌కు తీసుకువెళ్తున్నాము…" : "Taking you to your dashboard…"}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} noValidate className="mt-6 space-y-4">
@@ -153,7 +153,7 @@ export default function SignUpPage() {
                       onClick={() => setShowPassword((v) => !v)}
                       aria-pressed={showPassword}
                       aria-label={showPassword ? (te ? "పాస్‌వర్డ్ దాచండి" : "Hide password") : te ? "పాస్‌వర్డ్ చూపండి" : "Show password"}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-charcoal/50 hover:text-charcoal"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-charcoal/70 hover:text-charcoal"
                     >
                       {showPassword ? (
                         <EyeOff className="size-4.5" aria-hidden />
@@ -185,7 +185,7 @@ export default function SignUpPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="signup-farm" className="mb-1.5 block text-sm font-medium text-charcoal">
-                    {te ? "పొలం పేరు" : "Farm name"} <span className="font-normal text-charcoal/50">{te ? "(ఐచ్ఛికం)" : "(optional)"}</span>
+                    {te ? "పొలం పేరు" : "Farm name"} <span className="font-normal text-charcoal/70">{te ? "(ఐచ్ఛికం)" : "(optional)"}</span>
                   </label>
                   <input
                     id="signup-farm"
@@ -199,7 +199,7 @@ export default function SignUpPage() {
                 </div>
                 <div>
                   <label htmlFor="signup-district" className="mb-1.5 block text-sm font-medium text-charcoal">
-                    {te ? "జిల్లా" : "District"} <span className="font-normal text-charcoal/50">{te ? "(ఐచ్ఛికం)" : "(optional)"}</span>
+                    {te ? "జిల్లా" : "District"} <span className="font-normal text-charcoal/70">{te ? "(ఐచ్ఛికం)" : "(optional)"}</span>
                   </label>
                   <input
                     id="signup-district"
@@ -246,7 +246,7 @@ export default function SignUpPage() {
                 </div>
               </fieldset>
 
-              <label htmlFor="signup-terms" className="flex cursor-pointer items-start gap-2.5 text-sm text-charcoal/70">
+              <label htmlFor="signup-terms" className="flex cursor-pointer items-start gap-2.5 text-sm text-charcoal/85">
                 <input
                   id="signup-terms"
                   type="checkbox"
@@ -288,7 +288,7 @@ export default function SignUpPage() {
             </form>
           )}
 
-          <p className="mt-6 text-center text-sm text-charcoal/60">
+          <p className="mt-6 text-center text-sm text-charcoal/80">
             {te ? "ఇప్పటికే ఖాతా ఉందా? " : "Already have an account? "}
             <Link href="/login" className="font-semibold text-forest hover:underline">
               {te ? "సైన్ ఇన్" : "Sign in"}

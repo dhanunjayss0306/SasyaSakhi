@@ -45,7 +45,7 @@ const STATUS_STYLE: Record<ParamStatus, { pill: string; icon: typeof CheckCircle
     icon: ArrowUpCircle,
   },
   unknown: {
-    pill: "bg-charcoal/10 text-charcoal/70",
+    pill: "bg-charcoal/10 text-charcoal/85",
     icon: HelpCircle,
   },
 };
@@ -68,7 +68,7 @@ export function SoilParameterCard({ parameter }: { parameter: SoilParameter }) {
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-charcoal">{te ? parameter.labelTe : parameter.label}</h3>
-          <p className="text-xs text-charcoal/60">{te ? parameter.label : parameter.labelTe}</p>
+          <p className="text-xs text-charcoal/80">{te ? parameter.label : parameter.labelTe}</p>
         </div>
         <span
           className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium ${style.pill}`}
@@ -80,12 +80,12 @@ export function SoilParameterCard({ parameter }: { parameter: SoilParameter }) {
       <p className="mt-3 font-display text-3xl font-semibold text-charcoal">
         {parameter.value === null ? "—" : parameter.value}
         {parameter.unit && (
-          <span className="ml-1 text-base font-normal text-charcoal/60">
+          <span className="ml-1 text-base font-normal text-charcoal/80">
             {parameter.unit}
           </span>
         )}
       </p>
-      <p className="mt-2 text-sm text-charcoal/70">{te ? EXPLANATIONS[parameter.key].te : EXPLANATIONS[parameter.key].en}</p>
+      <p className="mt-2 text-sm text-charcoal/85">{te ? EXPLANATIONS[parameter.key].te : EXPLANATIONS[parameter.key].en}</p>
     </article>
   );
 }

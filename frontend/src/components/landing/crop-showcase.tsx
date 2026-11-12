@@ -143,7 +143,7 @@ export function CropShowcase() {
   const te = lang === "te";
 
   return (
-    <section id="crops" aria-labelledby="crops-heading" className="bg-cream py-20 sm:py-28">
+    <section id="crops" aria-labelledby="crops-heading" className="bg-cream py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-widest text-forest">
@@ -151,18 +151,18 @@ export function CropShowcase() {
           </p>
           <h2
             id="crops-heading"
-            className="mt-3 font-display text-4xl font-semibold tracking-tight text-charcoal text-balance sm:text-5xl"
+            className="mt-3 font-display text-5xl font-semibold tracking-tight text-charcoal text-balance sm:text-6xl"
           >
             {te ? "మూడు పంటలు, మీ నేలకు స్కోర్ చేయబడ్డాయి" : "Three crops, scored against your soil"}
           </h2>
-          <p className="mt-4 text-lg leading-relaxed text-charcoal/70">
+          <p className="mt-4 text-lg leading-relaxed text-charcoal/85">
             {te
               ? "నమూనా అనుకూలత వివరాలను చూడటానికి ఒక కార్డును ఎంచుకోండి. కింద స్కోర్‌లు డెమో విలువలు."
               : "Select a card to see sample suitability details. Scores below are demo values."}
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-3">
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
           {CROPS.map((crop) => (
             <CardContainer
               key={crop.key}
@@ -176,19 +176,19 @@ export function CropShowcase() {
                 <CardItem translateZ={20} className="mt-4">
                   <h3 className="font-display text-2xl font-semibold text-charcoal">
                     {te ? crop.telugu : crop.name}
-                    <span className="ml-2 text-base font-normal text-charcoal/50">
+                    <span className="ml-2 text-base font-normal text-charcoal/70">
                       {te ? crop.name : crop.telugu}
                     </span>
                   </h3>
                 </CardItem>
                 <CardItem translateZ={10} className="mt-2">
-                  <p className="text-sm leading-relaxed text-charcoal/65">
+                  <p className="text-sm leading-relaxed text-charcoal/85">
                     {te ? crop.tagline.te : crop.tagline.en}
                   </p>
                 </CardItem>
                 <CardItem translateZ={20} className="mt-5 w-full">
                   <div className="flex items-baseline justify-between text-sm">
-                    <span className="font-medium text-charcoal/70">{te ? "అనుకూలత" : "Suitability"}</span>
+                    <span className="font-medium text-charcoal/85">{te ? "అనుకూలత" : "Suitability"}</span>
                     <span className="font-display text-3xl font-semibold text-forest">
                       {crop.score}%
                     </span>
@@ -199,7 +199,7 @@ export function CropShowcase() {
                     aria-label={`${crop.name} suitability ${crop.score} percent, demo value`}
                   >
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-leaf to-forest"
+                      className="h-full rounded-full bg-leaf"
                       style={{ width: `${crop.score}%` }}
                     />
                   </div>
@@ -211,7 +211,7 @@ export function CropShowcase() {
                     aria-expanded={selected === crop.key}
                     aria-controls="crop-detail-panel"
                     className={cn(
-                      "rounded-full px-6 py-2.5 text-sm font-semibold transition-colors",
+                      "rounded-lg px-6 py-2.5 text-sm font-semibold transition-colors",
                       selected === crop.key
                         ? "bg-charcoal text-ivory"
                         : "bg-forest text-ivory hover:bg-pine",
@@ -239,13 +239,13 @@ export function CropShowcase() {
             <div>
               <p className="flex items-center justify-between text-xs font-semibold uppercase tracking-widest text-leaf">
                 {te ? "నేల అనుకూలత" : "Soil suitability"} — {te ? active.telugu : active.name}
-                <span className="rounded-full bg-gold/20 px-3 py-1 normal-case tracking-normal text-charcoal/70">
+                <span className="rounded-full bg-gold/20 px-3 py-1 normal-case tracking-normal text-charcoal/85">
                   {te ? "డెమో డేటా" : "Demo data"}
                 </span>
               </p>
               <div className="mt-5 grid gap-4">
                 <div className="rounded-2xl bg-ivory p-4">
-                  <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/50">
+                  <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/70">
                     <Droplets className="size-4" aria-hidden /> {te ? "నేల pH" : "Soil pH"}
                   </p>
                   <p className="mt-2 font-display text-xl font-semibold text-charcoal">
@@ -253,7 +253,7 @@ export function CropShowcase() {
                   </p>
                 </div>
                 <div className="rounded-2xl bg-ivory p-4">
-                  <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/50">
+                  <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/70">
                     <Thermometer className="size-4" aria-hidden /> {te ? "ఉష్ణోగ్రత" : "Temperature"}
                   </p>
                   <p className="mt-2 font-display text-xl font-semibold text-charcoal">
@@ -261,7 +261,7 @@ export function CropShowcase() {
                   </p>
                 </div>
                 <div className="rounded-2xl bg-ivory p-4">
-                  <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/50">
+                  <p className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-charcoal/70">
                     <Sun className="size-4" aria-hidden /> {te ? "నీటి అవసరం" : "Water need"}
                   </p>
                   <p className="mt-2 font-display text-xl font-semibold text-charcoal">
@@ -269,7 +269,7 @@ export function CropShowcase() {
                   </p>
                 </div>
               </div>
-              <p className="mt-5 text-sm leading-relaxed text-charcoal/70">
+              <p className="mt-5 text-sm leading-relaxed text-charcoal/85">
                 {te ? active.demo.note.te : active.demo.note.en}
               </p>
             </div>

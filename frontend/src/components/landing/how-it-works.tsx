@@ -61,7 +61,7 @@ export function HowItWorks() {
     <section
       id="how-it-works"
       aria-labelledby="how-it-works-heading"
-      className="bg-[#EAF0E4] py-20 sm:py-28"
+      className="bg-[#EAF0E4] py-24 sm:py-32"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl">
@@ -70,20 +70,20 @@ export function HowItWorks() {
           </p>
           <h2
             id="how-it-works-heading"
-            className="mt-3 font-display text-4xl font-semibold tracking-tight text-charcoal text-balance sm:text-5xl"
+            className="mt-3 font-display text-5xl font-semibold tracking-tight text-charcoal text-balance sm:text-6xl"
           >
             {te
               ? "నేల నమూనా నుండి నమ్మకమైన విత్తడం వరకు ఏడు దశలు"
               : "Seven steps from soil sample to confident sowing"}
           </h2>
-          <p className="mt-4 text-lg leading-relaxed text-charcoal/70">
+          <p className="mt-4 text-lg leading-relaxed text-charcoal/85">
             {te
-              ? "మిమ్మల్ని నియంత్రణలో ఉంచే మార్గనిర్దేశిత ప్రవాహం — యంత్రం చదువుతుంది, నియమాలు లెక్కిస్తాయి, మరియు మీరు ప్రతి దశను ఆమోదిస్తారు."
-              : "A guided flow that keeps you in control — the machine reads, the rules calculate, and you approve every step."}
+              ? "మిమ్మల్ని నియంత్రణలో ఉంచే మార్గనిర్దేశిత ప్రవాహం. ప్రతి దశను మీరే ఆమోదిస్తారు."
+              : "A guided flow that keeps you in control. You approve every step."}
           </p>
         </div>
 
-        <ol className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
+        <ol className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-7">
           {STEPS.map((step, i) => (
             <li
               key={step.title.en}
@@ -95,7 +95,7 @@ export function HowItWorks() {
               <h3 className="mt-4 font-sans text-base font-bold text-charcoal">
                 {te ? step.title.te : step.title.en}
               </h3>
-              <p className="mt-1.5 text-xs leading-relaxed text-charcoal/60">
+              <p className="mt-1.5 text-xs leading-relaxed text-charcoal/80">
                 {te ? step.description.te : step.description.en}
               </p>
             </li>

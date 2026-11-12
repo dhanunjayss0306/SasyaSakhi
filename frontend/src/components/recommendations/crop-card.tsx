@@ -121,14 +121,14 @@ export function CropCard({ crop, selected, onSelect, statusLabel }: CropCardProp
       <h3 className="mt-4 font-display text-xl font-semibold text-charcoal">
         {te ? crop.nameTe : crop.name} <span className="text-base font-normal text-forest/70">· {te ? crop.name : crop.nameTe}</span>
       </h3>
-      <p className="mt-1 text-sm leading-relaxed text-charcoal/70">{te ? crop.descriptionTe : crop.description}</p>
+      <p className="mt-1 text-sm leading-relaxed text-charcoal/85">{te ? crop.descriptionTe : crop.description}</p>
 
       {!statusLabel && (
         <div className="mt-4" aria-label={`Suitability for ${crop.name}: ${crop.suitability} percent`}>
           <div className="h-2 overflow-hidden rounded-full bg-sage" role="progressbar"
             aria-valuenow={crop.suitability} aria-valuemin={0} aria-valuemax={100}
             aria-label={`${crop.name} suitability`}>
-            <div className="h-full rounded-full bg-gradient-to-r from-leaf to-forest"
+            <div className="h-full rounded-full bg-leaf"
               style={{ width: `${crop.suitability}%` }} />
           </div>
         </div>

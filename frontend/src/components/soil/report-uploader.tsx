@@ -116,7 +116,7 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
           <p className="font-display text-lg font-semibold text-charcoal">
             {te ? "మీ నేల నివేదికను ఇక్కడ లాగండి" : "Drag your soil report here"}
           </p>
-          <p className="mt-1 text-sm text-charcoal/70">
+          <p className="mt-1 text-sm text-charcoal/85">
             {te ? `PDF, JPG లేదా PNG — గరిష్ఠంగా ${MAX_SIZE_MB} MB` : `PDF, JPG or PNG — up to ${MAX_SIZE_MB} MB`}
           </p>
         </div>
@@ -145,7 +145,7 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
           <FileText className="h-5 w-5 shrink-0 text-forest" aria-hidden="true" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-charcoal">{file.name}</p>
-            <p className="text-xs text-charcoal/60">{formatSize(file.size)}</p>
+            <p className="text-xs text-charcoal/80">{formatSize(file.size)}</p>
           </div>
           <Button
             type="button"
@@ -184,7 +184,7 @@ export function ReportUploader({ onProcess, onSample }: ReportUploaderProps) {
         </Button>
       </div>
 
-      <p className="mt-4 text-xs text-charcoal/60">
+      <p className="mt-4 text-xs text-charcoal/80">
         {BACKEND_CONFIGURED
           ? te
             ? "మీ ఫైల్ OCR కోసం కాన్ఫిగర్ చేసిన బ్యాకెండ్‌కు పంపబడుతుంది."

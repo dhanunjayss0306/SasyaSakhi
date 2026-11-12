@@ -262,7 +262,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
           </span>
           <div>
             <p className="font-display text-base font-semibold text-charcoal">SasyaSakhi Assistant</p>
-            <p className="text-xs text-charcoal/60">
+            <p className="text-xs text-charcoal/80">
               {lastSource === "live"
                 ? initialLang === "te"
                   ? "ప్రత్యక్ష సమాధానాలు"
@@ -292,7 +292,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
       >
         {messages.length === 1 && (
           <div className="rounded-xl border border-dashed border-sage bg-ivory p-4 text-center">
-            <p className="text-sm text-charcoal/65">
+            <p className="text-sm text-charcoal/85">
               {initialLang === "te"
                 ? "కింద ప్రశ్నతో ప్రారంభించండి, లేదా సూచనలలో ఒకదాన్ని నొక్కండి."
                 : "Start with a question below, or tap one of the suggestions."}
@@ -382,7 +382,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
               type="button"
               onClick={() => send(q)}
               disabled={typing}
-              className="rounded-full border border-sage bg-ivory px-3 py-1.5 text-xs font-medium text-forest transition-colors hover:bg-sage disabled:opacity-50"
+              className="rounded-lg border border-sage bg-ivory px-3 py-1.5 text-xs font-medium text-forest transition-colors hover:bg-sage disabled:opacity-50"
             >
               {q}
             </button>
@@ -407,7 +407,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={initialLang === "te" ? "మీ ప్రశ్న ఇక్కడ టైప్ చేయండి…" : "Type your question…"}
-          className="h-10 flex-1 rounded-xl border border-sage bg-ivory px-4 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-forest focus:outline-none"
+          className="h-10 flex-1 rounded-xl border border-sage bg-ivory px-4 text-sm text-charcoal placeholder:text-charcoal/60 focus:border-forest focus:outline-none"
           autoComplete="off"
         />
         <button
@@ -430,7 +430,7 @@ export function ChatWindow({ initialLang }: ChatWindowProps) {
         </Button>
       </form>
       {(listening || voiceError) && (
-        <p className="px-4 pb-3 text-xs text-charcoal/60" role="status">
+        <p className="px-4 pb-3 text-xs text-charcoal/80" role="status">
           {listening
             ? initialLang === "te"
               ? "వింటున్నాను… మాట్లాడండి."

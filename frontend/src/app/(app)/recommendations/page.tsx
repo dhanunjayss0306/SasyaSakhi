@@ -157,8 +157,8 @@ export default function RecommendationsPage() {
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">{te ? "పంట సిఫార్సులు" : "Crop recommendations"}</h1>
-          <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
+          <h1 className="font-display text-4xl font-semibold text-charcoal">{te ? "పంట సిఫార్సులు" : "Crop recommendations"}</h1>
+          <p className="mt-1 max-w-2xl text-sm text-charcoal/85">
             {cropsPhase === "live"
               ? te
                 ? "మీ నేల నివేదిక నుండి అనుకూలత."
@@ -190,7 +190,7 @@ export default function RecommendationsPage() {
       </div>
 
       {cropsPhase === "loading" ? (
-        <p className="mt-6 text-sm text-charcoal/60" role="status">
+        <p className="mt-6 text-sm text-charcoal/80" role="status">
           {te ? "సిఫార్సులు లోడ్ అవుతున్నాయి…" : "Loading recommendations…"}
         </p>
       ) : (
@@ -225,7 +225,7 @@ export default function RecommendationsPage() {
               </h2>
               {showLiveWhy ? (
                 <>
-                  <p className="mt-1 text-sm text-charcoal/60">
+                  <p className="mt-1 text-sm text-charcoal/80">
                     {te ? "అనుకూలత:" : "Suitability:"}{" "}
                     <span className="font-semibold text-forest">
                       {te ? STATUS_LABEL[liveSelected.status].te : STATUS_LABEL[liveSelected.status].en}
@@ -234,7 +234,7 @@ export default function RecommendationsPage() {
                   {liveSelected.supporting.length > 0 && (
                     <ul className="mt-4 space-y-3">
                       {liveSelected.supporting.map((point) => (
-                        <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
+                        <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/90">
                           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-leaf" aria-hidden />
                           <span>{point}</span>
                         </li>
@@ -246,7 +246,7 @@ export default function RecommendationsPage() {
                       <h3 className="mt-5 text-sm font-semibold text-charcoal">{te ? "పరిమితం చేసే అంశాలు" : "Limiting factors"}</h3>
                       <ul className="mt-2 space-y-3">
                         {liveSelected.limiting.map((point) => (
-                          <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
+                          <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/90">
                             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-leaf" aria-hidden />
                             <span>{point}</span>
                           </li>
@@ -255,11 +255,11 @@ export default function RecommendationsPage() {
                     </>
                   )}
                   {liveSelected.missing.length > 0 && (
-                    <p className="mt-4 text-xs text-charcoal/55">
+                    <p className="mt-4 text-xs text-charcoal/75">
                       {te ? "తప్పిపోయిన సమాచారం:" : "Missing information:"} {liveSelected.missing.join(", ")}.
                     </p>
                   )}
-                  <p className="mt-4 text-sm text-charcoal/70">{liveSelected.explanation}</p>
+                  <p className="mt-4 text-sm text-charcoal/85">{liveSelected.explanation}</p>
                   {mlSelected && (
                     <div className="mt-6 rounded-xl border border-sage bg-ivory p-4">
                       <h3 className="text-sm font-semibold text-charcoal">
@@ -267,17 +267,17 @@ export default function RecommendationsPage() {
                       </h3>
                       {mlSelected.score !== null ? (
                         <>
-                          <p className="mt-1 text-sm text-charcoal/70">
+                          <p className="mt-1 text-sm text-charcoal/85">
                             {te ? "ML అనుకూలత:" : "ML suitability:"}{" "}
                             <span className="font-semibold text-forest">
                               {mlSelected.score}/100 ({mlSelected.status})
                             </span>
                           </p>
-                          <p className="mt-2 text-sm text-charcoal/70">{mlSelected.explanation}</p>
+                          <p className="mt-2 text-sm text-charcoal/85">{mlSelected.explanation}</p>
                           {mlSelected.gaps.length > 0 && (
                             <ul className="mt-3 space-y-2">
                               {mlSelected.gaps.map((gap) => (
-                                <li key={gap} className="text-sm leading-relaxed text-charcoal/80">
+                                <li key={gap} className="text-sm leading-relaxed text-charcoal/90">
                                   {gap}
                                 </li>
                               ))}
@@ -285,9 +285,9 @@ export default function RecommendationsPage() {
                           )}
                         </>
                       ) : (
-                        <p className="mt-1 text-sm text-charcoal/70">{mlSelected.explanation}</p>
+                        <p className="mt-1 text-sm text-charcoal/85">{mlSelected.explanation}</p>
                       )}
-                      <p className="mt-3 text-xs text-charcoal/55">
+                      <p className="mt-3 text-xs text-charcoal/75">
                         {te
                           ? "ML స్కోర్ పంట యొక్క ఆదర్శ అవసరాలతో అంతరాలను మాత్రమే పోలుస్తుంది."
                           : "The ML score only compares gaps against the crop's ideal needs."}
@@ -297,20 +297,20 @@ export default function RecommendationsPage() {
                 </>
               ) : (
                 <>
-                  <p className="mt-1 text-sm text-charcoal/60">
+                  <p className="mt-1 text-sm text-charcoal/80">
                     {te ? "అనుకూలత స్కోర్:" : "Suitability score:"} <span className="font-semibold text-forest">{selectedRec?.suitability ?? selectedCrop.suitability}%</span>
                   </p>
                   <ul className="mt-4 space-y-3">
                     {(te && selectedCrop.soilFactorsTe
                       ? selectedCrop.soilFactorsTe
                       : (selectedRec?.why ?? selectedCrop.soilFactors)).map((point) => (
-                      <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/80">
+                      <li key={point} className="flex items-start gap-2.5 text-sm leading-relaxed text-charcoal/90">
                         <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-leaf" aria-hidden />
                         <span>{point}</span>
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-4 text-xs text-charcoal/55">
+                  <p className="mt-4 text-xs text-charcoal/75">
                     {te
                       ? "డెమో డేటా — స్కోర్‌లు ఉదాహరణలు మరియు నమూనా నేల నివేదికపై ఆధారపడి ఉన్నాయి."
                       : "Demo data — scores are illustrative and based on the sample soil report."}

@@ -30,7 +30,7 @@ export default function ReviewSoilReportPage() {
         <h1 className="mt-4 font-display text-2xl font-semibold text-charcoal">
           {te ? "ఇంకా నివేదిక లేదు" : "No report yet"}
         </h1>
-        <p className="mt-2 max-w-sm text-sm text-charcoal/70">
+        <p className="mt-2 max-w-sm text-sm text-charcoal/85">
           {te
             ? "ముందు నేల నివేదికను అప్‌లోడ్ చేయండి, తద్వారా మేము దాని విలువలను చదివి మీతో కలిసి తనిఖీ చేయగలము."
             : "Upload a soil report first so we can read its values and check them with you."}
@@ -64,10 +64,10 @@ export default function ReviewSoilReportPage() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
       <header className="mb-6">
-        <h1 className="font-display text-3xl font-semibold text-charcoal">
+        <h1 className="font-display text-4xl font-semibold text-charcoal">
           {te ? "సంగ్రహించిన విలువలను సమీక్షించండి" : "Review Extracted Values"}
         </h1>
-        <p className="mt-2 text-sm text-charcoal/70">
+        <p className="mt-2 text-sm text-charcoal/85">
           {isDemo
             ? te
               ? "డెమో OCR ఈ విలువలను చదివింది:"

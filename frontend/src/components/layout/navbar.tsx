@@ -29,7 +29,7 @@ function LanguageSelector({ onSelect }: { onSelect?: () => void }) {
     <div
       role="group"
       aria-label="Language"
-      className="flex items-center rounded-full border border-charcoal/15 bg-cream p-0.5 text-xs font-medium"
+      className="flex items-center rounded-lg border border-charcoal/15 bg-cream p-0.5 text-xs font-medium"
     >
       {(["en", "te"] as Lang[]).map((l) => (
         <button
@@ -38,10 +38,10 @@ function LanguageSelector({ onSelect }: { onSelect?: () => void }) {
           onClick={() => choose(l)}
           aria-pressed={lang === l}
           className={cn(
-            "rounded-full px-3 py-1.5 transition-colors",
+            "rounded-md px-3 py-1.5 transition-colors",
             lang === l
               ? "bg-forest text-ivory"
-              : "text-charcoal/70 hover:text-charcoal",
+              : "text-charcoal/85 hover:text-charcoal",
           )}
         >
           {l === "en" ? "EN" : "తెలుగు"}
@@ -79,7 +79,7 @@ export function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="rounded-full px-4 py-2 text-sm font-medium text-charcoal/80 transition-colors hover:bg-forest/5 hover:text-charcoal"
+                className="rounded-lg px-4 py-2 text-sm font-medium text-charcoal/90 transition-colors hover:bg-forest/5 hover:text-charcoal"
               >
                 {lang === "te" ? link.labelTe : link.label}
               </a>
@@ -96,7 +96,7 @@ export function Navbar() {
                 variant: "outline",
                 size: "sm",
                 className:
-                  "rounded-full border-charcoal/20 bg-cream text-charcoal hover:bg-forest/5 hover:text-charcoal",
+                  "border-charcoal/20 bg-cream text-charcoal hover:bg-forest/5 hover:text-charcoal",
               }),
             )}
           >
@@ -107,7 +107,7 @@ export function Navbar() {
             className={cn(
               buttonVariants({
                 size: "sm",
-                className: "rounded-full bg-gold text-charcoal hover:bg-gold/90",
+                className: "bg-gold text-charcoal hover:bg-gold/90",
               }),
             )}
           >
@@ -135,7 +135,7 @@ export function Navbar() {
       {open && (
         <div
           id="mobile-menu"
-          className="border-t border-charcoal/10 bg-cream px-4 pb-5 pt-2 lg:hidden"
+          className="border-t border-charcoal/10 bg-cream px-5 pb-6 pt-2 lg:hidden"
         >
           <ul className="flex flex-col">
             {NAV_LINKS.map((link) => (
@@ -158,7 +158,7 @@ export function Navbar() {
                 buttonVariants({
                   variant: "outline",
                   className:
-                    "flex-1 rounded-full border-charcoal/20 bg-cream text-charcoal hover:bg-forest/5 hover:text-charcoal",
+                    "flex-1 border-charcoal/20 bg-cream text-charcoal hover:bg-forest/5 hover:text-charcoal",
                 }),
               )}
             >
@@ -169,7 +169,7 @@ export function Navbar() {
               onClick={() => setOpen(false)}
               className={cn(
                 buttonVariants({
-                  className: "flex-1 rounded-full bg-gold text-charcoal hover:bg-gold/90",
+                  className: "flex-1 bg-gold text-charcoal hover:bg-gold/90",
                 }),
               )}
             >

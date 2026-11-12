@@ -69,7 +69,7 @@ function HowToUseGuide({
             <h2 className="font-display text-2xl font-semibold text-charcoal">
               {te ? "SasyaSakhi ని ఎలా వాడాలి" : "How to use SasyaSakhi"}
             </h2>
-            <p className="mt-1 text-sm text-charcoal/65">
+            <p className="mt-1 text-sm text-charcoal/85">
               {te
                 ? "మీ నేల నివేదిక నుండి విత్తే నిర్ణయం వరకు ఏడు దశలు."
                 : "Seven steps from your soil report to a sowing decision."}
@@ -79,7 +79,7 @@ function HowToUseGuide({
             type="button"
             onClick={onClose}
             aria-label="Close guide"
-            className="rounded-full border border-sage bg-white p-2 text-charcoal hover:bg-sage/60"
+            className="rounded-lg border border-sage bg-white p-2 text-charcoal hover:bg-sage/60"
           >
             <X className="size-4" aria-hidden />
           </button>
@@ -92,14 +92,14 @@ function HowToUseGuide({
               </span>
               <div>
                 <p className="font-semibold text-charcoal">{te ? step.title.te : step.title.en}</p>
-                <p className="mt-0.5 text-sm leading-relaxed text-charcoal/70">
+                <p className="mt-0.5 text-sm leading-relaxed text-charcoal/85">
                   {te ? step.detail.te : step.detail.en}
                 </p>
               </div>
             </li>
           ))}
         </ol>
-        <p className="mt-6 rounded-xl bg-gold/15 p-4 text-sm leading-relaxed text-charcoal/75">
+        <p className="mt-6 rounded-xl bg-gold/15 p-4 text-sm leading-relaxed text-charcoal/90">
           {te ? (
             <>
               ఇప్పటికే పంట వేసి, నేల నివేదిక లేదా? బదులుగా{" "}
@@ -131,40 +131,36 @@ function SampleInsightCard() {
         <p className="flex items-center gap-2 font-display text-lg font-semibold">
           <FlaskConical className="size-5 text-gold" aria-hidden />
           {te ? "నేల అంతర్దృష్టి" : "Soil insight"}
-          <span className="ml-auto rounded-full border border-white/30 px-2.5 py-0.5 font-sans text-[11px] font-medium normal-case tracking-normal text-ivory/85">
+          <span className="ml-auto rounded-full border border-white/30 px-2.5 py-0.5 font-sans text-[11px] font-medium normal-case tracking-normal text-ivory/95">
             {te ? "నమూనా" : "Sample"}
           </span>
         </p>
         <dl className="mt-5 grid grid-cols-3 gap-3 text-center">
           <div className="rounded-xl bg-pine/60 px-2 py-3">
-            <dt className="text-[11px] uppercase tracking-wider text-ivory/60">pH</dt>
+            <dt className="text-[11px] uppercase tracking-wider text-ivory/80">pH</dt>
             <dd className="mt-1 font-display text-xl font-semibold">6.8</dd>
           </div>
           <div className="rounded-xl bg-pine/60 px-2 py-3">
-            <dt className="text-[11px] uppercase tracking-wider text-ivory/60">N · P · K</dt>
+            <dt className="text-[11px] uppercase tracking-wider text-ivory/80">N · P · K</dt>
             <dd className="mt-1 break-all font-display text-sm font-semibold">280·22·310</dd>
           </div>
           <div className="rounded-xl bg-pine/60 px-2 py-3">
-            <dt className="text-[11px] uppercase tracking-wider text-ivory/60">OC</dt>
+            <dt className="text-[11px] uppercase tracking-wider text-ivory/80">OC</dt>
             <dd className="mt-1 font-display text-xl font-semibold">0.62%</dd>
           </div>
         </dl>
         <p className="mt-5 font-semibold text-ivory">{te ? "ఉత్తమ సరిపోలిక: వరి" : "Best match: Paddy"}</p>
-        <p className="mt-1 text-sm leading-relaxed text-ivory/80">
+        <p className="mt-1 text-sm leading-relaxed text-ivory/90">
           {te
             ? "కొద్దిగా ఆమ్ల లోమ్ — వరికి మంచిది. నాటే ముందు ఎకరాకు 25 కిలోల MOP వేయండి."
             : "Slightly acidic loam — good for paddy. Add 25 kg/acre MOP before transplanting."}
         </p>
         <Link
           href="/dashboard"
-          className={cn(
-            buttonVariants({
-              size: "lg",
-              className: "mt-5 w-full rounded-full bg-gold text-charcoal hover:bg-gold/90",
-            }),
-          )}
+          className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-gold underline-offset-4 hover:underline"
         >
           {te ? "నమూనా విశ్లేషణ చూడండి" : "View sample analysis"}
+          <ArrowRight className="size-4" aria-hidden />
         </Link>
       </div>
     </div>
@@ -198,7 +194,7 @@ export function Hero() {
         className="absolute inset-0 bg-gradient-to-t from-pine/90 via-pine/35 to-pine/10"
       />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-12 lg:gap-8">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-4 py-24 sm:px-6 lg:grid-cols-12 lg:gap-8">
         <div className="text-center lg:col-span-7 lg:text-left">
           <p className="inline-flex items-center gap-2 rounded-full bg-black/40 px-4 py-1.5 text-xs font-medium uppercase tracking-widest text-gold backdrop-blur">
             <span aria-hidden className="size-1.5 rounded-full bg-gold" />
@@ -211,56 +207,44 @@ export function Hero() {
             <span className="block">{te ? "మెరుగైన వ్యవసాయం." : "Better Farming."}</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/85 lg:mx-0">
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-ivory/95 lg:mx-0">
             {te
-              ? "మీ నేల పరీక్ష నివేదికను అప్‌లోడ్ చేయండి మరియు స్పష్టమైన సమాధానాలు పొందండి: మీ నేలకు ఏమి కావాలి, ఏ పంటలు సరిపోతాయి, మరియు ఎంత ఎరువు వాడాలి — తెలుగు లేదా ఇంగ్లీష్‌లో."
-              : "Upload your soil test report and get clear answers: what your soil needs, which crops suit it, and exactly how much fertilizer to use — in English or Telugu."}
+              ? "మీ నేల పరీక్ష నివేదికను అప్‌లోడ్ చేయండి. మీ నేల, మీ పంటలు, మీ ఎరువు గురించి స్పష్టమైన సమాధానాలు పొందండి — ఇంగ్లీష్ లేదా తెలుగులో."
+              : "Upload your soil test report. Get clear answers on your soil, your crops, and your fertilizer — in English or Telugu."}
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-3 lg:flex-row lg:flex-wrap lg:items-start lg:justify-start">
+          <div className="mt-8 flex flex-col items-center gap-3 lg:items-start lg:justify-start">
             <Link
               href="/soil-report"
               className={cn(
                 buttonVariants({
                   size: "lg",
-                  className: "w-full rounded-full bg-gold px-7 text-charcoal hover:bg-gold/90 sm:w-auto",
+                  className: "w-full bg-gold px-7 text-charcoal hover:bg-gold/90 sm:w-auto",
                 }),
               )}
             >
               {te ? "నా నేలను విశ్లేషించండి" : "Analyze My Soil"}
               <ArrowRight className="size-4" aria-hidden />
             </Link>
-            <Link
-              href="/my-crop"
-              className={cn(
-                buttonVariants({
-                  size: "lg",
-                  variant: "outline",
-                  className:
-                    "w-full rounded-full border-white/40 bg-transparent px-7 text-ivory hover:bg-white/15 hover:text-ivory sm:w-auto",
-                }),
-              )}
-            >
-              <Sprout className="size-4" aria-hidden />
-              {te ? "నాకు ఇప్పటికే పంట ఉంది" : "I Already Have a Crop"}
-            </Link>
-            <button
-              type="button"
-              onClick={() => setGuideOpen(true)}
-              className={cn(
-                buttonVariants({
-                  size: "lg",
-                  variant: "outline",
-                  className:
-                    "w-full rounded-full border-white/30 bg-white/5 px-7 text-ivory hover:bg-white/15 hover:text-ivory sm:w-auto",
-                }),
-              )}
-            >
-              {te ? "దీన్ని ఎలా వాడాలి" : "How to Use This"}
-            </button>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 lg:justify-start">
+              <Link
+                href="/my-crop"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-ivory underline-offset-4 hover:underline"
+              >
+                <Sprout className="size-4" aria-hidden />
+                {te ? "నాకు ఇప్పటికే పంట ఉంది" : "I Already Have a Crop"}
+              </Link>
+              <button
+                type="button"
+                onClick={() => setGuideOpen(true)}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-ivory underline-offset-4 hover:underline"
+              >
+                {te ? "దీన్ని ఎలా వాడాలి" : "How to Use This"}
+              </button>
+            </div>
           </div>
 
-          <p className="mt-6 text-sm text-ivory/70">
+          <p className="mt-6 text-sm text-ivory/85">
             {te
               ? "ఉచిత నమూనా · డెమో ప్రయత్నించడానికి ఖాతా అవసరం లేదు · ఏ ఫోన్‌లోనైనా పనిచేస్తుంది"
               : "Free prototype · No account needed to try the demo · Works on any phone"}
@@ -269,7 +253,7 @@ export function Hero() {
 
         <div className="mx-auto w-full max-w-md lg:col-span-5 lg:mx-0 lg:justify-self-end">
           <SampleInsightCard />
-          <p className="mt-3 text-center text-xs text-ivory/60">
+          <p className="mt-3 text-center text-xs text-ivory/80">
             {te ? "నమూనా ముందస్తు చూపు — మీ నివేదికే ఇన్‌పుట్ అవుతుంది." : "Sample preview — your report becomes the input."}
           </p>
         </div>
@@ -278,7 +262,7 @@ export function Hero() {
       <a
         href="#features"
         aria-label="Scroll to features"
-        className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/20 bg-white/10 p-2.5 text-ivory/80 backdrop-blur transition-colors hover:bg-white/20 hover:text-ivory"
+        className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 rounded-lg border border-white/20 bg-white/10 p-2.5 text-ivory/90 backdrop-blur transition-colors hover:bg-white/20 hover:text-ivory"
       >
         <ChevronDown className="size-5 animate-bounce" aria-hidden />
       </a>

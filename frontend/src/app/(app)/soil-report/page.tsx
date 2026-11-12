@@ -110,7 +110,7 @@ export default function SoilReportPage() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
       <header className="mb-8">
-        <h1 className="font-display text-3xl font-semibold text-charcoal">
+        <h1 className="font-display text-4xl font-semibold text-charcoal">
           {method === "choose"
             ? te
               ? "మీ నేల వివరాలను పంచుకోండి"
@@ -119,20 +119,20 @@ export default function SoilReportPage() {
               ? "నేల నివేదిక అప్‌లోడ్ చేయండి"
               : "Upload Soil Report"}
         </h1>
-        <p className="mt-2 text-sm text-charcoal/70">
+        <p className="mt-2 text-sm text-charcoal/85">
           {method === "choose"
             ? te
               ? "మీ నేల వివరాలను ఎలా పంచుకోవాలనుకుంటున్నారో ఎంచుకోండి. ప్రతి ఎంపిక ఒకే సమీక్ష మరియు విశ్లేషణ ప్రవాహానికి దారితీస్తుంది."
               : "Pick how you want to share soil details. Every option leads into the same review and analysis flow."
             : te
-              ? "మీ ల్యాబ్ నేల నివేదికను PDF లేదా ఫోటోగా అప్‌లోడ్ చేయండి. మా డెమో OCR ముఖ్య విలువలను చదువుతుంది, కాబట్టి విశ్లేషణకు ముందు మీరు వాటిని నిర్ధారించవచ్చు."
-              : "Upload your lab soil report as a PDF or photo. Our demo OCR reads the key values so you can confirm them before analysis."}
+              ? "మీ ల్యాబ్ నేల నివేదికను PDF లేదా ఫోటోగా అప్‌లోడ్ చేయండి. మా డెమో OCR ముఖ్య విలువలను చదువుతుంది — మీరు నిర్ధారించండి."
+              : "Upload your lab soil report as a PDF or photo. Our demo OCR reads the key values for you to confirm."}
         </p>
       </header>
 
       {method === "choose" && phase !== "processing" ? (
         <div className="space-y-3">
-          <p className="text-sm text-charcoal/70">
+          <p className="text-sm text-charcoal/85">
             {te
               ? "మీ నేల వివరాలను ఎలా పంచుకోవాలనుకుంటున్నారో ఎంచుకోండి. ప్రతి ఎంపిక ఒకే సమీక్ష మరియు విశ్లేషణ ప్రవాహానికి దారితీస్తుంది."
               : "Pick how you want to share soil details. Every option leads into the same review and analysis flow."}
@@ -145,7 +145,7 @@ export default function SoilReportPage() {
             <FileText className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
             <span>
               <span className="block font-semibold text-charcoal">{te ? "నేల నివేదిక అప్‌లోడ్ చేయండి" : "Upload soil report"}</span>
-              <span className="mt-0.5 block text-sm text-charcoal/70">
+              <span className="mt-0.5 block text-sm text-charcoal/85">
                 {te
                   ? "మీ ల్యాబ్ నివేదిక PDF లేదా ఫోటో. యాప్ విలువలను చదువుతుంది."
                   : "PDF or photo of your lab report. The app reads the values."}
@@ -159,7 +159,7 @@ export default function SoilReportPage() {
             <Satellite className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
             <span>
               <span className="block font-semibold text-charcoal">{te ? "ఉపగ్రహం" : "Satellite"}</span>
-              <span className="mt-0.5 block text-sm text-charcoal/70">
+              <span className="mt-0.5 block text-sm text-charcoal/85">
                 {te
                   ? "ఉపగ్రహ డేటా నుండి పొలం స్థానం ద్వారా నేల అంచనాలు. కొన్ని విలువలు మాత్రమే అందుబాటులో ఉన్నాయి, మరియు అవి నమూనా అంచనాలు, ఎప్పుడూ ల్యాబ్ పరీక్ష కాదు."
                   : "Soil estimates by field location from satellite data. Only some values are available, and they are modelled estimates, never a lab test."}
@@ -173,7 +173,7 @@ export default function SoilReportPage() {
             <FlaskConical className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
             <span>
               <span className="block font-semibold text-charcoal">{te ? "భౌతిక పరీక్ష" : "Physical test"}</span>
-              <span className="mt-0.5 block text-sm text-charcoal/70">
+              <span className="mt-0.5 block text-sm text-charcoal/85">
                 {te
                   ? "మీ వద్ద ఇప్పటికే భౌతిక ల్యాబ్ పరీక్ష ఉంది. దాని విలువలను చేతితో టైప్ చేయండి."
                   : "You already have a physical lab test. Type its values by hand."}
@@ -187,7 +187,7 @@ export default function SoilReportPage() {
             <Camera className="mt-0.5 h-6 w-6 shrink-0 text-forest" aria-hidden="true" />
             <span>
               <span className="block font-semibold text-charcoal">{te ? "నేల ఫోటో" : "Soil photo"}</span>
-              <span className="mt-0.5 block text-sm text-charcoal/70">
+              <span className="mt-0.5 block text-sm text-charcoal/85">
                 {te
                   ? "మీ నేల ఫోటో తీసి జతచేయండి. కేవలం సుమారు సేంద్రీయ కార్బన్ సూచన మాత్రమే వస్తుంది; మిగిలినవి ల్యాబ్ పరీక్ష నుండి నింపడానికి ఖాళీగా ఉంటాయి."
                   : "Take a photo of your soil and attach it. Only a rough organic-carbon hint carries over; the rest stays blank to fill from a lab test."}
@@ -215,14 +215,14 @@ export default function SoilReportPage() {
                 ) : (
                   <Loader2
                     className={`h-5 w-5 shrink-0 animate-spin ${
-                      i === activeStep ? "text-forest" : "text-charcoal/30"
+                      i === activeStep ? "text-forest" : "text-charcoal/55"
                     }`}
                     aria-hidden="true"
                   />
                 )}
                 <span
                   className={`text-sm ${
-                    i <= activeStep ? "font-medium text-charcoal" : "text-charcoal/50"
+                    i <= activeStep ? "font-medium text-charcoal" : "text-charcoal/70"
                   }`}
                 >
                   {te ? step.te : step.en}

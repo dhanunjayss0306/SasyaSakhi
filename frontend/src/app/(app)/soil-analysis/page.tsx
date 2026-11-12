@@ -65,7 +65,7 @@ function NpkBar({ paramKey, value, te }: { paramKey: string; value: number | nul
     <div>
       <div className="flex items-baseline justify-between">
         <p className="text-sm font-medium text-charcoal">{label}</p>
-        <p className="text-sm text-charcoal/70">
+        <p className="text-sm text-charcoal/85">
           {value === null ? "—" : `${value} kg/ha`}
         </p>
       </div>
@@ -89,7 +89,7 @@ function NpkBar({ paramKey, value, te }: { paramKey: string; value: number | nul
           />
         )}
       </div>
-      <div className="mt-1 flex justify-between text-[11px] text-charcoal/50">
+      <div className="mt-1 flex justify-between text-[11px] text-charcoal/70">
         <span>0</span>
         <span className="text-leaf">{te ? "ఆకుపచ్చ బ్యాండ్ = సాధారణ పరిధి" : "green band = typical range"}</span>
         <span>{range.max}</span>
@@ -171,10 +171,10 @@ export default function SoilAnalysisPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-10">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">
+          <h1 className="font-display text-4xl font-semibold text-charcoal">
             {te ? "నేల విశ్లేషణ" : "Soil Analysis"}
           </h1>
-          <p className="mt-1 text-sm text-charcoal/70">
+          <p className="mt-1 text-sm text-charcoal/85">
             {te ? "ఆధారం:" : "Based on"}{" "}
             <span className="font-medium">{report.fileName}</span>
             {usingSample &&
@@ -203,7 +203,7 @@ export default function SoilAnalysisPage() {
             {te ? verdict.title.te : verdict.title.en}
           </h2>
         </div>
-        <p className="mt-2 text-sm text-charcoal/80">{te ? verdict.detail.te : verdict.detail.en}</p>
+        <p className="mt-2 text-sm text-charcoal/90">{te ? verdict.detail.te : verdict.detail.en}</p>
       </section>
 
       {/* Parameter cards */}
@@ -227,7 +227,7 @@ export default function SoilAnalysisPage() {
           {npk.map((p) => (
             <NpkBar key={p.key} paramKey={p.key} value={p.value} te={te} />
           ))}
-          <p className="text-xs text-charcoal/60">
+          <p className="text-xs text-charcoal/80">
             {te
               ? "ముదురు గుర్తు మీ విలువను చూపిస్తుంది; ఆకుపచ్చ బ్యాండ్ సాధారణ పరిధిని చూపిస్తుంది. స్కేల్‌లు ఉదాహరణ డెమో పరిధులు."
               : "The dark marker shows your value; the green band shows the typical range. Scales are illustrative demo ranges."}
@@ -247,7 +247,7 @@ export default function SoilAnalysisPage() {
               className="rounded-2xl border border-forest/15 bg-ivory p-5"
             >
               <h3 className="text-sm font-semibold text-charcoal">{te ? a.title.te : a.title.en}</h3>
-              <p className="mt-1 text-sm text-charcoal/70">{te ? a.detail.te : a.detail.en}</p>
+              <p className="mt-1 text-sm text-charcoal/85">{te ? a.detail.te : a.detail.en}</p>
             </div>
           ))}
         </div>
@@ -262,7 +262,7 @@ export default function SoilAnalysisPage() {
           <Info className="h-5 w-5" aria-hidden="true" />
           {te ? "మూలాలు, ఊహలు & పరిమితులు" : "Sources, assumptions & limitations"}
         </h2>
-        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-charcoal/80">
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-charcoal/90">
           <li>
             <strong>{isDemo ? (te ? "డెమో డేటా మాత్రమే:" : "Demo data only:") : te ? "మూలం:" : "Source:"}</strong>{" "}
             {isDemo ? (te ? TE_MOCK_NOTICE : MOCK_NOTICE) : report.mockNotice}

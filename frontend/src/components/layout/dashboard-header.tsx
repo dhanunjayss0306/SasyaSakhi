@@ -115,10 +115,9 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
             .join(" "),
     );
 
-  const initial = (userName || "G").charAt(0).toUpperCase();
 
   return (
-    <header className="sticky top-0 z-20 border-b border-charcoal/10 bg-cream/90 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-charcoal/10 bg-cream">
       <div className="flex items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6">
         {/* Hamburger (opens the drawer on small screens; the sidebar is
             always visible on desktop) */}
@@ -137,7 +136,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
           type="button"
           onClick={handleBack}
           aria-label={lang === "te" ? "వెనుకకు వెళ్ళు" : "Go back"}
-          className="flex shrink-0 items-center gap-0.5 rounded-full border border-charcoal/20 bg-cream px-3 py-2 text-sm font-semibold text-charcoal hover:bg-sage"
+          className="flex shrink-0 items-center gap-0.5 rounded-lg border border-charcoal/20 bg-cream px-3 py-2 text-sm font-semibold text-charcoal hover:bg-sage"
         >
           <ChevronLeft className="size-5" aria-hidden />
           <span>{lang === "te" ? "వెనుకకు" : "Back"}</span>
@@ -146,7 +145,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
         {/* Title + breadcrumb */}
         <div className="min-w-0 flex-1">
           <nav aria-label="Breadcrumb" className="hidden sm:block">
-            <ol className="flex items-center gap-1 text-xs text-charcoal/60">
+            <ol className="flex items-center gap-1 text-xs text-charcoal/80">
               <li>
                 <Link href="/dashboard" className="hover:text-forest hover:underline">
                   SasyaSakhi
@@ -162,7 +161,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
               ))}
             </ol>
           </nav>
-          <h1 className="truncate font-display text-xl font-semibold tracking-tight text-charcoal sm:text-2xl">
+          <h1 className="truncate font-display text-2xl font-semibold tracking-tight text-charcoal sm:text-3xl">
             {title}
           </h1>
         </div>
@@ -171,9 +170,9 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
         <div
           role="group"
           aria-label="Language"
-          className="flex items-center rounded-full border border-sage bg-white p-1"
+          className="flex items-center rounded-lg border border-sage bg-white p-1"
         >
-          <Globe className="ml-1.5 size-4 text-charcoal/50" aria-hidden />
+          <Globe className="ml-1.5 size-4 text-charcoal/70" aria-hidden />
           {(
             [
               { code: "en", label: "EN" },
@@ -186,10 +185,10 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
               onClick={() => changeLang(opt.code)}
               aria-pressed={lang === opt.code}
               className={cn(
-                "rounded-full px-2.5 py-1 text-xs font-semibold transition-colors",
+                "rounded-md px-2.5 py-1 text-xs font-semibold transition-colors",
                 lang === opt.code
                   ? "bg-forest text-ivory"
-                  : "text-charcoal/60 hover:text-charcoal",
+                  : "text-charcoal/80 hover:text-charcoal",
               )}
             >
               {opt.label}
@@ -205,7 +204,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
             aria-expanded={notifOpen}
             aria-haspopup="true"
             aria-label="Notifications (demo)"
-            className="relative rounded-full border border-sage bg-white p-2.5 text-charcoal hover:bg-sage/60"
+            className="relative rounded-lg border border-sage bg-white p-2.5 text-charcoal hover:bg-sage/60"
           >
             <Bell className="size-4.5" aria-hidden />
             <span
@@ -219,7 +218,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
               aria-label="Demo notifications"
               className="absolute right-0 top-12 w-80 overflow-hidden rounded-2xl border border-sage bg-white shadow-xl shadow-forest/10"
             >
-              <p className="border-b border-sage/70 bg-sage/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-charcoal/70">
+              <p className="border-b border-sage/70 bg-sage/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-charcoal/85">
                 {lang === "te" ? "డెమో నోటిఫికేషన్‌లు" : "Demo notifications"}
               </p>
               <ul className="divide-y divide-sage/60">
@@ -228,12 +227,12 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
                   return (
                     <li key={n.en.title} className="px-4 py-3">
                       <p className="text-sm font-semibold text-charcoal">{item.title}</p>
-                      <p className="mt-0.5 text-xs text-charcoal/60">{item.body}</p>
+                      <p className="mt-0.5 text-xs text-charcoal/80">{item.body}</p>
                     </li>
                   );
                 })}
               </ul>
-              <p className="bg-ivory px-4 py-2 text-[11px] text-charcoal/50">
+              <p className="bg-ivory px-4 py-2 text-[11px] text-charcoal/70">
                 {lang === "te"
                   ? "డెమో మాత్రమే — నిజమైన నోటిఫికేషన్ సేవకు కనెక్ట్ కాలేదు."
                   : "Demo only — not connected to a real notification service."}
@@ -250,14 +249,14 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
             aria-expanded={userOpen}
             aria-haspopup="true"
             aria-label="Account menu"
-            className="flex items-center gap-2 rounded-full border border-sage bg-white py-1.5 pl-1.5 pr-2.5 hover:bg-sage/60"
+            className="flex items-center gap-2 rounded-lg border border-sage bg-white py-1.5 pl-1.5 pr-2.5 hover:bg-sage/60"
           >
-            <span
-              className="flex size-8 items-center justify-center rounded-full bg-forest font-display text-sm font-semibold text-ivory"
-              aria-hidden
-            >
-              {initial}
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element -- local avatar photo; next/image offers nothing here */}
+            <img
+              src="/dhanunjay.jpg"
+              alt=""
+              className="size-8 rounded-full object-cover"
+            />
             <span className="hidden max-w-28 truncate text-sm font-medium text-charcoal md:block">
               {userName}
             </span>
@@ -269,15 +268,15 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
               className="absolute right-0 top-12 w-60 overflow-hidden rounded-2xl border border-sage bg-white shadow-xl shadow-forest/10"
             >
               <div className="flex items-center gap-3 border-b border-sage/70 px-4 py-3">
-                <span
-                  className="flex size-10 items-center justify-center rounded-full bg-forest font-display text-base font-semibold text-ivory"
-                  aria-hidden
-                >
-                  {initial}
-                </span>
+                {/* eslint-disable-next-line @next/next/no-img-element -- local avatar photo; next/image offers nothing here */}
+                <img
+                  src="/dhanunjay.jpg"
+                  alt=""
+                  className="size-10 rounded-full object-cover"
+                />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-charcoal">{userName}</p>
-                  <p className="text-[11px] text-charcoal/50">
+                  <p className="text-[11px] text-charcoal/70">
                     {lang === "te" ? "డెమో ఖాతా" : "Demo account"}
                   </p>
                 </div>
@@ -289,7 +288,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
                   role="menuitem"
                   className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-charcoal hover:bg-sage/60"
                 >
-                  <UserRound className="size-4 text-charcoal/50" aria-hidden />
+                  <UserRound className="size-4 text-charcoal/70" aria-hidden />
                   {lang === "te" ? "ప్రొఫైల్ సెట్టింగ్‌లు" : "Profile settings"}
                 </Link>
                 <button
@@ -298,7 +297,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
                   onClick={handleSignOut}
                   className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm text-charcoal hover:bg-sage/60"
                 >
-                  <LogOut className="size-4 text-charcoal/50" aria-hidden />
+                  <LogOut className="size-4 text-charcoal/70" aria-hidden />
                   {lang === "te" ? "సైన్ అవుట్" : "Sign out"}
                 </button>
               </div>

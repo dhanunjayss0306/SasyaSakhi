@@ -146,7 +146,7 @@ export default function LoginPage() {
           <p className="font-display text-2xl font-medium leading-snug text-ivory">
             {te ? "“మీ నేలను తెలుసుకోండి, అది ఏమి పండించాలో చెబుతుంది.”" : "“Know your soil, and it will tell you what to grow.”"}
           </p>
-          <footer className="mt-3 text-sm text-ivory/60">
+          <footer className="mt-3 text-sm text-ivory/80">
             {te ? "భారతీయ రైతుల కోసం నేల ఆరోగ్య మార్గదర్శకత్వం — ఇంగ్లీష్ మరియు తెలుగులో." : "Soil health guidance for Indian farmers — in English and Telugu."}
           </footer>
         </blockquote>
@@ -169,10 +169,10 @@ export default function LoginPage() {
           </Link>
 
           <div className="rounded-3xl border border-sage bg-white p-6 shadow-xl shadow-forest/5 sm:p-8">
-            <h1 className="font-display text-3xl font-semibold tracking-tight text-charcoal">
+            <h1 className="font-display text-4xl font-semibold tracking-tight text-charcoal">
               {te ? "తిరిగి స్వాగతం" : "Welcome back"}
             </h1>
-            <p className="mt-2 text-sm text-charcoal/60">
+            <p className="mt-2 text-sm text-charcoal/80">
               {te ? "మీ పొలం డాష్‌బోర్డ్‌కు కొనసాగడానికి సైన్ ఇన్ చేయండి." : "Sign in to continue to your farm dashboard."}
             </p>
 
@@ -194,7 +194,7 @@ export default function LoginPage() {
                   aria-invalid={error ? true : undefined}
                   aria-describedby={error ? "login-error" : undefined}
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-sage bg-ivory/50 px-3.5 py-2.5 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-leaf focus:outline-none focus:ring-2 focus:ring-leaf/40"
+                  className="w-full rounded-xl border border-sage bg-ivory/50 px-3.5 py-2.5 text-sm text-charcoal placeholder:text-charcoal/60 focus:border-leaf focus:outline-none focus:ring-2 focus:ring-leaf/40"
                 />
               </div>
 
@@ -216,14 +216,14 @@ export default function LoginPage() {
                     aria-invalid={error ? true : undefined}
                     aria-describedby={error ? "login-error" : undefined}
                     placeholder="••••••••"
-                    className="w-full rounded-xl border border-sage bg-ivory/50 px-3.5 py-2.5 pr-11 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-leaf focus:outline-none focus:ring-2 focus:ring-leaf/40"
+                    className="w-full rounded-xl border border-sage bg-ivory/50 px-3.5 py-2.5 pr-11 text-sm text-charcoal placeholder:text-charcoal/60 focus:border-leaf focus:outline-none focus:ring-2 focus:ring-leaf/40"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
                     aria-pressed={showPassword}
                     aria-label={showPassword ? (te ? "పాస్‌వర్డ్ దాచండి" : "Hide password") : te ? "పాస్‌వర్డ్ చూపండి" : "Show password"}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-charcoal/50 hover:text-charcoal"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-charcoal/70 hover:text-charcoal"
                   >
                     {showPassword ? (
                       <EyeOff className="size-4.5" aria-hidden />
@@ -235,7 +235,7 @@ export default function LoginPage() {
               </div>
 
               <div className="flex items-center justify-between text-sm">
-                <label htmlFor="login-remember" className="flex cursor-pointer items-center gap-2 text-charcoal/70">
+                <label htmlFor="login-remember" className="flex cursor-pointer items-center gap-2 text-charcoal/85">
                   <input
                     id="login-remember"
                     type="checkbox"
@@ -285,7 +285,7 @@ export default function LoginPage() {
 
             <div className="my-5 flex items-center gap-3" aria-hidden>
               <span className="h-px flex-1 bg-sage" />
-              <span className="text-xs uppercase tracking-wider text-charcoal/40">{te ? "లేదా" : "or"}</span>
+              <span className="text-xs uppercase tracking-wider text-charcoal/60">{te ? "లేదా" : "or"}</span>
               <span className="h-px flex-1 bg-sage" />
             </div>
 
@@ -306,7 +306,7 @@ export default function LoginPage() {
               {te ? "Google సైన్-ఇన్ (డెమో — కనెక్ట్ చేయబడలేదు)" : "Google sign-in (demo — not connected)"}
             </Button>
 
-            <p className="mt-6 text-center text-sm text-charcoal/60">
+            <p className="mt-6 text-center text-sm text-charcoal/80">
               {te ? "SasyaSakhiకి కొత్తవారా? " : "New to SasyaSakhi? "}
               <Link href="/signup" className="font-semibold text-forest hover:underline">
                 {te ? "ఖాతా సృష్టించండి" : "Create account"}
@@ -314,7 +314,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <p className="mt-4 text-center text-xs text-charcoal/50">
+          <p className="mt-4 text-center text-xs text-charcoal/70">
             {te ? "డెమో నమూనా — నిజమైన ఆధారాలు నిల్వ చేయబడవు లేదా ధృవీకరించబడవు." : "Demo prototype — no real credentials are stored or verified."}
           </p>
         </div>

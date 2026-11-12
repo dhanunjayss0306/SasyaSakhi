@@ -73,8 +73,8 @@ export default function WeatherPage() {
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">{te ? "వాతావరణం" : "Weather"}</h1>
-          <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
+          <h1 className="font-display text-4xl font-semibold text-charcoal">{te ? "వాతావరణం" : "Weather"}</h1>
+          <p className="mt-1 max-w-2xl text-sm text-charcoal/85">
             {te
               ? "పొలం సలహాతో 5-రోజుల దృక్పథం. వర్షం చుట్టూ పిచికారీ మరియు ఎరువును ప్లాన్ చేయండి."
               : "5-day outlook with field advice. Plan spraying and fertilizer around the rain."}
@@ -111,13 +111,13 @@ export default function WeatherPage() {
                     </p>
                     <Icon className={cn("mt-3 h-10 w-10", i === 0 ? "text-gold" : "text-forest")} aria-hidden />
                     <p className="mt-3 font-display text-2xl font-semibold">
-                      {d.tempHigh}°<span className={cn("text-base font-normal", i === 0 ? "text-ivory/70" : "text-charcoal/55")}> / {d.tempLow}°</span>
+                      {d.tempHigh}°<span className={cn("text-base font-normal", i === 0 ? "text-ivory/85" : "text-charcoal/75")}> / {d.tempLow}°</span>
                     </p>
-                    <p className={cn("mt-1 inline-flex items-center gap-1 text-xs font-medium", i === 0 ? "text-ivory/85" : "text-charcoal/70")}>
+                    <p className={cn("mt-1 inline-flex items-center gap-1 text-xs font-medium", i === 0 ? "text-ivory/95" : "text-charcoal/85")}>
                       <CloudRain className="h-3.5 w-3.5" aria-hidden />
                       {d.rainChance}% {te ? "వర్షం" : "rain"}
                     </p>
-                    <p className={cn("mt-3 border-t pt-3 text-xs leading-relaxed", i === 0 ? "border-ivory/20 text-ivory/85" : "border-sage text-charcoal/70")}>
+                    <p className={cn("mt-3 border-t pt-3 text-xs leading-relaxed", i === 0 ? "border-ivory/20 text-ivory/95" : "border-sage text-charcoal/85")}>
                       {te ? (ADVICE_TE[d.advice] ?? d.advice) : d.advice}
                     </p>
                   </article>

@@ -45,7 +45,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
           title={titleForPath(pathname, lang)}
           onMenuToggle={() => setSidebarOpen((v) => !v)}
         />
-        <main className="mx-auto w-full max-w-6xl px-4 pt-6 pb-28 sm:px-6 sm:pt-8">
+        <main className="mx-auto w-full max-w-6xl px-5 pt-8 pb-28 sm:px-8 sm:pt-10">
           {children}
         </main>
       </div>

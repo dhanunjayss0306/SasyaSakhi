@@ -50,10 +50,10 @@ export default function ManualPhysicalTestPage() {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
       <header className="mb-6">
-        <h1 className="font-display text-3xl font-semibold text-charcoal">
+        <h1 className="font-display text-4xl font-semibold text-charcoal">
           {te ? "భౌతిక పరీక్ష విలువలు" : "Physical Test Values"}
         </h1>
-        <p className="mt-2 text-sm text-charcoal/70">
+        <p className="mt-2 text-sm text-charcoal/85">
           {te
             ? "మీ భౌతిక ల్యాబ్ పరీక్ష నివేదిక నుండి విలువలను టైప్ చేయండి. విశ్లేషణకు ఆరు విలువలు అవసరం."
             : "Type the values from your physical lab test report. All six values are needed for analysis."}

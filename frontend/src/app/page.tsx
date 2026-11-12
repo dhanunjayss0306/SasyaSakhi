@@ -14,25 +14,25 @@ function AboutSection() {
   const lang = useStoredLang();
   const te = lang === "te";
   return (
-    <section id="about" aria-labelledby="about-heading" className="bg-cream py-20 sm:py-28">
+    <section id="about" aria-labelledby="about-heading" className="bg-cream py-24 sm:py-32">
       <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
         <p className="text-sm font-semibold uppercase tracking-widest text-forest">
           {te ? "గురించి" : "About"}
         </p>
         <h2
           id="about-heading"
-          className="mt-3 font-display text-4xl font-semibold tracking-tight text-charcoal text-balance sm:text-5xl"
+          className="mt-3 font-display text-5xl font-semibold tracking-tight text-charcoal text-balance sm:text-6xl"
         >
           {te
             ? "వ్యవసాయ నిర్ణయాలను అర్థం చేసుకోవడానికి ల్యాబ్ కోటు అవసరం లేదు"
             : "Farming decisions should not need a lab coat to understand"}
         </h2>
-        <p className="mt-6 text-lg leading-relaxed text-charcoal/70">
+        <p className="mt-6 text-lg leading-relaxed text-charcoal/85">
           {te
-            ? "SasyaSakhi ఒకే ఒక కారణం కోసం ఉంది: భారతదేశం అంతటా చిన్న రైతులకు పెద్ద వ్యవసాయ ల్యాబ్ ఇచ్చే స్పష్టతే వారి నేల గురించి కూడా లభించాలి. మీ వద్ద ఇప్పటికే ఉన్న నేల ఆరోగ్య కార్డును తీసుకుని, మీరు అమలు చేయగల మార్గదర్శకత్వంగా మారుస్తాము — ఏ పంట వేయాలి, ఎంత ఆహారం ఇవ్వాలి, మరియు ఎప్పుడు చేయాలి — ఇంగ్లీష్ లేదా తెలుగులో సరళంగా వివరించబడుతుంది."
-            : "SasyaSakhi exists for one reason: smallholder farmers across India deserve the same clarity about their soil that a big agronomy lab provides. We take the soil health card you already have and turn it into guidance you can act on — which crop to sow, how much to feed it, and when to do it — explained simply in English or Telugu."}
+            ? "చిన్న రైతులకు పెద్ద వ్యవసాయ ల్యాబ్ ఇచ్చే స్పష్టతే వారి నేల గురించి కూడా లభించాలి. మీ నేల ఆరోగ్య కార్డును అమలు చేయగల మార్గదర్శకత్వంగా మారుస్తాము — ఇంగ్లీష్ లేదా తెలుగులో."
+            : "Smallholder farmers deserve the same clarity about their soil that a big agronomy lab provides. We turn your soil health card into guidance you can act on — in English or Telugu."}
         </p>
-        <p className="mt-4 text-lg leading-relaxed text-charcoal/70">
+        <p className="mt-4 text-lg leading-relaxed text-charcoal/85">
           {te
             ? "మేము ఆంధ్రప్రదేశ్‌లో వరి, పత్తి మరియు మిరపతో ప్రారంభిస్తున్నాము, మరియు నిజమైన రైతుల అభిప్రాయం నుండి పెరుగుతున్నాము."
             : "We are starting in Andhra Pradesh with paddy, cotton and chilli, and growing from real farmer feedback."}
@@ -48,7 +48,7 @@ export default function Home() {
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-forest focus:px-5 focus:py-2.5 focus:text-ivory"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-forest focus:px-5 focus:py-2.5 focus:text-ivory"
       >
         {lang === "te" ? "కంటెంట్‌కు వెళ్ళు" : "Skip to content"}
       </a>

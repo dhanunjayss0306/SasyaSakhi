@@ -113,8 +113,8 @@ export default function FertilizerPlannerPage() {
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">{te ? "ఎరువుల ప్రణాళిక" : "Fertilizer Planner"}</h1>
-          <p className="mt-1 max-w-2xl text-sm text-charcoal/65">
+          <h1 className="font-display text-4xl font-semibold text-charcoal">{te ? "ఎరువుల ప్రణాళిక" : "Fertilizer Planner"}</h1>
+          <p className="mt-1 max-w-2xl text-sm text-charcoal/85">
             {te
               ? "నియమాల ఇంజిన్ నుండి ఎంచుకున్న పంటకు ఎకరాకు మోతాదులు."
               : "Doses per acre for the selected crop, from the rules engine."}
@@ -143,7 +143,7 @@ export default function FertilizerPlannerPage() {
 
       <div className="mt-6">
         {BACKEND_CONFIGURED && fertResult === undefined ? (
-          <p className="text-sm text-charcoal/60" role="status">
+          <p className="text-sm text-charcoal/80" role="status">
             {te ? "ఎరువుల ప్రణాళిక లోడ్ అవుతోంది…" : "Loading fertilizer plan…"}
           </p>
         ) : (

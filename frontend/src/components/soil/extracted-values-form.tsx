@@ -77,9 +77,9 @@ export function ExtractedValuesForm({ report, onConfirm, onBack }: ExtractedValu
                 className="text-sm font-medium text-charcoal"
               >
                 {te ? p.labelTe : p.label}{" "}
-                <span className="font-normal text-charcoal/60">· {te ? p.label : p.labelTe}</span>
+                <span className="font-normal text-charcoal/80">· {te ? p.label : p.labelTe}</span>
                 {p.unit && (
-                  <span className="ml-1 text-xs text-charcoal/50">({p.unit})</span>
+                  <span className="ml-1 text-xs text-charcoal/70">({p.unit})</span>
                 )}
               </label>
               {p.uncertain && (

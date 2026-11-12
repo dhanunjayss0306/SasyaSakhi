@@ -80,8 +80,8 @@ export default function CropCalendarPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-charcoal">{te ? "పంట క్యాలెండర్" : "Crop calendar"}</h1>
-          <p className="mt-1 text-sm text-charcoal/65">
+          <h1 className="font-display text-4xl font-semibold text-charcoal">{te ? "పంట క్యాలెండర్" : "Crop calendar"}</h1>
+          <p className="mt-1 text-sm text-charcoal/85">
             {events ? (te ? `${completedCount} / ${events.length} పనులు పూర్తయ్యాయి` : `${completedCount} of ${events.length} tasks done`) : te ? "మీ సీజన్ పనులు, నెలవారీగా." : "Your season tasks, month by month."}
           </p>
         </div>
@@ -132,15 +132,15 @@ export default function CropCalendarPage() {
                             {checked && <Check className="h-4 w-4" aria-hidden />}
                           </button>
                           <div className="min-w-0 flex-1">
-                            <p className={cn("font-medium text-charcoal", checked && "line-through text-charcoal/50")}>
+                            <p className={cn("font-medium text-charcoal", checked && "line-through text-charcoal/70")}>
                               {te ? event.titleTe : event.title}
                             </p>
-                            <p className={cn("text-sm", checked ? "text-charcoal/40" : "text-forest/75")}>
+                            <p className={cn("text-sm", checked ? "text-charcoal/60" : "text-forest/75")}>
                               {te ? event.title : event.titleTe}
                             </p>
                           </div>
                           <div className="shrink-0 text-right">
-                            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/55">{dayLabel(event.date, te)}</p>
+                            <p className="text-xs font-semibold uppercase tracking-wide text-charcoal/75">{dayLabel(event.date, te)}</p>
                             <p className="mt-0.5 inline-block rounded-full bg-forest/10 px-2 py-0.5 text-xs font-medium text-forest">
                               {te ? (CROP_TE[event.crop] ?? event.crop) : event.crop}
                             </p>

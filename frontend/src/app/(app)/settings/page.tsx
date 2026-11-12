@@ -28,7 +28,7 @@ function Switch({
     >
       <span>
         <span className="block font-medium text-charcoal">{label}</span>
-        <span className="block text-sm text-charcoal/60">{hint}</span>
+        <span className="block text-sm text-charcoal/80">{hint}</span>
       </span>
       <span
         aria-hidden
@@ -89,8 +89,8 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold text-charcoal">{te ? "సెట్టింగ్స్" : "Settings"}</h1>
-      <p className="mt-1 text-sm text-charcoal/65">
+      <h1 className="font-display text-4xl font-semibold text-charcoal">{te ? "సెట్టింగ్స్" : "Settings"}</h1>
+      <p className="mt-1 text-sm text-charcoal/85">
         {te ? "నమూనా — సెట్టింగ్స్ ఈ పరికరంలో మాత్రమే సేవ్ అవుతాయి." : "Prototype — settings save on this device only."}
       </p>
 
@@ -130,6 +130,19 @@ export default function SettingsPage() {
           {te ? "ప్రొఫైల్" : "Profile"}
         </h2>
         <div className="mt-4 space-y-4">
+          <div className="flex items-center gap-4">
+            {/* eslint-disable-next-line @next/next/no-img-element -- local profile photo; next/image offers nothing here */}
+            <img
+              src="/dhanunjay.jpg"
+              alt={te ? "ప్రొఫైల్ ఫోటో" : "Profile photo"}
+              className="size-16 shrink-0 rounded-full object-cover ring-1 ring-sage"
+            />
+            <p className="text-sm leading-relaxed text-charcoal/85">
+              {te
+                ? "మీ ఫోటో యాప్ పైన కనిపిస్తుంది."
+                : "Your photo appears at the top of the app."}
+            </p>
+          </div>
           <div>
             <label htmlFor="profile-name" className="mb-1 block text-sm font-medium text-charcoal">
               {te ? "పేరు" : "Name"}
@@ -141,7 +154,7 @@ export default function SettingsPage() {
               onChange={(e) => setName(e.target.value)}
               placeholder={te ? "మీ పేరు" : "Your name"}
               autoComplete="name"
-              className="h-10 w-full rounded-xl border border-sage bg-ivory px-4 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-forest focus:outline-none"
+              className="h-10 w-full rounded-xl border border-sage bg-ivory px-4 text-sm text-charcoal placeholder:text-charcoal/60 focus:border-forest focus:outline-none"
             />
           </div>
           <div>
@@ -155,7 +168,7 @@ export default function SettingsPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               autoComplete="email"
-              className="h-10 w-full rounded-xl border border-sage bg-ivory px-4 text-sm text-charcoal placeholder:text-charcoal/40 focus:border-forest focus:outline-none"
+              className="h-10 w-full rounded-xl border border-sage bg-ivory px-4 text-sm text-charcoal placeholder:text-charcoal/60 focus:border-forest focus:outline-none"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -195,7 +208,7 @@ export default function SettingsPage() {
             hint={te ? "ఎరువు ధర మార్పుల గురించి నాకు తెలియజేయండి." : "Notify me about fertilizer price changes."}
           />
         </div>
-        <p className="mt-3 text-xs text-charcoal/55">
+        <p className="mt-3 text-xs text-charcoal/75">
           {te ? "డెమో టోగుల్స్ — ఈ నమూనాలో నోటిఫికేషన్లు నిజంగా పంపబడవు." : "Demo toggles — notifications are not actually sent in this prototype."}
         </p>
       </section>

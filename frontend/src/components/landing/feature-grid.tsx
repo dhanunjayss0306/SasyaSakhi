@@ -18,8 +18,8 @@ const FEATURES = [
     icon: FileScan,
     title: { en: "Soil Report Upload + OCR", te: "నేల నివేదిక అప్‌లోడ్ + OCR" },
     description: {
-      en: "Snap a photo of your soil health card or upload a PDF. Text is read automatically — no typing needed.",
-      te: "మీ నేల ఆరోగ్య కార్డు ఫోటో తీయండి లేదా PDF అప్‌లోడ్ చేయండి. వచనం స్వయంచాలకంగా చదవబడుతుంది — టైప్ చేయాల్సిన అవసరం లేదు.",
+      en: "Snap a photo of your soil health card or upload a PDF. No typing needed.",
+      te: "మీ నేల ఆరోగ్య కార్డు ఫోటో తీయండి లేదా PDF అప్‌లోడ్ చేయండి. టైప్ చేయాల్సిన అవసరం లేదు.",
     },
     href: "/soil-report",
     span: "",
@@ -38,8 +38,8 @@ const FEATURES = [
     icon: Crop,
     title: { en: "Crop Suitability", te: "పంట అనుకూలత" },
     description: {
-      en: "See which of paddy, cotton and chilli your soil suits best — with a match score for each.",
-      te: "వరి, పత్తి మరియు మిరపలో మీ నేలకు ఏది బాగా సరిపోతుందో చూడండి — ప్రతిదానికి సరిపోలిక స్కోర్‌తో.",
+      en: "Which of paddy, cotton and chilli suits your soil best — with a match score.",
+      te: "వరి, పత్తి మరియు మిరపలో మీ నేలకు ఏది బాగా సరిపోతుందో చూడండి — సరిపోలిక స్కోర్‌తో.",
     },
     href: "/recommendations",
     span: "",
@@ -100,7 +100,7 @@ export function FeatureGrid() {
   const lang = useStoredLang();
   const te = lang === "te";
   return (
-    <section id="features" aria-labelledby="features-heading" className="bg-cream py-20 sm:py-28">
+    <section id="features" aria-labelledby="features-heading" className="bg-cream py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-widest text-forest">
@@ -108,20 +108,20 @@ export function FeatureGrid() {
           </p>
           <h2
             id="features-heading"
-            className="mt-3 font-display text-4xl font-semibold tracking-tight text-charcoal text-balance sm:text-5xl"
+            className="mt-3 font-display text-5xl font-semibold tracking-tight text-charcoal text-balance sm:text-6xl"
           >
             {te
               ? "మీ నేల నివేదిక మీకు చెప్పాలనుకున్నదంతా"
               : "Everything your soil report was trying to tell you"}
           </h2>
-          <p className="mt-4 text-lg leading-relaxed text-charcoal/70">
+          <p className="mt-4 text-lg leading-relaxed text-charcoal/85">
             {te
-              ? "మీ నేల ఆరోగ్య కార్డు ఫోటో నుండి పూర్తి సీజన్ ప్రణాళిక వరకు — మీ భూమి చుట్టూ కలిసి పనిచేసే ఎనిమిది సాధనాలు."
-              : "From a photo of your soil health card to a full season plan — eight tools that work together around one thing: your land."}
+              ? "మీ నేల ఆరోగ్య కార్డు ఫోటో నుండి పూర్తి సీజన్ ప్రణాళిక వరకు — ఎనిమిది సాధనాలు, ఒకే లక్ష్యం: మీ భూమి."
+              : "From a photo of your soil health card to a full season plan — eight tools, one goal: your land."}
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature) => (
             <a
               key={feature.title.en}
@@ -138,7 +138,7 @@ export function FeatureGrid() {
               <h3 className="mt-5 font-display text-xl font-semibold text-charcoal">
                 {te ? feature.title.te : feature.title.en}
               </h3>
-              <p className="mt-2 flex-1 text-sm leading-relaxed text-charcoal/65">
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-charcoal/85">
                 {te ? feature.description.te : feature.description.en}
               </p>
               <span className="mt-4 text-sm font-medium text-forest">
